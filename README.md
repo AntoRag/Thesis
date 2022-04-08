@@ -8,4 +8,4 @@
     ```bash
     # This will run the simulation on Gazebo
     roslaunch interbotix_xslocobot_gazebo xslocobot_gazebo.launch use_base:=true robot_model:=locobot_wx250s use_camera:=true use_lidar:=true use_sim:=true use_position_controllers:=true dof:=6 
-    ```
+  ```
