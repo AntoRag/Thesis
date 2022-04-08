@@ -1,0 +1,8 @@
+prefix=/home/antonio/Thesis/devel
+
+Name: test_node
+Description: Description of test_node
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

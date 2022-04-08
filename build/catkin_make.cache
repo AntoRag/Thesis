@@ -1,0 +1,2 @@
+test_node
+-DCATKIN_DEVEL_PREFIX=/home/antonio/Thesis/devel -DCMAKE_INSTALL_PREFIX=/home/antonio/Thesis/install -G Unix Makefiles
