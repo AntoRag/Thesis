@@ -203,6 +203,6 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-catkin_install_python(PROGRAMS scripts/save_data.py
+catkin_install_python(PROGRAMS scripts/save_data_topic.py scripts/save_data_jointstate.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
