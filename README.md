@@ -1,5 +1,11 @@
 # Thesis
-
+First clone and then catkin_make workspace
+    ```bash
+    git clone https://github.com/AntoRag/AntoRag.git
+    cd Thesis
+    catkin_make
+    ```
+    
 - test_node implemented to publish on /locobot/<joint_name>/command to control the position of a joint while running the simulation on Gazebo. To run a simulation in Gazebo while visualizing in Rviz type in the terminal:
 
   ```bash
