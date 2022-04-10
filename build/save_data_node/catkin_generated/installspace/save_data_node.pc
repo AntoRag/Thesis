@@ -1,8 +1,0 @@
-prefix=/home/antonio/Thesis/install
-
-Name: save_data_node
-Description: Description of save_data_node
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

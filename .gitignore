@@ -3,3 +3,6 @@
 *.vscode
 
 ./gazebo_worlds
+#ignore catkin cache files
+./build
+./devel

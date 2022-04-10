@@ -1,8 +1,0 @@
-prefix=/home/antonio/Thesis/devel
-
-Name: save_data
-Description: Description of save_data
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
