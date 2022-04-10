@@ -1,5 +1,6 @@
 # Thesis
-First clone and then catkin_make workspace
+- First clone and then catkin_make workspace:
+
     ```bash
     git clone https://github.com/AntoRag/AntoRag.git
     cd Thesis
