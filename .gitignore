@@ -2,7 +2,7 @@
 # ignore vscode
 *.vscode
 
-./gazebo_worlds
+/gazebo_worlds
 #ignore catkin cache files
-./build
-./devel
+/build
+/devel
