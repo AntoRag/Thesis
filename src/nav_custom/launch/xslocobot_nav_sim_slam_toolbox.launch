@@ -1,0 +1,94 @@
+<launch>
+
+  <arg name="robot_model"                       default="locobot_wx250s"/>
+  <arg name="robot_name"                        default="locobot"/>
+  <arg name="arm_model"                         default="$(eval 'mobile_' + arg('robot_model').split('_')[1])"/>
+  <arg name="use_lidar"                         default="true"/>
+  <arg name="show_gripper_bar"                  default="true"/>
+  <arg name="show_gripper_fingers"              default="true"/>
+  <arg name="external_urdf_loc"                 default=""/>
+  <arg name="localization"                      default="false"/>
+  <arg name="camera_tilt_angle"                 default="0.2618"/>
+  <arg name="use_rviz"                          default="true"/>
+  <arg name="rviz_frame"                        default="map"/>
+  <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
+  <arg name="gui"                               default="true"/>
+  <arg name="debug"                             default="false"/>
+  <arg name="paused"                            default="true"/>
+  <arg name="recording"                         default="false"/>
+  <arg name="use_sim_time"                      default="true"/>
+  <arg name="dof"                               default="6"/>
+  <arg name="x"                                 default="0"/>
+  <arg name="y"                                 default="0"/>
+  <arg name="z"                                 default="0"/>
+
+  <arg name="spawner_configuration"             default="-J tilt $(arg camera_tilt_angle) -x $(arg x) -y $(arg y) -z $(arg z) "/>
+  <arg name="mode"                              default="mapping"/>
+
+
+<!--  GAZEBO SETTINGS-->
+  <include file="$(find gazebo_custom)/launch/xslocobot_gazebo.launch">
+    <arg name="robot_model"                       default="$(arg robot_model)"/>
+    <arg name="robot_name"                        default="$(arg robot_name)"/>
+    <arg name="arm_model"                         default="$(arg arm_model)"/>
+    <arg name="show_lidar"                        default="$(arg use_lidar)"/>
+    <arg name="show_gripper_bar"                  default="$(arg show_gripper_bar)"/>
+    <arg name="show_gripper_fingers"              default="$(arg show_gripper_fingers)"/>
+    <arg name="external_urdf_loc"                 default="$(arg external_urdf_loc)"/>
+    <arg name="use_rviz"                          default="$(arg use_rviz)"/>
+    <arg name="rviz_frame"                        default="$(arg rviz_frame)"/>
+    <arg name="world_name"                        default="$(arg world_name)"/>
+    <arg name="gui"                               default="$(arg gui)"/>
+    <arg name="debug"                             default="$(arg debug)"/>
+    <arg name="paused"                            default="$(arg paused)"/>
+    <arg name="recording"                         default="$(arg recording)"/>
+    <arg name="use_sim_time"                      default="$(arg use_sim_time)"/>
+    <arg name="use_position_controllers"          default="true"/>
+    <arg name="dof"                               default="$(arg dof)"/>
+    <arg name="spawner_configuration"             default="$(arg spawner_configuration)"/>
+    <!-- work in progress arg name="rvizconfig"                        default="$(find slam_toolbox)/config/slam_toolbox_default.rviz" /-->
+  </include>
+
+<!--  SLAM-TOOLBOX SETTINGS-->
+  <node 
+    pkg="slam_toolbox" 
+    type="async_slam_toolbox_node" 
+    name="slam_toolbox" 
+    output="screen"
+    ns="$(arg robot_name)">
+    <rosparam command="load" file="$(find slam_toolbox)/config/mapper_params_online_async.yaml" />
+    <remap from="/scan"                     to="/$(arg robot_name)/scan"/>
+    <param name="base_frame"                      value="$(arg robot_name)/base_footprint"/>
+    <param name="odom_frame"                 value="$(arg robot_name)/odom"/> 
+    <param name="max_laser_range"                 value="12.0"/>  
+    <param name="mode"                       value="$(arg mode)"/>
+  </node>
+
+<!--  NAVIGATION SETTINGS-->
+  <node
+    pkg="move_base"
+    type="move_base"
+    respawn="false"
+    name="move_base"
+    output="screen"
+    ns="$(arg robot_name)">
+    <rosparam     if="$(arg use_lidar)" file="$(find interbotix_xslocobot_nav)/config/local_costmap_all_params.yaml" command="load"/>
+    <rosparam     if="$(arg use_lidar)" file="$(find interbotix_xslocobot_nav)/config/global_costmap_all_params.yaml" command="load"/>
+    <rosparam unless="$(arg use_lidar)" file="$(find interbotix_xslocobot_nav)/config/local_costmap_depth_params.yaml" command="load"/>
+    <rosparam unless="$(arg use_lidar)" file="$(find interbotix_xslocobot_nav)/config/global_costmap_depth_params.yaml" command="load"/>
+    <rosparam file="$(find interbotix_xslocobot_nav)/config/common_costmap_params.yaml" command="load" ns="global_costmap"/>
+    <rosparam file="$(find interbotix_xslocobot_nav)/config/common_costmap_params.yaml" command="load" ns="local_costmap"/>
+    <rosparam file="$(find interbotix_xslocobot_nav)/config/local_planner_params.yaml"  command="load"/>
+    <rosparam file="$(find interbotix_xslocobot_nav)/config/global_planner_params.yaml" command="load"/>
+    <rosparam file="$(find interbotix_xslocobot_nav)/config/move_base_params.yaml"      command="load"/>
+
+    <param name="global_costmap/robot_base_frame" value="$(arg robot_name)/base_footprint"/>
+    <param name="local_costmap/global_frame"      value="$(arg robot_name)/odom"/>
+    <param name="local_costmap/robot_base_frame"  value="$(arg robot_name)/base_footprint"/>
+
+    <remap from="cmd_vel"                         to="mobile_base/commands/velocity"/>
+    <remap from="map"                             to="/map"/>
+    <remap from="odom"                            to="mobile_base/odom"/>
+  </node>
+
+</launch>
