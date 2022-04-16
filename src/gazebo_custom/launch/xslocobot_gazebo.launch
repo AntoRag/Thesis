@@ -111,7 +111,7 @@
     <arg name="load_gazebo_configs"               value="true"/>
     <arg name="use_rviz"                          value="$(arg use_rviz)"/>
     <arg name="rviz_frame"                        value="$(arg rviz_frame)"/>
-    <arg name="rvizconfig"                        value="$(arg rviz_frame)"/>
+    <arg name="rvizconfig"                        value="$(arg rvizconfig)"/>
   </include>
 
   <arg

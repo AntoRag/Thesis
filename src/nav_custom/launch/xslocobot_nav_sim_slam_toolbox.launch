@@ -46,7 +46,7 @@
     <arg name="use_position_controllers"          default="true"/>
     <arg name="dof"                               default="$(arg dof)"/>
     <arg name="spawner_configuration"             default="$(arg spawner_configuration)"/>
-    <!-- work in progress arg name="rvizconfig"                        default="$(find slam_toolbox)/config/slam_toolbox_default.rviz" /-->
+    <arg name="rvizconfig"                        default="$(find slam_toolbox)/config/slam_toolbox_default.rviz" />
   </include>
 
 <!--  SLAM-TOOLBOX SETTINGS-->
