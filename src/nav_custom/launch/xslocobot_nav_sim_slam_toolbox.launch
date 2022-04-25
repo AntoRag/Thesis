@@ -57,7 +57,19 @@
     output="screen"
     ns="$(arg robot_name)">
     <rosparam command="load" file="$(find slam_toolbox)/config/mapper_params_online_async.yaml" />
-    <remap from="/scan"                     to="/$(arg robot_name)/scan"/>
+    <remap from="/scan"                                 to="/$(arg robot_name)/scan"/>
+    <!--remap from="/slam_toolbox/interactive_mode"        to="/$(arg robot_name)/slam_toolbox/interactive_mode"       /-->
+    <!--remap from="/slam_toolbox/serialize_map"           to="/$(arg robot_name)/slam_toolbox/serialize_map"          /-->
+    <!--remap from="/slam_toolbox/paused_new_measurements" to="/$(arg robot_name)/slam_toolbox/paused_new_measurements"/-->
+    <!--remap from="/slam_toolbox/deserialize_map"         to="/$(arg robot_name)/slam_toolbox/deserialize_map"        /-->
+    <!--remap from="/slam_toolbox/clear_changes"           to="/$(arg robot_name)/slam_toolbox/clear_changes"          /-->
+    <!--remap from="/slam_toolbox/manual_loop_closure"     to="/$(arg robot_name)/slam_toolbox/manual_loop_closure"    /-->
+    <!--remap from="/slam_toolbox/save_map"                to="/$(arg robot_name)/slam_toolbox/save_map"               /-->
+    <!--remap from="/slam_toolbox/clear_queue"             to="/$(arg robot_name)/slam_toolbox/clear_queue"            /-->
+    <!--remap from="/slam_toolbox/toggle_interactive_mode" to="/$(arg robot_name)/slam_toolbox/toggle_interactive_mode"/-->
+    <!--remap from="/slam_toolbox/pause_new_measurements"  to="/$(arg robot_name)/slam_toolbox/pause_new_measurements" /-->
+    <!--remap from="/map_merging/add_submap"               to="/$(arg robot_name)/map_merging/add_submap"              /-->
+    <!--remap from="/map_merging/merge_submaps"            to="/$(arg robot_name)/map_merging/merge_submaps"           /-->
     <param name="base_frame"                      value="$(arg robot_name)/base_footprint"/>
     <param name="odom_frame"                 value="$(arg robot_name)/odom"/> 
     <param name="max_laser_range"                 value="12.0"/>  

@@ -46,16 +46,16 @@ SlamToolboxPlugin::SlamToolboxPlugin(QWidget* parent):
 {
   ros::NodeHandle nh;
   bool paused_measure = false, interactive = false;
-  nh.getParam("/slam_toolbox/paused_new_measurements", paused_measure);
-  nh.getParam("/slam_toolbox/interactive_mode", interactive);
-  _serialize = nh.serviceClient<slam_toolbox_msgs::SerializePoseGraph>("/slam_toolbox/serialize_map");
-  _load_map = nh.serviceClient<slam_toolbox_msgs::DeserializePoseGraph>("/slam_toolbox/deserialize_map");
-  _clearChanges = nh.serviceClient<slam_toolbox_msgs::Clear>("/slam_toolbox/clear_changes");
-  _saveChanges = nh.serviceClient<slam_toolbox_msgs::LoopClosure>("/slam_toolbox/manual_loop_closure");
-  _saveMap = nh.serviceClient<slam_toolbox_msgs::SaveMap>("/slam_toolbox/save_map");
-  _clearQueue = nh.serviceClient<slam_toolbox_msgs::ClearQueue>("/slam_toolbox/clear_queue");
-  _interactive = nh.serviceClient<slam_toolbox_msgs::ToggleInteractive>("/slam_toolbox/toggle_interactive_mode");
-  _pause_measurements = nh.serviceClient<slam_toolbox_msgs::Pause>("/slam_toolbox/pause_new_measurements");
+  nh.getParam("/locobot/slam_toolbox/paused_new_measurements", paused_measure);
+  nh.getParam("/locobot/slam_toolbox/interactive_mode", interactive);
+  _serialize = nh.serviceClient<slam_toolbox_msgs::SerializePoseGraph>("/locobot/slam_toolbox/serialize_map");
+  _load_map = nh.serviceClient<slam_toolbox_msgs::DeserializePoseGraph>("/locobot/slam_toolbox/deserialize_map");
+  _clearChanges = nh.serviceClient<slam_toolbox_msgs::Clear>("/locobot/slam_toolbox/clear_changes");
+  _saveChanges = nh.serviceClient<slam_toolbox_msgs::LoopClosure>("/locobot/slam_toolbox/manual_loop_closure");
+  _saveMap = nh.serviceClient<slam_toolbox_msgs::SaveMap>("/locobot/slam_toolbox/save_map");
+  _clearQueue = nh.serviceClient<slam_toolbox_msgs::ClearQueue>("/locobot/slam_toolbox/clear_queue");
+  _interactive = nh.serviceClient<slam_toolbox_msgs::ToggleInteractive>("/locobot/slam_toolbox/toggle_interactive_mode");
+  _pause_measurements = nh.serviceClient<slam_toolbox_msgs::Pause>("/locobot/slam_toolbox/pause_new_measurements");
   _load_submap_for_merging = nh.serviceClient<slam_toolbox_msgs::AddSubmap>("/map_merging/add_submap");
   _merge = nh.serviceClient<slam_toolbox_msgs::MergeMaps>("/map_merging/merge_submaps");
 
@@ -479,8 +479,8 @@ void SlamToolboxPlugin::updateCheckStateIfExternalChange()
   bool paused_measure = false, interactive = false;
   while (ros::ok())
   {
-    nh.getParam("/slam_toolbox/paused_new_measurements", paused_measure);
-    nh.getParam("/slam_toolbox/interactive_mode", interactive);
+    nh.getParam("/locobot/slam_toolbox/paused_new_measurements", paused_measure);
+    nh.getParam("/locobot/slam_toolbox/interactive_mode", interactive);
 
     bool oldState = _check1->blockSignals(true);
     _check1->setChecked(interactive);
