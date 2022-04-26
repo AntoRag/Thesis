@@ -75,7 +75,7 @@
     <arg name="paused"                            default="$(arg paused)"/>
     <arg name="recording"                         default="$(arg recording)"/>
     <arg name="use_sim_time"                      default="$(arg use_sim_time)"/>
-    <arg name="use_position_controllers"          default="true"/>
+    <arg name="use_trajectory_controllers"        value="true"/>
     <arg name="dof"                               default="$(arg dof)"/>
     <arg name="spawner_configuration"             default="$(arg spawner_configuration)"/>
   </include>
@@ -197,4 +197,29 @@
     <remap from="odom"                            to="mobile_base/odom"/>
   </node>
 
+ <include file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
+    <arg name="robot_model"                       value="$(arg robot_model)"/>
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
+    <arg name="use_rviz"                          value="false"/>
+    <arg name="use_joint_pub"                     value="true"/>
+    <arg name="rate"                              value="100"/>
+    <arg name="source_list"                       value="[move_group/fake_controller_joint_states]"/>
+  </include>
+
+  <include file="$(find interbotix_xslocobot_moveit)/launch/move_group.launch" ns="$(arg robot_name)">
+    <arg name="robot_model"                       value="$(arg robot_model)"/>
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+    <arg name="external_srdf_loc"                 value="$(arg external_srdf_loc)"/>
+    <arg name="dof"                               value="$(arg dof)"/>
+    <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="fake_execution"                    value="$(arg use_fake)"/>
+    <arg name="publish_monitored_planning_scene"  value="true" />
+  </include>
+
+  <include if="$(arg use_moveit_rviz)" file="$(find interbotix_xslocobot_moveit)/launch/moveit_rviz.launch" ns="$(arg robot_name)">
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="config"                            value="true"/>
 </launch>

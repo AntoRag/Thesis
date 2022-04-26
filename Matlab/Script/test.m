@@ -24,7 +24,7 @@ clc
 
 % data_arm =
 % readmatrix('C:\Thesis\Matlab\Data\data_saved_arm.csv','OutputType','double');
-data_arm = readmatrix('/home/antonio/Thesis/Matlab/Data/data_saved_arm.csv','OutputType','double');
+data_arm = readmatrix('/home/antonio/thesis/Matlab/Data/data_saved_arm.csv','OutputType','double');
 
 %% Reordering vector
 time = data_arm(1:end,1);
