@@ -18,13 +18,13 @@
   <arg name="use_sim_time"                      default="true"/>
   <arg name="use_position_controllers"          default="false"/>
   <arg name="use_trajectory_controllers"        default="false"/>
-  <arg name="dof"                               default="5"/>
+  <arg name="dof"                               default="6"/>
   <arg name="spawner_configuration"             default=""/>
 
 
 
-  <env name="GAZEBO_RESOURCE_PATH"              value="$(find gazebo_custom):$(find gazebo_custom)/worlds"/>
-  <env name="GAZEBO_MODEL_PATH"              value="$(find gazebo_custom):$(find gazebo_custom)/models"/>
+  <env name="GAZEBO_RESOURCE_PATH"              value="$(env GAZEBO_RESOURCE_PATH):$(find gazebo_custom):$(find gazebo_custom)/worlds"/>
+  <env name="GAZEBO_MODEL_PATH"              value="$(env GAZEBO_MODEL_PATH):$(find gazebo_custom):$(find gazebo_custom)/models"/>
 
   <rosparam file="$(find gazebo_custom)/config/locobot_gazebo_controllers.yaml" command="load" ns="$(arg robot_name)"/>
 
