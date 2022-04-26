@@ -1,8 +1,11 @@
 
 # ignore vscode
 *.vscode
-
 /gazebo_worlds
 #ignore catkin cache files
 /build
 /devel
+#ignore .csv files
+*.csv
+#ignore autosave matlab
+*.asv

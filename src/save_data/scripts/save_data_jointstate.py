@@ -66,7 +66,7 @@ def data_received(data):
         rospy.loginfo("Read acquired: %s", data.name)
         if data.name == ['wheel_right_joint', 'wheel_left_joint']:
             if checker(data.position, True):
-                data_array.append([data.name, ros_time.secs, data.position[0], data.position[1]])
+                data_array.append([data.name,ros_time.secs, data.position[0], data.position[1]])
         else:
             if checker( data.position + data.velocity, False):
                 data_array.append([ros_time.secs, data.position[0], data.position[1], data.position[2],
