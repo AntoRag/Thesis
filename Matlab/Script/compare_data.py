@@ -3,12 +3,14 @@ import math
 import numpy
 import matlab.engine
 
-matlab_function='test' #name of the matlab script to be launched
 
 def main():
-    global matlab_function
     eng = matlab.engine.start_matlab()
-    eng.matlab_function(nargout=0)
+    s = eng.genpath('/home/antonio/Thesis/Matlab/Script') #add to Matlab path the scripts
+    eng.addpath(s, nargout=0)
+    eng.test(nargout=0) #test.m script to be launched
+    input("Press Enter to continue...") #wait for Enter from keyboard to close the figures
+    eng.quit()
 
 
 if __name__ == '__main__':

@@ -31,7 +31,7 @@ time = data_arm(1:end,1);
 arm_angles_pos = [data_arm(:,10) data_arm(:,8) data_arm(:,2) data_arm(:,3) data_arm(:,11) data_arm(:,12)];
 gripper_angles_pos = [data_arm(:,5) data_arm(:,7)];
 camera_angles_pos = [data_arm(:,6) data_arm(:,9)];
-arm_angles_vel = [data_arm(:,21) data_arm(:,19) data_arm(:,13) data_arm(:,14) data_arm(:,22) data_arm(:,23)]
+arm_angles_vel = [data_arm(:,21) data_arm(:,19) data_arm(:,13) data_arm(:,14) data_arm(:,22) data_arm(:,23)];
 gripper_angles_vel = [data_arm(:,16) data_arm(:,18)];
 camera_angles_vel = [data_arm(:,17) data_arm(:,20)];
 
