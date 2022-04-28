@@ -1,4 +1,4 @@
-# Thesis
+# thesis
 
 - First clone and then catkin_make workspace:
 
@@ -7,20 +7,6 @@
     cd Thesis
     catkin_make
     ```
-
-- test_node implemented to publish on /locobot/<joint_name>/command to control the position of a joint while running the simulation on Gazebo. To run a simulation in Gazebo while visualizing in Rviz type in the terminal:
-
-  ```bash
-  # This will run the node for controlling singularly each joint while visualizing it on Rviz
-  roslaunch interbotix_xslocobot_control xslocobot_control.launch use_sim:=true use_rviz:=true robot_model:=locobot_wx250s
-  ```
-
-  Then, in another terminal, we can type
-
-  ```bash
-  # This will run the simulation on Gazebo
-  roslaunch interbotix_xslocobot_nav xslocobot_nav_sim.launch robot_model:=locobot_wx250s dof:=6 use_lidar:=true
-  ```
 
 - save_data_topic script can be implemented to read messages published on a topic and store they in a .csv file that after can be easily imported in MATLAB. Until now it is possible to read Float64 messages published on a topic. To run it just type on the terminal
 
@@ -41,3 +27,14 @@ In this way we will obtain a file called data_saved.csv with time as first colum
   ```bash
   python3 FromBagToCVS.py /path/to/.bag/file topic/to/be/converted/
   ```
+- To run a simulation in Gazebo while using MoveIt as framework we can give as command:
+  ```bash
+  roslaunch nav_custom xslocobot_nav_sim_rtabmap.launch
+  ```
+  It will load as default OMPL library for motion planning. If we want to explicitly specify the motion planner we can give:
+    ```bash
+  roslaunch nav_custom xslocobot_nav_sim_rtabmap.launch pipeline:=ompl
+  ```
+  Currently is possible to select between two different motion planner: CHOMP and OMPL.
+  (Currently, to make CHOMP working correclty, have to be selected "use cartesian path" and select a velocity and acceleration scaling factor equal to 0.6).
+- In the folder Matlab there are two scripts useful to analyze the .csv files produced by "save_data_jointstate.py". "DirectKinematic.m" takes as input the angles in radians of the joints and gives in output the end effector position and RPY angles. Those results are then processed in "test.m" and simply plotted.

@@ -18,7 +18,7 @@
   <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
   <arg name="gui"                               default="true"/>
   <arg name="debug"                             default="false"/>
-  <arg name="paused"                            default="true"/>
+  <arg name="paused"                            default="false"/>
   <arg name="recording"                         default="false"/>
   <arg name="use_sim_time"                      default="true"/>
   <arg name="dof"                               default="6"/>
@@ -31,8 +31,10 @@
   <arg name="use_moveit_rviz"                   default="false"/>
   <arg name="use_moveit"                        default="true"/>    
   <arg name="use_fake"                          default="false"/>
-  <arg name="use_explore_lite"                   default="false"/>
-
+  <arg name="use_explore_lite"                  default="false"/>
+  <arg name="pipeline"                          default="ompl"/>
+  <arg name="fake_execution"                    default="false"/>
+  
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
                                                                       --RGBD/ProximityBySpace true
@@ -202,8 +204,8 @@
     <remap from="map"                             to="rtabmap/grid_map"/>
     <remap from="odom"                            to="mobile_base/odom"/>
   </node>
-<group if="$(arg use_moveit)">
-  <include file="$(find interbotix_xslocobot_moveit)/launch/move_group.launch" ns="$(arg robot_name)">
+<!--MoveIt planner selection -->
+  <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
@@ -211,15 +213,8 @@
     <arg name="use_camera"                        value="$(arg use_camera)"/>
     <arg name="fake_execution"                    value="$(arg use_fake)"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
-    <!--remap from="/locobot/execute_trajectory/goal" to="/locobot/arm_controller/follow_joint_trajectory/goal"/-->
-
+    <arg name="pipeline"                          value="$(arg pipeline)"/>
   </include>
-
-  <include if="$(arg use_moveit_rviz)" file="$(find interbotix_xslocobot_moveit)/launch/moveit_rviz.launch" ns="$(arg robot_name)">
-    <arg name="robot_name"                        value="$(arg robot_name)"/>
-    <arg name="config"                            value="true"/>
-  </include>
-</group>
 
 <node if="$(arg use_explore_lite)"
   pkg="explore_lite" 
@@ -240,6 +235,5 @@
   <param name="transform_tolerance" value="0.3"/>
   <param name="min_frontier_size" value="0.5"/>
 </node>
-
 
 </launch>
