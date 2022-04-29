@@ -11,8 +11,8 @@
 [35m[1mScanning dependencies of target kobuki_msgs_generate_messages_lisp[0m
 [  0%] Built target kobuki_msgs_generate_messages_lisp
 [35m[1mScanning dependencies of target kobuki_msgs_generate_messages_eus[0m
-[  0%] Built target kobuki_msgs_generate_messages_eus
 [35m[1mScanning dependencies of target kobuki_msgs_generate_messages_cpp[0m
+[  0%] Built target kobuki_msgs_generate_messages_eus
 [  0%] Built target kobuki_msgs_generate_messages_cpp
 [35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
 [  0%] Built target std_msgs_generate_messages_lisp
