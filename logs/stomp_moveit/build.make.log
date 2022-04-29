@@ -1,0 +1,37 @@
+[35m[1mScanning dependencies of target stomp_moveit_noisy_filters[0m
+[35m[1mScanning dependencies of target stomp_moveit[0m
+[  4%] [32mBuilding CXX object CMakeFiles/stomp_moveit_noisy_filters.dir/src/noisy_filters/joint_limits.cpp.o[0m
+[  8%] [32mBuilding CXX object CMakeFiles/stomp_moveit.dir/src/stomp_optimization_task.cpp.o[0m
+[ 13%] [32mBuilding CXX object CMakeFiles/stomp_moveit_noisy_filters.dir/src/noisy_filters/multi_trajectory_visualization.cpp.o[0m
+[ 17%] [32mBuilding CXX object CMakeFiles/stomp_moveit.dir/src/stomp_planner.cpp.o[0m
+[ 21%] [32mBuilding CXX object CMakeFiles/stomp_moveit.dir/src/utils/kinematics.cpp.o[0m
+[ 26%] [32mBuilding CXX object CMakeFiles/stomp_moveit.dir/src/utils/polynomial.cpp.o[0m
+[ 30%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_noisy_filters.so[0m
+[ 30%] Built target stomp_moveit_noisy_filters
+[35m[1mScanning dependencies of target stomp_moveit_update_filters[0m
+[ 34%] [32mBuilding CXX object CMakeFiles/stomp_moveit_update_filters.dir/src/update_filters/control_cost_projection.cpp.o[0m
+[ 39%] [32mBuilding CXX object CMakeFiles/stomp_moveit_update_filters.dir/src/update_filters/polynomial_smoother.cpp.o[0m
+[ 43%] [32mBuilding CXX object CMakeFiles/stomp_moveit_update_filters.dir/src/update_filters/trajectory_visualization.cpp.o[0m
+[ 47%] [32mBuilding CXX object CMakeFiles/stomp_moveit_update_filters.dir/src/update_filters/update_logger.cpp.o[0m
+[ 52%] [32mBuilding CXX object CMakeFiles/stomp_moveit_update_filters.dir/src/utils/polynomial.cpp.o[0m
+[35m[1mScanning dependencies of target stomp_moveit_cost_functions[0m
+[ 56%] [32mBuilding CXX object CMakeFiles/stomp_moveit_cost_functions.dir/src/cost_functions/collision_check.cpp.o[0m
+[35m[1mScanning dependencies of target stomp_moveit_noise_generators[0m
+[ 60%] [32mBuilding CXX object CMakeFiles/stomp_moveit_cost_functions.dir/src/cost_functions/obstacle_distance_gradient.cpp.o[0m
+[ 65%] [32mBuilding CXX object CMakeFiles/stomp_moveit_noise_generators.dir/src/noise_generators/normal_distribution_sampling.cpp.o[0m
+[ 69%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_update_filters.so[0m
+[ 69%] Built target stomp_moveit_update_filters
+[ 73%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_cost_functions.so[0m
+[ 73%] Built target stomp_moveit_cost_functions
+[ 78%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_noise_generators.so[0m
+[ 78%] Built target stomp_moveit_noise_generators
+[ 82%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit.so[0m
+[ 82%] Built target stomp_moveit
+[35m[1mScanning dependencies of target stomp_moveit_planner_manager[0m
+[35m[1mScanning dependencies of target stomp_moveit_smoothing_adapter[0m
+[ 86%] [32mBuilding CXX object CMakeFiles/stomp_moveit_planner_manager.dir/src/stomp_planner_manager.cpp.o[0m
+[ 91%] [32mBuilding CXX object CMakeFiles/stomp_moveit_smoothing_adapter.dir/src/stomp_smoothing_adapter.cpp.o[0m
+[ 95%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_planner_manager.so[0m
+[ 95%] Built target stomp_moveit_planner_manager
+[100%] [32m[1mLinking CXX shared library /home/antonio/thesis/devel/.private/stomp_moveit/lib/libstomp_moveit_smoothing_adapter.so[0m
+[100%] Built target stomp_moveit_smoothing_adapter

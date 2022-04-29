@@ -1,0 +1,11 @@
+Symlinking /home/antonio/thesis/devel/include/yocs_cmd_vel_mux/reloadConfig.h
+Symlinking /home/antonio/thesis/devel/share/yocs_cmd_vel_mux/cmake/yocs_cmd_vel_muxConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/share/yocs_cmd_vel_mux/cmake/yocs_cmd_vel_muxConfig.cmake
+Symlinking /home/antonio/thesis/devel/share/yocs_cmd_vel_mux/docs/reloadConfig-usage.dox
+Symlinking /home/antonio/thesis/devel/share/yocs_cmd_vel_mux/docs/reloadConfig.wikidoc
+Symlinking /home/antonio/thesis/devel/share/yocs_cmd_vel_mux/docs/reloadConfig.dox
+Symlinking /home/antonio/thesis/devel/lib/libyocs_cmd_vel_mux_nodelet.so
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/yocs_cmd_vel_mux.pc
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_cmd_vel_mux/__init__.py
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_cmd_vel_mux/cfg/__init__.py
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_cmd_vel_mux/cfg/reloadConfig.py

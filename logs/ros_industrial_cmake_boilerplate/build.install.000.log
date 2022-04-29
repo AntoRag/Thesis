@@ -1,0 +1,12 @@
+[36mInstall the project...[0m
+-- Install configuration: "Release"
+-- Installing: /home/antonio/thesis/devel/share/ros_industrial_cmake_boilerplate/package.xml
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/ros_industrial_cmake_boilerplate-config.cmake
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/ros_industrial_cmake_boilerplate-config-version.cmake
+-- Installing: /home/antonio/thesis/devel/share/ament_index/resource_index/packages/ros_industrial_cmake_boilerplate
+-- Installing: /home/antonio/thesis/devel/share/ros_industrial_cmake_boilerplate/hook/ament_prefix_path.dsv
+-- Installing: /home/antonio/thesis/devel/share/ros_industrial_cmake_boilerplate/hook/ros_package_path.dsv
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/cmake
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/cmake/extract_package_metadata.cmake
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/cmake/cmake_tools.cmake
+-- Installing: /home/antonio/thesis/devel/lib/cmake/ros_industrial_cmake_boilerplate/cmake/code_coverage.cmake

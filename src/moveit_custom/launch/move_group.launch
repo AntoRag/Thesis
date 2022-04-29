@@ -53,7 +53,7 @@
 
     <!-- Planning Functionality -->
     <arg name="pipeline" default="ompl" />
-    <include ns="move_group" file="$(find interbotix_xslocobot_moveit)/launch/planning_pipeline.launch.xml">
+    <include ns="move_group" file="$(find moveit_custom)/launch/planning_pipeline.launch.xml">
       <arg name="pipeline" value="$(arg pipeline)" />
     </include>
 

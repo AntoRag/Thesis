@@ -1,0 +1,2 @@
+apriltag:apriltag_ros/apriltag_ros
+-G Unix Makefiles -DCATKIN_DEVEL_PREFIX=/home/antonio/apriltag_ws/devel_isolated -DCMAKE_INSTALL_PREFIX=/home/antonio/apriltag_ws/install_isolated

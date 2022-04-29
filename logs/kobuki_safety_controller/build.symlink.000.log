@@ -1,0 +1,4 @@
+Symlinking /home/antonio/thesis/devel/share/kobuki_safety_controller/cmake/kobuki_safety_controllerConfig.cmake
+Symlinking /home/antonio/thesis/devel/share/kobuki_safety_controller/cmake/kobuki_safety_controllerConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/lib/libkobuki_safety_controller_nodelet.so
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/kobuki_safety_controller.pc

@@ -1,0 +1,12 @@
+Symlinking /home/antonio/thesis/devel/./local_setup.bash
+Symlinking /home/antonio/thesis/devel/./_setup_util.py
+Symlinking /home/antonio/thesis/devel/./local_setup.sh
+Symlinking /home/antonio/thesis/devel/./cmake.lock
+Symlinking /home/antonio/thesis/devel/./setup.sh
+Symlinking /home/antonio/thesis/devel/./setup.bash
+Symlinking /home/antonio/thesis/devel/./setup.zsh
+Symlinking /home/antonio/thesis/devel/./env.sh
+Symlinking /home/antonio/thesis/devel/./local_setup.zsh
+Symlinking /home/antonio/thesis/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig.cmake
+Symlinking /home/antonio/thesis/devel/share/catkin_tools_prebuild/cmake/catkin_tools_prebuildConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/catkin_tools_prebuild.pc

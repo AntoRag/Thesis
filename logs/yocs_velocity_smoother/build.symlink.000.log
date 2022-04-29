@@ -1,0 +1,11 @@
+Symlinking /home/antonio/thesis/devel/include/yocs_velocity_smoother/paramsConfig.h
+Symlinking /home/antonio/thesis/devel/share/yocs_velocity_smoother/cmake/yocs_velocity_smootherConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/share/yocs_velocity_smoother/cmake/yocs_velocity_smootherConfig.cmake
+Symlinking /home/antonio/thesis/devel/share/yocs_velocity_smoother/docs/paramsConfig-usage.dox
+Symlinking /home/antonio/thesis/devel/share/yocs_velocity_smoother/docs/paramsConfig.dox
+Symlinking /home/antonio/thesis/devel/share/yocs_velocity_smoother/docs/paramsConfig.wikidoc
+Symlinking /home/antonio/thesis/devel/lib/libyocs_velocity_smoother_nodelet.so
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/yocs_velocity_smoother.pc
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_velocity_smoother/__init__.py
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_velocity_smoother/cfg/__init__.py
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/yocs_velocity_smoother/cfg/paramsConfig.py

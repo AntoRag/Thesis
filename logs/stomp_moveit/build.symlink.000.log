@@ -1,0 +1,10 @@
+Symlinking /home/antonio/thesis/devel/share/stomp_moveit/cmake/stomp_moveitConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/share/stomp_moveit/cmake/stomp_moveitConfig.cmake
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_noise_generators.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_noisy_filters.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_planner_manager.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_smoothing_adapter.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_update_filters.so
+Symlinking /home/antonio/thesis/devel/lib/libstomp_moveit_cost_functions.so
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/stomp_moveit.pc

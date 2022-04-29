@@ -1,0 +1,4 @@
+Symlinking /home/antonio/thesis/devel/share/kobuki_testsuite/cmake/kobuki_testsuiteConfig.cmake
+Symlinking /home/antonio/thesis/devel/share/kobuki_testsuite/cmake/kobuki_testsuiteConfig-version.cmake
+Symlinking /home/antonio/thesis/devel/lib/pkgconfig/kobuki_testsuite.pc
+Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/kobuki_testsuite/__init__.py
