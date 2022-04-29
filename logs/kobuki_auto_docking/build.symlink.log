@@ -1,5 +1,0 @@
-Symlinking /home/antonio/thesis/devel/share/kobuki_auto_docking/cmake/kobuki_auto_dockingConfig.cmake
-Symlinking /home/antonio/thesis/devel/share/kobuki_auto_docking/cmake/kobuki_auto_dockingConfig-version.cmake
-Symlinking /home/antonio/thesis/devel/lib/libkobuki_auto_docking_nodelet.so
-Symlinking /home/antonio/thesis/devel/lib/libkobuki_auto_docking_ros.so
-Symlinking /home/antonio/thesis/devel/lib/pkgconfig/kobuki_auto_docking.pc

@@ -1,4 +1,0 @@
-[01m[K/home/antonio/thesis/src/interbotix/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_rviz/src/interbotix_control_panel.cpp:[m[K In member function ‘[01m[Kvoid interbotix_xs_rviz::InterbotixControlPanel::send_system_call()[m[K’:
-[01m[K/home/antonio/thesis/src/interbotix/interbotix_ros_toolboxes/interbotix_xs_toolbox/interbotix_xs_rviz/src/interbotix_control_panel.cpp:455:11:[m[K [01;35m[Kwarning: [m[Kignoring return value of ‘[01m[Kint system(const char*)[m[K’, declared with attribute warn_unused_result [[01;35m[K-Wunused-result[m[K]
-  455 |     [01;35m[Ksystem(("rosnode kill /" + robot_namespace_ + "/xs_sdk").c_str())[m[K;
-      |     [01;35m[K~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[m[K

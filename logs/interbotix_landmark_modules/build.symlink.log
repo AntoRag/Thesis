@@ -1,8 +1,0 @@
-Symlinking /home/antonio/thesis/devel/share/interbotix_landmark_modules/cmake/interbotix_landmark_modulesConfig.cmake
-Symlinking /home/antonio/thesis/devel/share/interbotix_landmark_modules/cmake/interbotix_landmark_modulesConfig-version.cmake
-Symlinking /home/antonio/thesis/devel/lib/pkgconfig/interbotix_landmark_modules.pc
-Symlinking /home/antonio/thesis/devel/lib/python3/dist-packages/interbotix_landmark_modules/__init__.py
-Symlinking /home/antonio/thesis/devel/lib/interbotix_landmark_modules/landmark_manager
-Symlinking /home/antonio/thesis/devel/lib/interbotix_landmark_modules/cmake.lock
-Symlinking /home/antonio/thesis/devel/lib/interbotix_landmark_modules/landmark_finder
-Symlinking /home/antonio/thesis/devel/lib/interbotix_landmark_modules/tf_map_to_landmark
