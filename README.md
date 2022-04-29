@@ -3,7 +3,7 @@
 - First clone and then catkin_make workspace:
 
     ```bash
-    git clone https://github.com/AntoRag/AntoRag.git
+    git clone --recurse-submodules https://github.com/AntoRag/thesis.git
     cd Thesis
     catkin build
     ```

@@ -5,6 +5,7 @@
 #ignore catkin cache files
 /build
 /devel
+/logs
 #ignore .csv files
 *.csv
 #ignore autosave matlab
