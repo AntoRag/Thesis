@@ -7,7 +7,12 @@
     cd Thesis
     catkin build
     ```
-
+- Add the following lines to the .bahsrc
+  ```bash
+  export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/interbotix_ws/src
+  export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/realsense_ws/src
+  export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/apriltag_ws/src
+  ```
 - save_data_topic script can be implemented to read messages published on a topic and store they in a .csv file that after can be easily imported in MATLAB. Until now it is possible to read Float64 messages published on a topic. To run it just type on the terminal
 
   ```bash

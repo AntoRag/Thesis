@@ -1,0 +1,9 @@
+[submodule "src/stomp_ros"]
+	path = src/stomp_ros
+	url = https://github.com/ros-industrial/stomp_ros.git
+[submodule "src/stomp"]
+	path = src/stomp
+	url = https://github.com/ros-industrial/stomp.git
+[submodule "src/ros_industrial_cmake_boilerplate"]
+	path = src/ros_industrial_cmake_boilerplate
+	url = https://github.com/ros-industrial/ros_industrial_cmake_boilerplate.git
