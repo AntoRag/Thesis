@@ -67,7 +67,7 @@
                                                                       --Reg/Strategy 0
                                                                       --Mem/STMSize 30"/>
 
-  <include file="$(find gazebo_custom)/launch/xslocobot_gazebo.launch">
+  <!--include file="$(find gazebo_custom)/launch/xslocobot_gazebo.launch">
     <arg name="robot_model"                       default="$(arg robot_model)"/>
     <arg name="robot_name"                        default="$(arg robot_name)"/>
     <arg name="arm_model"                         default="$(arg arm_model)"/>
@@ -86,7 +86,7 @@
     <arg name="use_trajectory_controllers"        value="true"/>
     <arg name="dof"                               default="$(arg dof)"/>
     <arg name="spawner_configuration"             default="$(arg spawner_configuration)"/>
-  </include>
+  </include-->
 
   <group ns="$(arg robot_name)/rtabmap">
 

@@ -1,2 +1,6 @@
 NavfnROS:
   allow_unknown: false
+
+GlobalPlanner:
+  use_dijkstra: false
+  allow_unknown: false
