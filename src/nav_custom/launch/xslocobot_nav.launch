@@ -1,6 +1,6 @@
 <launch>
 
-  <arg name="robot_model"                       default=""/>
+  <arg name="robot_model"                       default="locobot_wx250s"/>
   <arg name="robot_name"                        default="locobot"/>
   <arg name="use_lidar"                         default="false"/>
   <arg name="show_lidar"                        default="$(arg use_lidar)"/>
@@ -13,6 +13,7 @@
   <arg name="database_path"                     default="~/.ros/rtabmap.db"/>
   <arg name="camera_tilt_angle"                 default="0.2618"/>
   <arg name="launch_driver"                     default="true"/>
+  <arg name="use_explore_lite"                  default="false"/>
 
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
@@ -182,6 +183,26 @@
     name="camera_tilt"
     args="pub -1 commands/joint_group interbotix_xs_msgs/JointGroupCommand --latch '{name: 'camera', cmd: [0, $(arg camera_tilt_angle)]}'"
     ns="$(arg robot_name)">
+  </node>
+<!--EXPLORATION NODE-->
+  <node if="$(arg use_explore_lite)"
+    pkg="explore_lite" 
+    type="explore" 
+    respawn="false" 
+    name="explore" 
+    output="screen">
+    <!--ns="$(arg robot_name)"-->
+    <param name="robot_base_frame" value="/$(arg robot_name)/base_footprint"/>
+    <param name="costmap_topic" value="/$(arg robot_name)/move_base/global_costmap/costmap"/>
+    <param name="costmap_updates_topic" value="/$(arg robot_name)/move_base/global_costmap/costmap_updates"/>
+    <param name="visualize" value="true"/>
+    <param name="planner_frequency" value="0.33"/>
+    <param name="progress_timeout" value="30.0"/>
+    <param name="potential_scale" value="3.0"/>
+    <param name="orientation_scale" value="0.0"/>
+    <param name="gain_scale" value="1.0"/>
+    <param name="transform_tolerance" value="0.3"/>
+    <param name="min_frontier_size" value="0.5"/>
   </node>
 
 </launch>
