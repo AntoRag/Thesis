@@ -7,3 +7,6 @@
 [submodule "src/ros_industrial_cmake_boilerplate"]
 	path = src/ros_industrial_cmake_boilerplate
 	url = https://github.com/ros-industrial/ros_industrial_cmake_boilerplate.git
+[submodule "src/m-explore"]
+	path = src/m-explore
+	url = https://github.com/hrnr/m-explore.git
