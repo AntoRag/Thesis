@@ -34,7 +34,8 @@
   <arg name="use_explore_lite"                  default="false"/>
   <arg name="pipeline"                          default="ompl"/>
   <arg name="fake_execution"                    default="false"/>
-  
+  <arg name="use_actual"                        default="false"/>
+
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
                                                                       --RGBD/ProximityBySpace true
@@ -214,6 +215,7 @@
     <arg name="fake_execution"                    value="$(arg use_fake)"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
+    <arg name="use_actual"                        value="$(arg use_actual)"/>
   </include>
 
 <node if="$(arg use_explore_lite)"
