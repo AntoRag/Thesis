@@ -11,5 +11,4 @@
 #ignore autosave matlab
 *.asv
 #ignore commands for installing stomp (under working)
-commands.txt
 .catkin_tools/

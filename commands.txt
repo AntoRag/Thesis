@@ -1,0 +1,16 @@
+#install the following packages
+git clone https://github.com/ros-industrial/ros_industrial_cmake_boilerplate.git
+git clone https://github.com/ros-industrial/stomp.git
+git clone https://github.com/ros-industrial/stomp_ros.git
+#To install these it is necessary to put them in the catkin workspace and give "catkin build"
+
+#install the following
+# to have catkin build
+sudo apt install python3-catkin-tools
+#nlopt.hpp not found
+sudo apt install libnlopt-cxx-dev
+sudo apt install libnlopt-dev
+
+#to install chomp planner
+sudo apt install ros-noetic-moveit-planners-chomp
+sudo apt install ros-noetic-moveit-planners-ompl-dbgsym
