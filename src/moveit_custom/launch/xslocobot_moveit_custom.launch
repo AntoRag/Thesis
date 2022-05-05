@@ -2,17 +2,18 @@
 
   <arg name="robot_model"                       default="locobot_wx250s"/>
   <arg name="robot_name"                        default="locobot"/>
-  <arg name="show_lidar"                        default="false"/>>
+  <arg name="show_lidar"                        default="false"/>
+  <arg name="external_urdf_loc"                 default=""/>
   <arg name="external_srdf_loc"                 default=""/>
+  <arg name="mode_configs"                      default="$(find moveit_custom)/config/modes_all.yaml"/>
   <arg name="use_fake"                          default="false"/>
   <arg name="dof"                               default="6"/>
   <arg name="use_camera"                        default="false"/>
   <arg name="use_moveit_rviz"                   default="false"/>
   <arg name="pipeline"                          default="ompl"/>
   <arg name="fake_execution"                    default="false"/>
-  <arg name="publish_monitored_planning_scene"  default="true" />
   <arg name="use_actual"                        default="false" />
-  <arg name="mode_configs"                      default="$(find interbotix_xslocobot_moveit)/config/modes_all.yaml"/>
+  <arg name="publish_monitored_planning_scene"  default="true" />
 
 
   <include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
@@ -23,16 +24,16 @@
     <arg name="dof"                               value="$(arg dof)"/>
     <arg name="use_camera"                        value="$(arg use_camera)"/>
     <arg name="fake_execution"                    value="$(arg use_fake)"/>
-    <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
+    <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
   </include>
 
   <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
-    <arg name="external_urdf_loc"                 value=""/>
-    <arg name="use_rviz"                          value="true"/>
+    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
+    <arg name="use_rviz"                          value="false"/>
     <arg name="use_camera"                        value="$(arg use_camera)"/>
     <arg name="mode_configs"                      value="$(arg mode_configs)"/>
     <arg name="dof"                               value="$(arg dof)"/>
