@@ -1,12 +1,12 @@
-stomp/locobot:
+stomp/interbotix_arm:
   group_name: interbotix_arm
   optimization:
     num_timesteps: 60
-    num_iterations: 40
+    num_iterations: 100
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 1 #[1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 2 #[1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
@@ -38,19 +38,20 @@ stomp/locobot:
         marker_topic: stomp_trajectory
         marker_namespace: optimized
 
+stomp/interbotix_gripper:
   group_name: interbotix_gripper
   optimization:
     num_timesteps: 60
-    num_iterations: 40
+    num_iterations: 100
     num_iterations_after_valid: 0
     num_rollouts: 30
     max_rollouts: 30
-    initialization_method: 1 #[1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
+    initialization_method: 2 #[1 : LINEAR_INTERPOLATION, 2 : CUBIC_POLYNOMIAL, 3 : MININUM_CONTROL_COST]
     control_cost_weight: 0.0
   task:
     noise_generator:
       - class: stomp_moveit/NormalDistributionSampling
-        stddev: [0.05, 0.05]
+        stddev: [0.005]
     cost_functions:
       - class: stomp_moveit/CollisionCheck
         collision_penalty: 1.0

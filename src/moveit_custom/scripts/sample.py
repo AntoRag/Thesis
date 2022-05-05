@@ -13,28 +13,28 @@ from math import pi
 from std_msgs.msg import String
 from tf.transformations import quaternion_from_euler
 from moveit_commander.conversions import pose_to_list
+import numpy as np
+# def all_close(goal, actual, tolerance):
+#   """
+#   Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
+#   @param: goal       A list of floats, a Pose or a PoseStamped
+#   @param: actual     A list of floats, a Pose or a PoseStamped
+#   @param: tolerance  A float
+#   @returns: bool
+#   """
+#   all_equal = True
+#   if type(goal) is list:
+#     for index in range(len(goal)):
+#       if abs(actual[index] - goal[index]) > tolerance:
+#         return False
 
-def all_close(goal, actual, tolerance):
-  """
-  Convenience method for testing if a list of values are within a tolerance of their counterparts in another list
-  @param: goal       A list of floats, a Pose or a PoseStamped
-  @param: actual     A list of floats, a Pose or a PoseStamped
-  @param: tolerance  A float
-  @returns: bool
-  """
-  all_equal = True
-  if type(goal) is list:
-    for index in range(len(goal)):
-      if abs(actual[index] - goal[index]) > tolerance:
-        return False
+#   elif type(goal) is geometry_msgs.msg.PoseStamped:
+#     return all_close(goal.pose, actual.pose, tolerance)
 
-  elif type(goal) is geometry_msgs.msg.PoseStamped:
-    return all_close(goal.pose, actual.pose, tolerance)
+#   elif type(goal) is geometry_msgs.msg.Pose:
+#     return all_close(pose_to_list(goal), pose_to_list(actual), tolerance)
 
-  elif type(goal) is geometry_msgs.msg.Pose:
-    return all_close(pose_to_list(goal), pose_to_list(actual), tolerance)
-
-  return True
+#   return True
 
 class MoveGroupPythonIntefaceTutorial(object):
   """MoveGroupPythonIntefaceTutorial"""
@@ -78,7 +78,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## This interface can be used to plan and execute motions on the Interbotix Arm:
     self.group_name = "interbotix_arm"
     self.group = moveit_commander.MoveGroupCommander(self.group_name,robot_description='/locobot/robot_description',ns='/locobot')
-
+    
     ## We create a `DisplayTrajectory`_ publisher which is used later to publish
     ## trajectories for RViz to visualize:
     self.display_trajectory_publisher = rospy.Publisher("/locobot/move_group/display_planned_path",
@@ -109,30 +109,31 @@ class MoveGroupPythonIntefaceTutorial(object):
   def go_to_joint_state(self,joint_goal):
     ## Planning to a Joint Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^^
-
+    
     print("============ Printing Joint Goal: " + str(joint_goal))
-
+    plan_joint = self.group.plan(joint_goal)
+    print(str(plan_joint))
     # The go command can be called with joint values, poses, or without any
     # parameters if you have already set the pose or joint target for the group
-    self.group.go(joint_goal, wait=True)
+    self.group.go(plan_joint, wait=True)
 
     # Calling ``stop()`` ensures that there is no residual movement
     self.group.stop()
 
     current_joints = self.group.get_current_joint_values()
-    return all_close(joint_goal, current_joints, 0.01)
+    return #all_close(joint_goal, current_joints, 0.01)
 
   def go_to_pose_goal(self,pose_goal):
     ## Planning to a Pose Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^
     ## We can plan a motion for this group to a desired pose for the
     ## end-effector:
-
+  
     print("============ Printing Pose Goal:\n" + str(pose_goal))
     self.group.set_pose_target(pose_goal)
 
     ## Now, we call the planner to compute the plan and execute it.
-    plan = self.group.go(wait=True)
+    plan = self.group.plan(wait=True)
     # Calling `stop()` ensures that there is no residual movement
     self.group.stop()
     # It is always good to clear your targets after planning with poses.
@@ -140,7 +141,7 @@ class MoveGroupPythonIntefaceTutorial(object):
     self.group.clear_pose_targets()
 
     current_pose = self.group.get_current_pose().pose
-    return all_close(self.pose_goal, current_pose, 0.01)
+    return plan#all_close(pose_goal, current_pose, 0.01)
 
   def plan_cartesian_path(self, x_dir=1, z_dir=1):
     ## Cartesian Paths
@@ -228,58 +229,6 @@ class MoveGroupPythonIntefaceTutorial(object):
     # If we exited the while loop without returning then we timed out
     return False
 
-  def add_box(self, timeout=4):
-    ## Adding Objects to the Planning Scene
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## First, we will create a box in the planning scene at the location of the left finger:
-    box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = self.eef_link
-    box_pose.pose.position.x = self.ee_link_offset[0]
-    box_pose.pose.position.y = self.ee_link_offset[1]
-    box_pose.pose.position.z = self.ee_link_offset[2]
-    box_pose.pose.orientation.w = 1.0
-    self.box_name = "box"
-    self.scene.add_box(self.box_name, box_pose, size=(0.025, 0.025, 0.05))
-
-    return self.wait_for_state_update(box_is_known=True, timeout=timeout)
-
-
-  def attach_box(self, timeout=4):
-    ## Attaching Objects to the Robot
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## Next, we will attach the box to the Arm's wrist. Manipulating objects requires the
-    ## robot be able to touch them without the planning scene reporting the contact as a
-    ## collision. By adding link names to the ``touch_links`` array, we are telling the
-    ## planning scene to ignore collisions between those links and the box. For the Interbotix
-    ## robot, we set ``grasping_group = 'interbotix_gripper'``. If you are using a different robot,
-    ## you should change this value to the name of your end effector group name.
-    grasping_group = 'interbotix_gripper'
-    touch_links = self.robot.get_link_names(group=grasping_group)
-    self.scene.attach_box(self.eef_link, self.box_name, touch_links=touch_links)
-
-    # We wait for the planning scene to update.
-    return self.wait_for_state_update(box_is_attached=True, box_is_known=False, timeout=timeout)
-
-  def detach_box(self, timeout=4):
-    ## Detaching Objects from the Robot
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## We can also detach and remove the object from the planning scene:
-    self.scene.remove_attached_object(self.eef_link, name=self.box_name)
-
-    # We wait for the planning scene to update.
-    return self.wait_for_state_update(box_is_known=True, box_is_attached=False, timeout=timeout)
-
-  def remove_box(self, timeout=4):
-    ## Removing Objects from the Planning Scene
-    ## ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ## We can remove the box from the world.
-    self.scene.remove_world_object(self.box_name)
-
-    ## **Note:** The object must be detached before we can remove it from the world
-
-    # We wait for the planning scene to update.
-    return self.wait_for_state_update(box_is_attached=False, box_is_known=False, timeout=timeout)
-
 
 def main():
     print("============ Press `Enter` to begin the tutorial by setting up the moveit_commander (press ctrl-d to exit) ...")
@@ -293,46 +242,20 @@ def main():
 
     print("============ Press `Enter` to execute a movement using a pose goal ...")
     input()
-    pose_target = [0.2, 0.2, 0.2, 0, 0, 0]
-    tutorial.go_to_pose_goal(pose_goal=pose_target)
+    pose1 = [0.2, 0.2, 0.2, 0, 0, 0]
+    pose2 = [0.3, 0.3, 0.3, 0, 0, 0]
+    pose3 = [0.4, 0.4, 0.4, 0, 0, 0]
+    pose4 = [0.5, 0.2, 0.3, 0, 0, 0]
+    pose5 = [0.3, 0.1, 0.2, 0, 0, 0]
+    pose6 = [0.5, 0.1, 0.2, 0, 0, 0]
 
-    # print("============ Press `Enter` to plan and display a Cartesian path ...")
-    # input()
-    # cartesian_plan, fraction = tutorial.plan_cartesian_path()
-
-    # print("============ Press `Enter` to display a saved trajectory (this will replay the Cartesian path)  ...")
-    # input()
-    # tutorial.display_trajectory(cartesian_plan)
-
-    # print("============ Press `Enter` to execute a saved path ...")
-    # input()
-    # tutorial.execute_plan(cartesian_plan)
-
-    # if "interbotix_gripper" in tutorial.group_names:
-
-    #     print("============ Press `Enter` to add a box to the planning scene ...")
-    #     input()
-    #     tutorial.add_box()
-
-    #     print("============ Press `Enter` to attach a Box to the Interbotix robot ...")
-    #     input()
-    #     tutorial.attach_box()
-
-    #     print("============ Press `Enter` to plan and execute a path with an attached collision object ...")
-    #     input()
-    #     cartesian_plan, fraction = tutorial.plan_cartesian_path(x_dir=-1)
-    #     tutorial.execute_plan(cartesian_plan)
-
-    #     print("============ Press `Enter` to detach the box from the Interbotix robot ...")
-    #     input()
-    #     tutorial.detach_box()
-
-    #     print("============ Press `Enter` to remove the box from the planning scene ...")
-    #     input()
-    #     tutorial.remove_box()
-
-    # print("============ Python tutorial demo complete!")
+    pose_target = [pose1,pose2,pose3,pose4,pose5,pose6]
+    i = 0
+    while i<6:
+      tutorial.go_to_joint_state(joint_goal=pose_target[i])
+      i=i+1
     rospy.spin()
 
 if __name__ == '__main__':
   main()
+
