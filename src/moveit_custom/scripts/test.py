@@ -39,7 +39,10 @@ print("============ End effector: %s" % eef_link)
 # We can get a list of all the groups in the robot:
 group_names = robot.get_group_names()
 print("============ Robot Groups: " + str(group_names))
-
+print("")
+print("============ Printing robot state")
+print(robot.get_current_state())
+print("")
 def go_to_joint_state(joint_goal):
     ## Planning to a Joint Goal
     ## ^^^^^^^^^^^^^^^^^^^^^^^^
