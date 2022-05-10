@@ -27,7 +27,7 @@
   <arg name="dof" default=""/>
   <arg name="use_camera" default=""/>
 
-  <include file="$(find interbotix_xslocobot_moveit)/launch/planning_context.launch">
+  <include file="$(find moveit_custom)/launch/planning_context.launch">
     <arg name="robot_model"        value="$(arg robot_model)"/>
     <arg name="robot_name"         value="$(arg robot_name)"/>
     <arg name="show_lidar"         value="$(arg show_lidar)"/>
@@ -64,16 +64,16 @@
     </include>
 
     <!-- Sensors Functionality -->
-    <include ns="move_group" file="$(find interbotix_xslocobot_moveit)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+    <include ns="move_group" file="$(find moveit_custom)/launch/sensor_manager.launch.xml">
       <arg name="robot_model" value="$(arg robot_model)"/>
       <arg name="robot_name"  value="$(arg robot_name)"/>
       <arg name="use_camera"  value="$(arg use_camera)"/>
-    </include>
+    </include> 
 
     <!-- Start the actual move_group node/action server -->
     <node name="move_group" launch-prefix="$(arg launch_prefix)" pkg="moveit_ros_move_group" type="move_group" respawn="false" output="screen" args="$(arg command_args)">
       <!-- Set the display variable, in case OpenGL code is used internally -->
-      <env name="DISPLAY" value="$(optenv DISPLAY :0)" />
+      <env name="DISPLAY" value="$(optenv DISPLAY :1)" />
 
       <param name="allow_trajectory_execution" value="$(arg allow_trajectory_execution)"/>
       <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
@@ -88,5 +88,6 @@
       <param name="planning_scene_monitor/publish_state_updates" value="$(arg publish_monitored_planning_scene)" />
       <param name="planning_scene_monitor/publish_transforms_updates" value="$(arg publish_monitored_planning_scene)" />
     </node>
+
 
 </launch>
