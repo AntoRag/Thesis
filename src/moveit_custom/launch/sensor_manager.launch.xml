@@ -16,7 +16,8 @@
     <!-- <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map.yaml" />  -->
     <!-- <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_point_cloud.yaml" /> -->
     <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->
-    <include file="$(find octomap_server)/launch/octomap_mapping.launch"> </include> 
+    <include file="$(find moveit_custom)/launch/octomap_mapping.launch"> </include> 
+    <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_point_cloud.yaml" />
   </group>
 
 </launch>
