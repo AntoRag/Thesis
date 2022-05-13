@@ -25,7 +25,7 @@
                                                                       --RGBD/LinearUpdate 0.01
                                                                       --RGBD/LocalRadius 5
                                                                       --RGBD/OptimizeFromGraphEnd false
-                                                                      --Grid/FromDepth false
+                                                                      --Grid/FromDepth true
                                                                       --Grid/MaxObstacleHeight 0.7
                                                                       --Grid/RayTracing true
                                                                       --Grid/RangeMax 0

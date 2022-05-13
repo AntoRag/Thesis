@@ -48,9 +48,9 @@
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
     <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
     <arg name="use_rviz"                          value="false"/>
-    <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="use_camera"                        value="true"/>
     <arg name="mode_configs"                      value="$(arg mode_configs)"/>
-    <arg name="dof"                               value="$(arg dof)"/>
+    <arg name="dof"                               value="6"/>
   </include>
 
   <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
