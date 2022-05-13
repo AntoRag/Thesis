@@ -50,3 +50,5 @@ In this way we will obtain a file called data_saved.csv with time as first colum
   Currently is possible to select between two different motion planner: CHOMP and OMPL.
   (Currently, to make CHOMP working correclty, have to be selected "use cartesian path" and select a velocity and acceleration scaling factor equal to 0.6).
 - In the folder Matlab there are two scripts useful to analyze the .csv files produced by "save_data_jointstate.py". "DirectKinematic.m" takes as input the angles in radians of the joints and gives in output the end effector position and RPY angles. Those results are then processed in "test.m" and simply plotted.
+
+- If you face an error like "VWDictionary.cpp:741::addWordRef() Not found word 16308" simply delete .ros/rtabmap.db

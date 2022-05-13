@@ -11,7 +11,7 @@ stomp/interbotix_arm:
   task:
     noise_generator:
       - class: stomp_moveit/NormalDistributionSampling
-        stddev: [0.05, 0.8, 1.0, 0.8, 0.4, 0.4] #6 dof 
+        stddev: [0.05, 0.8, 1.0, 0.8, 0.4, 0.4] #6 DOF 
     cost_functions:
       - class: stomp_moveit/CollisionCheck
         collision_penalty: 1.0
@@ -51,7 +51,7 @@ stomp/interbotix_gripper:
   task:
     noise_generator:
       - class: stomp_moveit/NormalDistributionSampling
-        stddev: [0.005]
+        stddev: [0.005, 0.005] # 2 DOF
     cost_functions:
       - class: stomp_moveit/CollisionCheck
         collision_penalty: 1.0
