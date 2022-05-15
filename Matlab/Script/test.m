@@ -24,7 +24,8 @@ clc
 
 % data_arm =
 % readmatrix('C:\Thesis\Matlab\Data\data_saved_arm.csv','OutputType','double');
-data_arm = readmatrix('/home/antonio/thesis/Matlab/Data/ompl/ompldata_saved_arm.csv','OutputType','double');
+%data_arm = readmatrix('/home/antonio/thesis/Matlab/Data/ompl/ompldata_saved_arm.csv','OutputType','double');
+data_arm = readmatrix('/home/antonio/Desktop/stomp_data_saved_arm.csv','OutputType','double');
 
 %% Reordering vector
 time_arm = data_arm(1:end,1);
@@ -34,7 +35,7 @@ time_arm = data_arm(1:end,1);
 %     time(i) = time_arm(i)-t0
 % end
 % return
-time = linspace(1,160,length(time_arm))
+time(:) = time_arm(1:end)-time_arm(1)
 arm_angles_pos = [data_arm(:,4) data_arm(:,5) data_arm(:,6) data_arm(:,7) data_arm(:,8) data_arm(:,9)];
 gripper_angles_pos = [data_arm(:,10) data_arm(:,11)];
 camera_angles_pos = [data_arm(:,6) data_arm(:,9)];
@@ -83,7 +84,7 @@ for i = 1:6
     subplot(3,2,i)
     hold on
     title(string(joint_arm(i)) +' positions')
-    plot([arm_angles_pos(1:end,i)])
+    plot(time,[arm_angles_pos(1:end,i)])
     grid on, zoom on
     xlabel('$time [s]$','interpreter','latex','fontsize',15)
     ylabel('$Radians [rad]$','interpreter','latex','fontsize',15)
@@ -94,12 +95,12 @@ for i = 1:6
     subplot(3,2,i)
     hold on
     title(string(joint_arm(i))+ ' velocity')
-    plot([arm_angles_vel(1:end,i)])
+    plot(time,[arm_angles_vel(1:end,i)])
     grid on, zoom on
     xlabel('$time [s]$','interpreter','latex','fontsize',15)
     ylabel('$Radians per second [\frac{rad}{s}]$','interpreter','latex','fontsize',15)
     time_max = find(abs(arm_angles_vel(:,i))==max(abs(arm_angles_vel(1:end,i))));
-    plot(time_max,arm_angles_vel(time_max(1:end),i),'o','Color','b','MarkerSize',10,'MarkerFaceColor','#D9FFFF')
+    plot(time(time_max(1:end)),arm_angles_vel(time_max(1:end),i),'o','Color','b','MarkerSize',10,'MarkerFaceColor','#D9FFFF')
     max_vel(:,i)=arm_angles_vel(time_max(end),i)
     
 end

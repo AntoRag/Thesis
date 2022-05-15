@@ -7,7 +7,7 @@
 /devel
 /logs
 #ignore .csv files
-*.csv
+#*.csv
 #ignore autosave matlab
 *.asv
 #ignore commands for installing stomp (under working)
