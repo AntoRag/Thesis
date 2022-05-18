@@ -41,8 +41,8 @@
     <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
   </include>
   
-
-  <!-- <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
+<!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
+  <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
@@ -51,7 +51,9 @@
     <arg name="use_camera"                        value="true"/>
     <arg name="mode_configs"                      value="$(arg mode_configs)"/>
     <arg name="dof"                               value="6"/>
-  </include> -->
+  </include>
+<!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
+
 
   <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>

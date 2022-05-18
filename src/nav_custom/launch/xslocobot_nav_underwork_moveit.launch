@@ -51,22 +51,10 @@
                                                                       --Reg/Strategy 0
                                                                       --Mem/STMSize 30"/>
 
+
+  <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 <rosparam file="$(find interbotix_xslocobot_ros_control)/config/$(arg dof)dof_controllers.yaml" command="load" ns="$(arg robot_name)"/>
 <rosparam file="$(find interbotix_xslocobot_ros_control)/config/hardware.yaml" command="load" ns="$(arg robot_name)"/>
-
-  <include if="$(arg launch_driver)" file="$(find interbotix_xslocobot_control)/launch/xslocobot_control.launch">
-    <arg name="robot_model"                       value="$(arg robot_model)"/>
-    <arg name="robot_name"                        value="$(arg robot_name)"/>
-    <arg name="use_lidar"                         value="$(arg use_lidar)"/>
-    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
-    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
-    <arg name="use_rviz"                          value="$(arg use_rviz)"/>
-    <arg name="rviz_frame"                        value="map"/>
-    <arg name="use_camera"                        value="$(arg use_camera)"/>
-    <arg name="align_depth"                       value="true"/>
-    <arg name="use_base"                          value="true"/>
-    <arg name="use_dock"                          value="true"/>
-  </include>
 
   <node
     name="controller_spawner"
@@ -84,6 +72,35 @@
     output="screen"
     ns="$(arg robot_name)">
   </node>
+
+  <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
+    <arg name="robot_model"                       value="$(arg robot_model)"/>
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+    <arg name="dof"                               value="$(arg dof)"/>
+    <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="fake_execution"                    value="false"/>
+    <arg name="publish_monitored_planning_scene"  value="true" />
+    <arg name="pipeline"                          value="$(arg pipeline)"/>
+    <!-- To avoid to call two times the controller of the joints -->
+    <arg name="use_actual"                        value="false"/> 
+  </include>
+  <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
+
+  <include if="$(arg launch_driver)" file="$(find interbotix_xslocobot_control)/launch/xslocobot_control.launch">
+    <arg name="robot_model"                       value="$(arg robot_model)"/>
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="use_lidar"                         value="$(arg use_lidar)"/>
+    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
+    <arg name="use_rviz"                          value="$(arg use_rviz)"/>
+    <arg name="rviz_frame"                        value="map"/>
+    <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="align_depth"                       value="true"/>
+    <arg name="use_base"                          value="true"/>
+    <arg name="use_dock"                          value="true"/>
+  </include>
+
 
 
   <group ns="$(arg robot_name)/rtabmap">
@@ -230,17 +247,5 @@
     <param name="min_frontier_size" value="0.5"/>
   </node>
 
-  <!--MoveIt planner selection -->
-  <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
-    <arg name="robot_model"                       value="$(arg robot_model)"/>
-    <arg name="robot_name"                        value="$(arg robot_name)"/>
-    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
-    <arg name="dof"                               value="$(arg dof)"/>
-    <arg name="use_camera"                        value="$(arg use_camera)"/>
-    <arg name="fake_execution"                    value="false"/>
-    <arg name="publish_monitored_planning_scene"  value="true" />
-    <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <arg name="use_actual"                        value="true"/>
-  </include>
 
 </launch>
