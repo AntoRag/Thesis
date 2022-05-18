@@ -25,7 +25,7 @@ clc
 % data_arm =
 % readmatrix('C:\Thesis\Matlab\Data\data_saved_arm.csv','OutputType','double');
 %data_arm = readmatrix('/home/antonio/thesis/Matlab/Data/ompl/ompldata_saved_arm.csv','OutputType','double');
-data_arm = readmatrix('/home/antonio/Desktop/stomp_data_saved_arm.csv','OutputType','double');
+data_arm = readmatrix('/home/antonio/thesis/Matlab/Data/ompl_stomp/ompl_stomp_data_saved_arm.csv','OutputType','double');
 
 %% Reordering vector
 time_arm = data_arm(1:end,1);
@@ -100,7 +100,7 @@ for i = 1:6
     xlabel('$time [s]$','interpreter','latex','fontsize',15)
     ylabel('$Radians per second [\frac{rad}{s}]$','interpreter','latex','fontsize',15)
     time_max = find(abs(arm_angles_vel(:,i))==max(abs(arm_angles_vel(1:end,i))));
-    plot(time(time_max(1:end)),arm_angles_vel(time_max(1:end),i),'o','Color','b','MarkerSize',10,'MarkerFaceColor','#D9FFFF')
+    plot(time(time_max(1)),arm_angles_vel(time_max(1),i),'o','Color','b','MarkerSize',10,'MarkerFaceColor','#D9FFFF')
     max_vel(:,i)=arm_angles_vel(time_max(end),i)
     
 end
