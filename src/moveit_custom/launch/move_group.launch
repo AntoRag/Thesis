@@ -63,11 +63,13 @@
       <arg name="dof" value="$(arg dof)"/>
     </include>
 
+    <arg name="use_actual"                      default="false"/>
     <!-- Sensors Functionality -->
     <include ns="move_group" file="$(find moveit_custom)/launch/sensor_manager.launch.xml">
       <arg name="robot_model" value="$(arg robot_model)"/>
       <arg name="robot_name"  value="$(arg robot_name)"/>
       <arg name="use_camera"  value="$(arg use_camera)"/>
+      <arg name="use_actual"  value="$(arg use_actual)"/>
     </include> 
 
     <!-- Start the actual move_group node/action server -->

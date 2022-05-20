@@ -217,8 +217,10 @@
     <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <!-- To avoid to call two times gazebo -->
-    <arg name="use_gazebo"                        value="false"/> 
+    <arg name="use_gazebo"                        value="true"/> 
+    <arg name="use_actual"                        value="false"/>
+     <!-- To avoid to call two times gazebo -->
+    <arg name="use_rtabmap"                       value="true"/>
   </include>
   <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 

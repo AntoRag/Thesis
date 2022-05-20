@@ -18,6 +18,7 @@
   <arg name="pipeline"                          default="ompl"/>
   <arg name="dof"                               default="6"/>
   <arg name="use_camera"                        default="true"/> 
+  <arg name="use_rtabmap"                        default="true"/> 
   
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
@@ -81,8 +82,9 @@
     <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
+    <arg name="use_actual"                        value="true"/>
     <!-- To avoid to call two times the controller of the joints -->
-    <arg name="use_actual"                        value="false"/> 
+    <arg name="use_rtabmap"                       value="true"/>
   </include>
   <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 
