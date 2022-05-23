@@ -16,18 +16,7 @@
   <arg name="publish_monitored_planning_scene"  default="true" />
   <arg name="use_gazebo"                        default="false" />
   <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
-
-  <include if="$(arg use_gazebo)" file="$(find interbotix_xslocobot_gazebo)/launch/xslocobot_gazebo.launch">
-    <arg name="robot_model"                       value="$(arg robot_model)"/>
-    <arg name="robot_name"                        value="$(arg robot_name)"/>
-    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
-    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
-    <arg name="world_name"                        value="$(arg world_name)"/>
-    <arg name="use_trajectory_controllers"        value="true"/>
-    <arg name="rviz_frame"                        value="$(arg robot_name)/odom"/>
-    <arg name="use_rviz"                          value="true"/>
-    <arg name="dof"                               value="6"/>
-  </include>
+  <arg name="use_rtabmap"                       default="false" />
 
   <include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
@@ -41,8 +30,23 @@
     <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
   </include>
   
+<!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
+<group unless="$(arg use_rtabmap)">
+  
+  <include if="$(arg use_gazebo)" file="$(find gazebo_custom)/launch/xslocobot_gazebo.launch">
+    <arg name="robot_model"                       value="$(arg robot_model)"/>
+    <arg name="robot_name"                        value="$(arg robot_name)"/>
+    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+    <arg name="external_urdf_loc"                 value="$(arg external_urdf_loc)"/>
+    <arg name="world_name"                        value="$(arg world_name)"/>
+    <arg name="use_trajectory_controllers"        value="true"/>
+    <arg name="rviz_frame"                        value="$(arg robot_name)/odom"/>
+    <arg name="use_rviz"                          value="true"/>
+    <arg name="dof"                               value="6"/>
+    <arg name="use_sim_time"                      value="true"/>
+  </include>
 
-  <!-- <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
+  <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
@@ -51,7 +55,10 @@
     <arg name="use_camera"                        value="true"/>
     <arg name="mode_configs"                      value="$(arg mode_configs)"/>
     <arg name="dof"                               value="6"/>
-  </include> -->
+  </include>
+</group>
+<!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
+
 
   <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
