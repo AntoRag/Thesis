@@ -37,6 +37,3 @@
 [submodule "src/octomap"]
 	path = src/octomap
 	url = https://github.com/OctoMap/octomap.git
-[submodule "src/human_aware_navigation"]
-	path = src/human_aware_navigation
-	url = https://github.com/marinaKollmitz/human_aware_navigation.git
