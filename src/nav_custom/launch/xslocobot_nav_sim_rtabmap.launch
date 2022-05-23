@@ -34,7 +34,7 @@
   <arg name="use_explore_lite"                  default="false"/>
   <arg name="pipeline"                          default="ompl"/>
   <arg name="fake_execution"                    default="false"/>
-  <arg name="use_actual"                        default="false"/>
+
 
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
@@ -44,7 +44,7 @@
                                                                       --RGBD/LinearUpdate 0.01
                                                                       --RGBD/LocalRadius 5
                                                                       --RGBD/OptimizeFromGraphEnd false
-                                                                      --Grid/FromDepth false
+                                                                      --Grid/FromDepth true
                                                                       --Grid/MaxObstacleHeight 0.7
                                                                       --Grid/RayTracing true
                                                                       --Grid/RangeMax 0
@@ -144,6 +144,7 @@
       <param name="subscribe_scan_descriptor"     value="false"/>
       <param name="subscribe_user_data"           value="false"/>
       <param name="subscribe_odom_info"           value="false"/>
+      <param name="map_always_update"             value="true"/>
       <param name="frame_id"                      value="$(arg robot_name)/base_footprint"/>
       <param name="map_frame_id"                  value="map"/>
       <param name="odom_frame_id"                 value="$(arg robot_name)/odom"/>
@@ -205,18 +206,23 @@
     <remap from="map"                             to="rtabmap/grid_map"/>
     <remap from="odom"                            to="mobile_base/odom"/>
   </node>
-<!--MoveIt planner selection -->
+  <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
+
   <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
     <arg name="dof"                               value="$(arg dof)"/>
     <arg name="use_camera"                        value="$(arg use_camera)"/>
-    <arg name="fake_execution"                    value="$(arg use_fake)"/>
+    <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <arg name="use_actual"                        value="$(arg use_actual)"/>
+    <arg name="use_gazebo"                        value="true"/> 
+    <arg name="use_actual"                        value="false"/>
+     <!-- To avoid to call two times gazebo -->
+    <arg name="use_rtabmap"                       value="true"/>
   </include>
+  <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 
 <node if="$(arg use_explore_lite)"
   pkg="explore_lite" 

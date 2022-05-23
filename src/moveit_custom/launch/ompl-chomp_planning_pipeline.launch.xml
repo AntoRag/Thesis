@@ -19,5 +19,6 @@
   <param name="start_state_max_bounds_error" value="$(arg start_state_max_bounds_error)" />
 
   <rosparam command="load" file="$(find moveit_custom)/config/ompl_planning.yaml"/>
+  <rosparam command="load" file="$(find moveit_custom)/config/chomp_planning.yaml"/>
 
 </launch>

@@ -1,7 +1,14 @@
 # interbotix_locobot_moveit
 
-[![View Documentation](https://trossenrobotics.com/docs/docs_button.svg)](https://www.trossenrobotics.com/docs/interbotix_xslocobots/ros_packages/moveit_motion_planning_configuration.html)
+This package is a modified version of the original package included with the Locobot wx250s. It presents some changes and some additions.
 
 ## Overview
 
-This package contains the necessary config files to get any rover in the Interbotix X-Series Locobot Family working with MoveIt. Originally, the MoveIt Setup Assistant wizard was used to generate a MoveIt package for each robot individually. The packages were then all merged into one and the launch files modified so that a few arguments could be passed down to load the right config files (specifically the SRDFs). Additionally, this package makes use of the FollowJointTrajectory interface which seems to work pretty well in both Gazebo and on the physical robot. A 'master' launch file was then written to allow a user to choose whether to have MoveIt work with the simulated version, the physical robot hardware, or a MoveIt generated fake robot.
+Currently by this package is possible to run the MoveIt framework where we can select between five different planning pipelines:
+- OMPL
+- CHOMP
+- STOMP
+- OMPL + CHOMP
+- OMPL + STOMP
+
+The planner is aware of the environment thanks to the octmap updater. Currently it is capable of reading the topic where the point cloud is published and translate it in a series of cubic samples of the space. 

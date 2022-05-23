@@ -14,3 +14,10 @@ sudo apt install libnlopt-dev
 #to install chomp planner
 sudo apt install ros-noetic-moveit-planners-chomp
 sudo apt install ros-noetic-moveit-planners-ompl-dbgsym
+
+#to install necessary package for octomap
+sudo apt install ros-noetic-octomap ros-noetic-octovis
+sudo apt install ros-noetic-octomap-rviz-plugins
+sudo apt install ros-noetic-octomap-ros
+
+camera_self_filter TO_DO

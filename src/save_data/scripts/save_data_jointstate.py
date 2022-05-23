@@ -13,10 +13,10 @@ import time
 prev_data_wheel = 0
 prev_data_arm = 0
 data_array = []
-DELTA = 0.001 #Minimum change between values that will be logged
-MIN_VAL = 0.01 #Minimum change with respect to original value size (if I subtract 0.01e-5 to 0.01e-8 the difference will be higher 
+DELTA = 0.00001 #Minimum change between values that will be logged
+MIN_VAL = 0.0001 #Minimum change with respect to original value size (if I subtract 0.01e-5 to 0.01e-8 the difference will be higher 
                 #than the delta but still needs to be ignored
-TIME_STEP = 500 #Milliseconds between logging events
+TIME_STEP = 50 #Milliseconds between logging events
 
 
 def checker(data, flag) :
@@ -61,7 +61,6 @@ def data_received(data):
 
     if (log_time - prev_time) > TIME_STEP :#frequency check, lower TIME_STEP value for more frequent logging and viceversa
         prev_time = log_time
-
         ros_time = rospy.get_rostime() #get rostime for logging purposes
         rospy.loginfo("Read acquired: %s", data.name)
         if data.name == ['wheel_right_joint', 'wheel_left_joint']:

@@ -34,3 +34,6 @@
 [submodule "src/moveit_tutorials"]
 	path = src/moveit_tutorials
 	url = https://github.com/ros-planning/moveit_tutorials.git
+[submodule "src/octomap"]
+	path = src/octomap
+	url = https://github.com/OctoMap/octomap.git
