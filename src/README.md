@@ -60,12 +60,13 @@ roslaunch moveit_custom xslocobot_moveit_custom.launch use_gazebo:=true
 Then we can set other parameters like the followings:
 | Parameter             | Description |
 | -----------           | ----------- |
-|use_actual             | if true launches we can control the real robot|
+|use_actual             | if true we can control the real robot|
 |use_artag              | if true launches the node responsible for retreiving the position of ArTag in space|  
 |use_camera             | if true launches the nodes for publishing the camera data|
 |pipeline               | here we can select the motion planner to be exploited|
 
 ## How to launch RTAB-Map + MoveIt
+
 <---------------TO BE DONE--------------->
 
 ### Simulation RTAB-Map + MoveIt
