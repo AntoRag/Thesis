@@ -37,3 +37,10 @@
 [submodule "src/octomap"]
 	path = src/octomap
 	url = https://github.com/OctoMap/octomap.git
+[submodule "src/ar_track_alvar"]
+	path = src/ar_track_alvar
+	url = https://github.com/machinekoder/ar_track_alvar.git
+	branch = noetic-devel
+[submodule "src/gazebo_models"]
+	path = src/gazebo_models
+	url = https://github.com/mikaelarguedas/gazebo_models.git

@@ -21,3 +21,9 @@ sudo apt install ros-noetic-octomap-rviz-plugins
 sudo apt install ros-noetic-octomap-ros
 
 camera_self_filter TO_DO
+
+#to install artag tracker
+#in src/
+git submodule add -b noetic-devel https://github.com/machinekoder/ar_track_alvar.git 
+#then in thesis/
+catkin build

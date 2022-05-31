@@ -17,6 +17,7 @@
   <arg name="use_gazebo"                        default="false" />
   <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
   <arg name="use_rtabmap"                       default="false" />
+  <arg name="use_artag"                         default="false" />
 
   <include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
@@ -33,7 +34,7 @@
 <!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
 <group unless="$(arg use_rtabmap)">
   
-  <include if="$(arg use_gazebo)" file="$(find gazebo_custom)/launch/xslocobot_gazebo.launch">
+  <include if="$(arg use_gazebo)" file="$(find interbotix_xslocobot_gazebo)/launch/xslocobot_gazebo.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
@@ -43,7 +44,6 @@
     <arg name="rviz_frame"                        value="$(arg robot_name)/odom"/>
     <arg name="use_rviz"                          value="true"/>
     <arg name="dof"                               value="6"/>
-    <arg name="use_sim_time"                      value="true"/>
   </include>
 
   <include if="$(arg use_actual)" file="$(find interbotix_xslocobot_ros_control)/launch/xslocobot_ros_control.launch">
@@ -76,5 +76,9 @@
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="config"                            value="true"/>
   </include>
+
+
+  <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch" ns="$(arg robot_name)">
+  </include> 
 
 </launch>
