@@ -1,6 +1,6 @@
 # Thesis
 
-## Prerequisities
+## Prerequisites
 
 ### Install dependencies
 
