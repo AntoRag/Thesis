@@ -5,23 +5,39 @@
   <arg name="robot_name"  default="locobot"/>
   <arg name="use_camera"  default="true"/>
   <arg name="use_actual"  default="false"/>
+  <arg name="use_artag"   default="false"/>
+  <arg name="use_octomap" default="false"/>
+  
+  <!--/////////////////////////////Artag implementation////////////////////////////////////-->
+  <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch" ns="$(arg robot_name)">
+  </include> 
   
   <group if="$(arg use_camera)">
     <!-- Params for 3D sensors config -->
     <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->
     <!-- Params for the octomap monitor -->
     <group if="$(arg use_actual)">
-      <param name="octomap_frame" type="string" value="map" /> 
-      <param name="octomap_resolution" type="double" value="0.0025" /> <!--Maximum accurancy in mapping-->
-      <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
-      <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map.yaml" />
+
+      <group if="$(arg use_octomap)">
+        <param name="octomap_frame" type="string" value="map" /> 
+        <param name="octomap_resolution" type="double" value="0.0025" /> <!--Maximum accurancy in mapping-->
+        <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
+        <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map.yaml" />
+      </group>
+
+      <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch" ns="$(arg robot_name)">
+
     </group>
 
     <group unless="$(arg use_actual)">
-      <param name="octomap_frame" type="string" value="locobot/odom" /> 
-      <param name="octomap_resolution" type="double" value="0.025" /> <!--Maximum accurancy in mapping-->
-      <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
-      <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map_sim.yaml" />
+
+      <group if="$(arg use_octomap)">
+        <param name="octomap_frame" type="string" value="locobot/odom" /> 
+        <param name="octomap_resolution" type="double" value="0.025" /> <!--Maximum accurancy in mapping-->
+        <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
+        <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map_sim.yaml" />
+      </group>
+            <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom_sim.launch" ns="$(arg robot_name)">
     </group>
 
   </group>

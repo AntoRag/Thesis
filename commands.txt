@@ -27,3 +27,9 @@ camera_self_filter TO_DO
 git submodule add -b noetic-devel https://github.com/machinekoder/ar_track_alvar.git 
 #then in thesis/
 catkin build
+
+#cannot find GlobalPlanner solved via:
+sudo apt-get install ros-noetic-global-planner
+
+#Failed to create tebLocalPlanner
+sudo apt install ros-noetic-teb-local-planner

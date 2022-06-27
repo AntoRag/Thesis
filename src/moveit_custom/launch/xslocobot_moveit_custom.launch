@@ -18,6 +18,7 @@
   <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
   <arg name="use_rtabmap"                       default="false" />
   <arg name="use_artag"                         default="false" />
+  <arg name="use_octomap"                       default="false" />
 
 
 <include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
@@ -30,6 +31,9 @@
   <arg name="fake_execution"                    value="$(arg use_fake)"/>
   <arg name="pipeline"                          value="$(arg pipeline)"/>
   <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
+  <arg name="use_actual"                        value="$(arg use_actual)" /> <!--To be fixed, just for testing-->
+  <arg name="use_artag"                         value="$(arg use_artag)" />
+  <arg name="use_octomap"                       value="$(arg use_octomap)" />
 </include>
   
 <!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
@@ -61,7 +65,7 @@
 <!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
 
 
-  <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
+  <!-- <include if="$(arg use_fake)" file="$(find interbotix_xslocobot_descriptions)/launch/xslocobot_description.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
@@ -76,10 +80,6 @@
   <include if="$(arg use_moveit_rviz)" file="$(find moveit_custom)/launch/moveit_rviz.launch" ns="$(arg robot_name)">
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="config"                            value="true"/>
-  </include>
-
-<!--/////////////////////////////Artag implementation////////////////////////////////////-->
-  <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch" ns="$(arg robot_name)">
-  </include> 
+  </include> -->
 
 </launch>
