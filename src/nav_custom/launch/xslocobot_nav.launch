@@ -18,7 +18,8 @@
   <arg name="pipeline"                          default="ompl"/>
   <arg name="dof"                               default="6"/>
   <arg name="use_camera"                        default="true"/> 
-  <arg name="use_rtabmap"                        default="true"/> 
+  <arg name="use_rtabmap"                       default="true"/> 
+  <arg name="use_artag"                         default="false"/> 
   
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
@@ -79,6 +80,7 @@
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
     <arg name="dof"                               value="$(arg dof)"/>
     <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="use_artag"                         value="$(arg use_artag)"/>
     <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>

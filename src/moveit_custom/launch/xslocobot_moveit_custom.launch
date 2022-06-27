@@ -19,17 +19,18 @@
   <arg name="use_rtabmap"                       default="false" />
   <arg name="use_artag"                         default="false" />
 
-  <include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
-    <arg name="robot_model"                       value="$(arg robot_model)"/>
-    <arg name="robot_name"                        value="$(arg robot_name)"/>
-    <arg name="show_lidar"                        value="$(arg show_lidar)"/>
-    <arg name="external_srdf_loc"                 value="$(arg external_srdf_loc)"/>
-    <arg name="dof"                               value="$(arg dof)"/>
-    <arg name="use_camera"                        value="true"/>
-    <arg name="fake_execution"                    value="$(arg use_fake)"/>
-    <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
-  </include>
+
+<include file="$(find moveit_custom)/launch/move_group.launch" ns="$(arg robot_name)">
+  <arg name="robot_model"                       value="$(arg robot_model)"/>
+  <arg name="robot_name"                        value="$(arg robot_name)"/>
+  <arg name="show_lidar"                        value="$(arg show_lidar)"/>
+  <arg name="external_srdf_loc"                 value="$(arg external_srdf_loc)"/>
+  <arg name="dof"                               value="$(arg dof)"/>
+  <arg name="use_camera"                        value="true"/>
+  <arg name="fake_execution"                    value="$(arg use_fake)"/>
+  <arg name="pipeline"                          value="$(arg pipeline)"/>
+  <arg name="publish_monitored_planning_scene"  value="$(arg publish_monitored_planning_scene)" />
+</include>
   
 <!--/////////////////////////////Only if using MoveIt standalone////////////////////////////////////-->
 <group unless="$(arg use_rtabmap)">
