@@ -88,7 +88,7 @@
     <arg name="use_actual"                        value="true"/>
     <!-- To avoid to call two times the controller of the joints -->
     <arg name="use_rtabmap"                       value="true"/>
-    <arg name="use_octomap"                       value="$(arg octomap)"/>
+    <arg name="use_octomap"                       value="$(arg use_octomap)"/>
 
   </include>
   <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
