@@ -22,7 +22,9 @@
         <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map.yaml" />
       </group>
         <!--/////////////////////////////Artag implementation////////////////////////////////////-->
-      <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch"> </include> 
+      <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch"> 
+        <arg name="use_actual"       value="$(arg use_actual)"/>
+      </include> 
 
     </group>
 
@@ -35,7 +37,9 @@
         <rosparam command="load" file="$(find moveit_custom)/config/sensors_3d_depth_map_sim.yaml" />
       </group>
         <!--/////////////////////////////Artag implementation////////////////////////////////////-->
-        <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom_sim.launch"> </include> 
+        <include if="$(arg use_artag)" file="$(find moveit_custom)/launch/artag_custom.launch"> 
+          <arg name="use_actual"       value="$(arg use_actual)"/>
+        </include> 
     </group>
 
   </group>
