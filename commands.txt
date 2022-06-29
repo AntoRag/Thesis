@@ -33,3 +33,7 @@ sudo apt-get install ros-noetic-global-planner
 
 #Failed to create tebLocalPlanner
 sudo apt install ros-noetic-teb-local-planner
+
+#Necessary for building
+sudo apt install ros-noetic-rgbd-launch
+sudo apt install ros-noetic-move-base

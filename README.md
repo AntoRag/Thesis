@@ -29,18 +29,14 @@ catkin build
 Add the following lines to the .bahsrc file for the packages:
 
 ```bash
- export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/interbotix_ws/src
- export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/realsense_ws/src
- export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/apriltag_ws/src
+export ROS_PACKAGE_PATH=~/interbotix_ws/src:~/realsense_ws/src:~/apriltag_ws/src:$ROS_PACKAGE_PATH
  ```
 
 To specify where the models are stored, in order to run the simulation, it is necessary to export the path of gazebo models in the following manner:
 
 ```bash
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:<path_to_worlds>
-export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH: <path_to_worlds>
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/thesis/artag
-export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH:~/thesis/artag
+export GAZEBO_MODEL_PATH=~/Downloads/gazeboworlds/models:~/thesis/artag:$GAZEBO_MODEL_PATH
+export GAZEBO_RESOURCE_PATH=~/Downloads/gazeboworlds/worlds:~/thesis/artag:$GAZEBO_RESOURCE_PATH
 ```
 
 ## Errors
