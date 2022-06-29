@@ -34,7 +34,8 @@
   <arg name="use_explore_lite"                  default="false"/>
   <arg name="pipeline"                          default="ompl"/>
   <arg name="fake_execution"                    default="false"/>
-
+  <arg name="use_artag"                         default="false"/> 
+  <arg name="use_octomap"                       default="false"/> 
 
   <arg     if="$(arg use_lidar)" name="rtabmap_default_args" default="$(arg rtabmap_args)
                                                                       --RGBD/NeighborLinkRefining true
@@ -208,19 +209,21 @@
   </node>
   <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 
-  <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
+    <include if="$(arg use_moveit)" file="$(find moveit_custom)/launch/xslocobot_moveit_custom.launch">
     <arg name="robot_model"                       value="$(arg robot_model)"/>
     <arg name="robot_name"                        value="$(arg robot_name)"/>
     <arg name="show_lidar"                        value="$(arg show_lidar)"/>
     <arg name="dof"                               value="$(arg dof)"/>
     <arg name="use_camera"                        value="$(arg use_camera)"/>
+    <arg name="use_artag"                         value="$(arg use_artag)"/>
     <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <arg name="use_gazebo"                        value="true"/> 
-    <arg name="use_actual"                        value="false"/>
-     <!-- To avoid to call two times gazebo -->
+    <arg name="use_actual"                        value="true"/>
+    <!-- To avoid to call two times the controller of the joints -->
     <arg name="use_rtabmap"                       value="true"/>
+    <arg name="use_octomap"                       value="$(arg use_octomap)"/>
+
   </include>
   <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
 
