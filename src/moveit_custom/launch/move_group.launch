@@ -68,7 +68,7 @@
 
    
     <!-- Sensors Functionality Octmap & ar_track_alvar-->
-    <include ns="move_group"  file="$(find moveit_custom)/launch/sensor_manager.launch.xml">
+    <include ns="move_group"  file="$(find sensor_manager)/launch/sensor_manager.launch.xml">
       <arg name="robot_model" value="$(arg robot_model)"/>
       <arg name="robot_name"  value="$(arg robot_name)"/>
       <arg name="use_camera"  value="$(arg use_camera)"/>
