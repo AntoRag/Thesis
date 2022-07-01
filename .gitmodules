@@ -44,3 +44,7 @@
 [submodule "src/gazebo_models"]
 	path = src/gazebo_models
 	url = https://github.com/mikaelarguedas/gazebo_models.git
+[submodule "ar_track_alvar"]
+	path = ar_track_alvar
+	url = https://github.com/machinekoder/ar_track_alvar.git
+	branch = noetic-devel
