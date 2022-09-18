@@ -100,8 +100,8 @@ void callback(ar_track_alvar_msgs::AlvarMarkers req)
 
 int main(int argc, char **argv)
 {
+  putenv("ROS_NAMESPACE=locobot");
   ros::init(argc, argv, "pose_listener");
-
   ros::NodeHandle node_handle;
   // ros::Publisher planning_scene_diff_publisher = node_handle.advertise<moveit_msgs::PlanningScene>("/locobot/planning_scene", 1);
   ros::Subscriber sub = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, callback);

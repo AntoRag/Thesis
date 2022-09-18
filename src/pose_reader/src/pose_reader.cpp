@@ -11,6 +11,7 @@ double roll, pitch, yaw;
 
 void callback(ar_track_alvar_msgs::AlvarMarkers req)
 {
+  tf::Quaternion qinv;
   if (!req.markers.empty())
   {
     uint i;
@@ -23,6 +24,7 @@ void callback(ar_track_alvar_msgs::AlvarMarkers req)
       // ROS_INFO("id=%d", id);
       //  Get the orientation of the ARTag and trasnform it in RPY
       tf::Quaternion q(req.markers[i].pose.pose.orientation.x, req.markers[i].pose.pose.orientation.y, req.markers[i].pose.pose.orientation.z, req.markers[i].pose.pose.orientation.w);
+      qinv = q;
       tf::Matrix3x3 m(q);
       m.getRPY(roll, pitch, yaw);
       // ROS_INFO("roll = %1.3f, pitch = %1.3f, yaw=%1.2f ", roll, pitch, yaw);
@@ -30,7 +32,7 @@ void callback(ar_track_alvar_msgs::AlvarMarkers req)
       x = req.markers[i].pose.pose.position.x;
       y = req.markers[i].pose.pose.position.y;
       z = req.markers[i].pose.pose.position.z;
-      ROS_INFO("ARTag id = %d, x = %1.3f, y = %1.3f, z = %1.3f", id, x, y, z);
+      ROS_INFO("ARTag id = %d, x = %1.3f, y = %1.3f, z = %1.3f, q_z = %1.3f, q_w= %1.3f", id, x, y, z, q[2], q[3]);
       // Get how many ARTags are in the scene
       // ROS_INFO("lunghezza vettore = %d",req.markers.size());
       // roll  --> rotate around vertical axis
@@ -51,9 +53,10 @@ void callback(ar_track_alvar_msgs::AlvarMarkers req)
 
     goal.target_pose.pose.position.x = x;
     goal.target_pose.pose.position.y = y;
-    goal.target_pose.pose.orientation.w = 0.2;
+    goal.target_pose.pose.orientation.z =  qinv[2];
+    goal.target_pose.pose.orientation.w =  qinv[3];
 
-    ROS_INFO("Sending goal x = %f, y = %f", x, y);
+    ROS_INFO("Sending goal x = %f, y = %f, q_z = %1.3f, q_w= %1.3f", x, y, qinv[2], qinv[3]);
     ac.sendGoal(goal);
 
     ac.waitForResult();

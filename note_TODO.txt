@@ -1,0 +1,2 @@
+pubblicare people_msgs solo da locale da remoto non va (da temrminale con ssh locobot)
+ricorda di aggiungere il frame map 
