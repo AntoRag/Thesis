@@ -1,7 +1,7 @@
 # Marker size in cm
-marker_size: 4.0
+marker_size: 5.0
 
 max_new_marker_error: 0.08
 max_track_error: 0.02
 max_frequency: 1
-output_frame: map
+output_frame: locobot/odom
