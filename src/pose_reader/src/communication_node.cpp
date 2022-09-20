@@ -16,7 +16,7 @@
 #include <actionlib/client/simple_action_client.h>
 
 int id_request;
-int status_bool;
+int status_bool = 0;
 ros::Publisher goal_pub;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     ros::NodeHandle node_handle;
     ros::Subscriber sub_alvar = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, artag_callback);
     ros::Subscriber sub_request = node_handle.subscribe("/locobot/id_request", 1, request_callback);
-    ros::Subscriber sub_request = node_handle.subscribe("/locobot/robot_status", 1, status_callback);
+    ros::Subscriber sub_status = node_handle.subscribe("/locobot/robot_status", 1, status_callback);
     goal_pub = node_handle.advertise<geometry_msgs::Pose>("/locobot/pose_goal", 1);
 
     ros::Rate loop_rate(1);
