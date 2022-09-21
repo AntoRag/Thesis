@@ -33,6 +33,9 @@ void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
                 pose_id.pose.position.x = req.markers[i].pose.pose.position.x;
                 pose_id.pose.position.y = req.markers[i].pose.pose.position.y;
                 pose_id.pose.position.z = req.markers[i].pose.pose.position.z;
+                pose_id.pose.orientation.x = req.markers[i].pose.pose.orientation.x;
+                pose_id.pose.orientation.y = req.markers[i].pose.pose.orientation.y;
+                pose_id.pose.orientation.z = req.markers[i].pose.pose.orientation.z;
                 pose_id.pose.orientation.w = req.markers[i].pose.pose.orientation.w;
                 ROS_INFO("Lettura n%d OK, trovato id richiesto", i);
                 goal_pub.publish(pose_id);
@@ -78,7 +81,7 @@ int main(int argc, char **argv)
     ros::Subscriber sub_alvar = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, artag_callback);
     ros::Subscriber sub_request = node_handle.subscribe("/locobot/id_request", 1, request_callback);
     ros::Subscriber sub_status = node_handle.subscribe("/locobot/robot_status", 1, status_callback);
-    goal_pub = node_handle.advertise<geometry_msgs::Pose>("/locobot/pose_goal", 1);
+    goal_pub = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/pose_goal", 1);
 
     ros::Rate loop_rate(1);
     while (ros::ok())
