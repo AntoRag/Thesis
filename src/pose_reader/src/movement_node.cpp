@@ -7,10 +7,13 @@
 // Move base
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 // MoveIt
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/move_group_interface/move_group_interface.h>
+static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
+static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
 
 // TF2
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
@@ -18,12 +21,9 @@
 
 
 ros::Publisher status_pub;
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
-static const std::string PLANNING_GROUP_ARM = "interbotix_arm";
-static const std::string PLANNING_GROUP_GRIPPER = "interbotix_gripper";
 geometry_msgs::PoseStamped home_config;
 geometry_msgs::PoseStamped q1;
-geometry_msgs::PoseStamped q2; //conj of q1
+
 
 void multiplyQuaternion(move_base_msgs::MoveBaseGoal &goal,geometry_msgs::PoseStamped &pose_goal)
 {
@@ -32,10 +32,6 @@ void multiplyQuaternion(move_base_msgs::MoveBaseGoal &goal,geometry_msgs::PoseSt
   q1.pose.orientation.y = 0.5;
   q1.pose.orientation.z = -0.5;
 
-   float x_cr = 0;
-   float y_cr = 0;
-   float z_cr = 0;
-   float r_cr = 0;
   // First quaternion q1 (x1 y1 z1 r1)
   const float x1 = q1.pose.orientation.x;
   const float y1 = q1.pose.orientation.y;
@@ -52,6 +48,10 @@ void multiplyQuaternion(move_base_msgs::MoveBaseGoal &goal,geometry_msgs::PoseSt
   //goal.target_pose.pose.orientation.y = r2 * y1 - x2 * z1 + y2 * r1 + z2 * x1; // y component
   goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
   goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
+  pose_goal.pose.orientation.x = x2 * r1 + r2 * x1 + y2 * z1 - z2 * y1; // x component
+  pose_goal.pose.orientation.y = r2 * y1 - x2 * z1 + y2 * r1 + z2 * x1; // y component
+  pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
+  pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
 }
 
 void openGripper(trajectory_msgs::JointTrajectory &posture)
@@ -93,9 +93,10 @@ void pick(moveit::planning_interface::MoveGroupInterface &arm_group, moveit::pla
   // BEGIN_SUB_TUTORIAL pick1
   // Create a vector of grasps to be attempted, currently only creating single grasp.
   // This is essentially useful when using a grasp generator to generate and test multiple grasps.
+  ROS_INFO("Enter picking pipeline");
   std::vector<moveit_msgs::Grasp> grasps;
   grasps.resize(1);
-
+  
   // Setting grasp pose
   // ++++++++++++++++++++++
   // This is the pose of panda_link8. |br|
@@ -104,9 +105,8 @@ void pick(moveit::planning_interface::MoveGroupInterface &arm_group, moveit::pla
   // Therefore, the position for panda_link8 = 5 - (length of cube/2 - distance b/w panda_link8 and palm of eef - some
   // extra padding)
   grasps[0].grasp_pose.header.frame_id = "locobot/odom";
-  tf2::Quaternion orientation;
-  orientation.setRPY(-M_PI / 2, -M_PI / 4, -M_PI / 2);
-  grasps[0].grasp_pose.pose.orientation = tf2::toMsg(orientation);
+
+  grasps[0].grasp_pose.pose.orientation = goal_pose.pose.orientation;
   grasps[0].grasp_pose.pose.position.x = goal_pose.pose.position.x;
   grasps[0].grasp_pose.pose.position.y = goal_pose.pose.position.y;
   grasps[0].grasp_pose.pose.position.z = goal_pose.pose.position.z;
@@ -131,15 +131,18 @@ void pick(moveit::planning_interface::MoveGroupInterface &arm_group, moveit::pla
 
   // Setting posture of eef before grasp
   // +++++++++++++++++++++++++++++++++++
+  ROS_INFO("OpenGripper");
   openGripper(grasps[0].pre_grasp_posture);
   // END_SUB_TUTORIAL
 
   // BEGIN_SUB_TUTORIAL pick2
   // Setting posture of eef during grasp
   // +++++++++++++++++++++++++++++++++++
+  ROS_INFO("CloseGripper");
   closedGripper(grasps[0].grasp_posture);
   // END_SUB_TUTORIAL
   // Call pick to pick up the object using the grasps given
+  ROS_INFO("Picking");
   arm_group.pick("box", grasps);
   // END_SUB_TUTORIAL
 }
@@ -194,10 +197,11 @@ void place(moveit::planning_interface::MoveGroupInterface &arm_group, moveit::pl
   // END_SUB_TUTORIAL
 }
 
-void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface &planning_scene_interface, geometry_msgs::PoseStamped &goal_pose, moveit::planning_interface::MoveGroupInterface &move_group_interface_arm)
+void addCollisionObjects(geometry_msgs::PoseStamped &goal_pose, moveit::planning_interface::MoveGroupInterface &move_group_interface_arm)
 {
   // BEGIN_SUB_TUTORIAL table1
-  //
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+
   // Creating Environment
   // ^^^^^^^^^^^^^^^^^^^^
   // Create vector to hold 3 collision objects.
@@ -205,15 +209,15 @@ void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface &pla
 
   // Add the first table where the cube will originally be kept.
   collision_object.id = "box";
-  collision_object.header.frame_id = move_group_interface_arm.getPlanningFrame();
+  collision_object.header.frame_id = "map";
 
   /* Define the primitive and its dimensions. */
   shape_msgs::SolidPrimitive primitive;
   primitive.type = primitive.BOX;
   primitive.dimensions.resize(3);
-  primitive.dimensions[0] = 0.02; // dimension od medicine based on id
-  primitive.dimensions[1] = 0.02;
-  primitive.dimensions[2] = 0.02;
+  primitive.dimensions[0] = 0.05; // dimension od medicine based on id
+  primitive.dimensions[1] = 0.05;
+  primitive.dimensions[2] = 0.05;
 
   /* Define the pose of the table. */
   geometry_msgs::Pose pose;
@@ -224,7 +228,10 @@ void addCollisionObjects(moveit::planning_interface::PlanningSceneInterface &pla
   collision_object.primitives.push_back(primitive);
   collision_object.primitive_poses.push_back(pose);
   collision_object.operation = collision_object.ADD;
-  planning_scene_interface.applyCollisionObject(collision_object);
+  std::vector<moveit_msgs::CollisionObject> collision_objects;
+  collision_objects.push_back(collision_object);
+  planning_scene_interface.applyCollisionObjects(collision_objects);
+  ROS_INFO("Aggiunta scatola alla scena");
 }
 
 void pose_callback(geometry_msgs::PoseStamped pose_goal)
@@ -239,9 +246,7 @@ void pose_callback(geometry_msgs::PoseStamped pose_goal)
   moveit::planning_interface::MoveGroupInterface::Options move_group_options_gripper(PLANNING_GROUP_GRIPPER, "locobot/robot_description");
   moveit::planning_interface::MoveGroupInterface move_group_interface_arm(move_group_options_arm);
   moveit::planning_interface::MoveGroupInterface move_group_interface_gripper(move_group_options_gripper);
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
-  addCollisionObjects(planning_scene_interface, pose_goal, move_group_interface_arm);
-  ros::WallDuration(5.0).sleep();
+
   // pick and place routine
   // base moves
   MoveBaseClient ac("/locobot/move_base", true);
@@ -265,7 +270,9 @@ void pose_callback(geometry_msgs::PoseStamped pose_goal)
   else
     ROS_INFO(":( NOPE");
 
-  ros::WallDuration(1.0).sleep();
+  ros::WallDuration(20.0).sleep();
+  addCollisionObjects(pose_goal, move_group_interface_arm);
+  ros::WallDuration(20.0).sleep();
   move_group_interface_arm.setPlanningTime(45.0);
 
   ros::WallDuration(1.0).sleep();

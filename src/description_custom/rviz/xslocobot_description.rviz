@@ -6,6 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
+        - /TF1
+        - /TF1/Status1
         - /Move Base1/Local Plan1
         - /PlanningScene1/Scene Geometry1
         - /PlanningScene1/Scene Robot1
@@ -236,6 +238,10 @@ Visualization Manager:
       Frame Timeout: 60
       Frames:
         All Enabled: false
+        ar_marker_1:
+          Value: true
+        ar_marker_15:
+          Value: true
         locobot/ar_tag_link:
           Value: true
         locobot/arm_base_link:
@@ -327,7 +333,10 @@ Visualization Manager:
                     locobot/tilt_link:
                       locobot/camera_link:
                         locobot/camera_depth_link:
-                          {}
+                          ar_marker_1:
+                            {}
+                          ar_marker_15:
+                            {}
                 locobot/caster_back_link:
                   {}
                 locobot/caster_front_link:
@@ -654,167 +663,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          locobot/ar_tag_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/arm_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/base_footprint:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/battery_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_depth_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/camera_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_back_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/cliff_sensor_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/fingers_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/gripper_bar_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_prop_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gyro_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/laser_frame_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/left_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lidar_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lower_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/pan_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/plate_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/right_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/shoulder_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/tilt_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wrist_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Loop Animation: false
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -861,167 +709,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          locobot/ar_tag_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/arm_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/base_footprint:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/battery_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_depth_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/camera_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_back_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/cliff_sensor_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/fingers_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/gripper_bar_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_prop_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gyro_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/laser_frame_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/left_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lidar_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lower_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/pan_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/plate_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/right_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/shoulder_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/tilt_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wrist_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Robot Alpha: 1
         Show Robot Collision: false
         Show Robot Visual: true
@@ -1048,167 +735,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          locobot/ar_tag_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/arm_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/base_footprint:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/battery_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_depth_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/camera_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/camera_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_back_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/caster_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/cliff_sensor_front_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/cliff_sensor_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/ee_gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/fingers_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/gripper_bar_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gripper_prop_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/gyro_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          locobot/laser_frame_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/left_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lidar_tower_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/lower_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/pan_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/plate_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/right_finger_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/shoulder_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/tilt_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_arm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/upper_forearm_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_left_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wheel_right_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          locobot/wrist_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
         Robot Alpha: 1
         Show Robot Collision: true
         Show Robot Visual: true
@@ -1249,17 +775,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.19012227654457092
-        Y: -0.04505491256713867
-        Z: -0.10321187973022461
+        X: 0.08540748059749603
+        Y: 0.22730916738510132
+        Z: 0.2936592400074005
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1248438358306885
+      Pitch: 1.1098442077636719
       Target Frame: <Fixed Frame>
-      Yaw: 4.882744312286377
+      Yaw: 4.292745113372803
     Saved: ~
 Window Geometry:
   Displays:
@@ -1283,5 +809,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1440
-  X: 281
-  Y: 136
+  X: 2043
+  Y: 213
