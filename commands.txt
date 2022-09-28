@@ -40,3 +40,7 @@ sudo apt install ros-noetic-move-base
 
 #failed to create global planner
 sudo apt install ros-noetic-global-planner
+
+
+sudo apt install ros-noetic-people-msgs
+sudo apt install ros-noetic-rosparam-shortcuts

@@ -215,6 +215,11 @@ include_directories(include
 
 # # Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+catkin_install_python(PROGRAMS
+  scripts/movement_node.py
+  scripts/gripper_contr
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 add_executable(pose_reader src/pose_reader.cpp)
 add_executable(grasper src/grasper.cpp)
 add_executable(movement_node src/movement_node.cpp)
