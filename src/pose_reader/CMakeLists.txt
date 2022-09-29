@@ -217,7 +217,7 @@ include_directories(include
 # catkin_add_nosetests(test)
 catkin_install_python(PROGRAMS
   scripts/movement_node.py
-  scripts/gripper_contr
+  scripts/gripper_contr.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 add_executable(pose_reader src/pose_reader.cpp)

@@ -2,6 +2,6 @@
 marker_size: 5.0
 
 max_new_marker_error: 0.08
-max_track_error: 0.2
+max_track_error: 0.02
 max_frequency: 8.0
-output_frame: locobot/odom
+output_frame: locobot/base_footprint
