@@ -23,7 +23,10 @@
 
 bool ARM_STATUS = 0; // ARM_STATUS = 0 is arm idle
 int ID_REQUESTED = 0;
-geometry_msgs::PoseStamped GRASP_POSE_GOAL;
+geometry_msgs::PoseStamped grasp_pose_goal;
+geometry_msgs::PoseStamped base_pose_goal;
+geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
+ar_track_alvar_msgs::AlvarMarkers markers_poses;
 
 void id_callback(std_msgs::String id_request)
 {
@@ -33,7 +36,7 @@ void id_callback(std_msgs::String id_request)
 
 void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
 {
-
+    markers_poses = req;
 }
 
 void arm_status_callback(std_msgs::String arm_status)
@@ -52,8 +55,6 @@ void arm_status_callback(std_msgs::String arm_status)
 
 void base_status_callback(std_msgs::String base_status)
 {
-
-    
 }
 
 int main(int argc, char **argv)
@@ -78,31 +79,53 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(1);
     while (ros::ok())
     {
+        // BASE MOVING TO TARGET
 
-        // ARM COMMUNICATION PART PICK
-        if (ARM_STATUS == 0)
+        // BASE SEARCHING FOR TARGET
+
+        // ARM COMMUNICATION PART PICK;
+        int i;
+        for (i = 0; i < markers_poses.markers.size(); i++)
         {
-            pub_grasp_pose_goal.publish(GRASP_POSE_GOAL);
-            ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
-            pub_pick_place.publish("pick");
-            bond_pick_arm.start();
-            if (!bond_pick_arm.waitUntilFormed(ros::Duration(10.0)))
+            if (ID_REQUESTED == markers_poses.markers[i].id)
             {
-                ROS_ERROR("ERROR bond not formed!");
-                return false;
+                ROS_INFO("Lettura n%d OK, trovato id richiesto", i);
+
+                if (ARM_STATUS == 0)
+                {
+                    grasp_pose_goal.pose.position.x = markers_poses.markers[i].pose.pose.position.x;
+                    grasp_pose_goal.pose.position.y = markers_poses.markers[i].pose.pose.position.y;
+                    grasp_pose_goal.pose.position.z = markers_poses.markers[i].pose.pose.position.z;
+                    grasp_pose_goal.pose.orientation.x = markers_poses.markers[i].pose.pose.orientation.x;
+                    grasp_pose_goal.pose.orientation.y = markers_poses.markers[i].pose.pose.orientation.y;
+                    grasp_pose_goal.pose.orientation.z = markers_poses.markers[i].pose.pose.orientation.z;
+                    grasp_pose_goal.pose.orientation.w = markers_poses.markers[i].pose.pose.orientation.w;
+
+                    pub_grasp_pose_goal.publish(grasp_pose_goal);
+                    ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
+                    pub_pick_place.publish("pick");
+                    bond_pick_arm.start();
+                    if (!bond_pick_arm.waitUntilFormed(ros::Duration(10.0)))
+                    {
+                        ROS_ERROR("ERROR bond not formed!");
+                        return false;
+                    }
+                    bond_pick_arm.waitUntilBroken(ros::Duration(-1.0));
+                    ROS_INFO("Arm finished the pick routine");
+                }
+                else
+                {
+                    ROS_INFO("Arm currently running");
+                }
             }
-            bond_pick_arm.waitUntilBroken(ros::Duration(-1.0));
-            ROS_INFO("Arm finished the pick routine");
         }
 
-
-
-
+        // BASE MOVING TO DEPOT
 
         // ARM COMMUNICATION PART PLACE
         if (ARM_STATUS == 0)
         {
-            pub_grasp_pose_goal.publish(GRASP_POSE_GOAL);
+            pub_grasp_pose_goal.publish(HOME_POSE_GOAL);
             ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
             pub_pick_place.publish("place");
 
@@ -115,7 +138,6 @@ int main(int argc, char **argv)
             bond_place_arm.waitUntilBroken(ros::Duration(-1.0));
             ROS_INFO("Arm finished the place routine");
         }
-
 
         ros::spinOnce();
         loop_rate.sleep();
