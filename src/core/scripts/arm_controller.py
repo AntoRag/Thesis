@@ -120,8 +120,14 @@ def PickPlaceCallback(pick_place_string):
     #the opening and the close of the gripper
     bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
     bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
+    bond_pick_arm = bondpy.Bond("/locobot/pick_arm", "PickArm")
+    bond_place_arm = bondpy.Bond("/locobot/place_arm", "PlaceArm")
+
 
     if pick_place_string == "pick":
+
+        bond_pick_arm.start()
+
         #first we add the box to be grasped to the planning scene
         add_box(pose_goal,scene)
 
@@ -161,7 +167,11 @@ def PickPlaceCallback(pick_place_string):
         #actuate the motion
         go_to_pose_goal(move_group_arm,retraction_pose)
 
+        bond_pick_arm.break_bond()
+
     elif pick_place_string == "place":
+
+        bond_place_arm.start()
 
         #We go into the place position
         place_pose = PoseStamped()
@@ -196,6 +206,8 @@ def PickPlaceCallback(pick_place_string):
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
+
+        bond_place_arm.break_bond()
 
     else:
         rospy.ERROR("Error in giving command to pick or place")
