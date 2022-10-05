@@ -1,3 +1,4 @@
+
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -27,6 +28,7 @@ geometry_msgs::PoseStamped grasp_pose_goal;
 geometry_msgs::PoseStamped base_pose_goal;
 geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
 ar_track_alvar_msgs::AlvarMarkers markers_poses;
+std_msgs::String pick_place;
 
 void id_callback(std_msgs::String id_request)
 {
@@ -101,9 +103,11 @@ int main(int argc, char **argv)
                     grasp_pose_goal.pose.orientation.z = markers_poses.markers[i].pose.pose.orientation.z;
                     grasp_pose_goal.pose.orientation.w = markers_poses.markers[i].pose.pose.orientation.w;
 
+                    pick_place.data = "pick";
+
                     pub_grasp_pose_goal.publish(grasp_pose_goal);
                     ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
-                    pub_pick_place.publish("pick");
+                    pub_pick_place.publish(pick_place);
                     bond_pick_arm.start();
                     if (!bond_pick_arm.waitUntilFormed(ros::Duration(10.0)))
                     {
@@ -125,15 +129,15 @@ int main(int argc, char **argv)
         // ARM COMMUNICATION PART PLACE
         if (ARM_STATUS == 0)
         {
+            pick_place.data = "place";
             pub_grasp_pose_goal.publish(HOME_POSE_GOAL);
             ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
-            pub_pick_place.publish("place");
+            pub_pick_place.publish(pick_place);
 
             bond_place_arm.start();
             if (!bond_place_arm.waitUntilFormed(ros::Duration(10.0)))
             {
                 ROS_ERROR("ERROR bond not formed!");
-                return false;
             }
             bond_place_arm.waitUntilBroken(ros::Duration(-1.0));
             ROS_INFO("Arm finished the place routine");

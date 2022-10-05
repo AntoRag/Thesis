@@ -71,7 +71,7 @@ void status_callback(std_msgs::String status_robot)
         ROS_INFO("Non so cosa hai scritto");
     }
 }
-void moveBaseCallback()
+//void moveBaseCallback()
 int main(int argc, char **argv)
 {
     

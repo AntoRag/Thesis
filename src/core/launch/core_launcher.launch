@@ -15,14 +15,14 @@
     <node
       pkg="core"
       type="arm_controller"
-      name="arm_controller"
+      name="arm_controller.py"
       output="screen">
     </node>
 
     <node
       pkg="core"
       type="gripper_controller"
-      name="gripper_controller"
+      name="gripper_controller.py"
       output="screen">
     </node>
 
