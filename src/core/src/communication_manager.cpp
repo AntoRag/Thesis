@@ -33,7 +33,7 @@ void id_callback(std_msgs::String id_request)
 
 void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
 {
-    
+
 }
 
 void arm_status_callback(std_msgs::String arm_status)
@@ -52,6 +52,8 @@ void arm_status_callback(std_msgs::String arm_status)
 
 void base_status_callback(std_msgs::String base_status)
 {
+
+    
 }
 
 int main(int argc, char **argv)

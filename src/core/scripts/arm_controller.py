@@ -166,7 +166,9 @@ def PickPlaceCallback(pick_place_string):
         retraction_pose.pose.position.x = retraction_pose.pose.position.x - 0.1 # we go 10 cm far from the goal position
         #actuate the motion
         go_to_pose_goal(move_group_arm,retraction_pose)
-
+        
+        current_status = "idle"
+        arm_status_pub.publish(current_status)
         bond_pick_arm.break_bond()
 
     elif pick_place_string == "place":
@@ -206,17 +208,14 @@ def PickPlaceCallback(pick_place_string):
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
-
+        
+        current_status = "idle"
+        arm_status_pub.publish(current_status)
         bond_place_arm.break_bond()
 
     else:
         rospy.ERROR("Error in giving command to pick or place")
     
-    current_status = "idle"
-    arm_status_pub.publish(current_status)
-
-
-
 
 def listener():
 
