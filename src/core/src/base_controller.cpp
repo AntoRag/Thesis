@@ -17,67 +17,60 @@
 
 
 //frodo costants
-#include "elrond_macro.h"
+#include "../include/elrond_macro.h"
 
 ros::Publisher pub_status;
 ros::Publisher goal_pub;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-
+std_msgs::Int64 base_status_msg;
 
 bool wait;
 bool success_navigation;
 //Handles simple case of goal pose from Communication Manacer
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
-{
+    {
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseActionGoal rGoal;
-        
-    MoveBaseClient client("/locobot/move_base",true);
+
+    MoveBaseClient client("/locobot/move_base", true);
     rGoal.goal.target_pose = pPose;
 
     client.waitForServer();
     client.sendGoal(rGoal.goal);
-    pub_status.publish(TO_GOAL);
+    base_status_msg.data = BASE_TO_GOAL;
+    pub_status.publish(base_status_msg);
     wait = client.waitForResult();
-    if(wait)
-    {
+    if (wait)
+        {
         rResult = client.getState();
-    }
+        }
     else
-    {
+        {
         ROS_ERROR("Action server not available!");
         ros::requestShutdown();
-    }
+        }
 
-    if(rResult == actionlib::SimpleClientGoalState::SUCCEEDED)
-    {
+    if (rResult == actionlib::SimpleClientGoalState::SUCCEEDED)
+        {
         ROS_INFO("Goal execution done!");
-        pub_status.publish(GOAL_OK);
-    }
-    else{
+        base_status_msg.data = BASE_GOAL_OK;
+        pub_status.publish(base_status_msg);
+        }
+    else {
         ROS_INFO("Goal not reached!");
-        pub_status.publish(GOAL_FAIL);
+        base_status_msg.data = BASE_GOAL_FAIL;
+        pub_status.publish(base_status_msg);
+        }
+
     }
-
-}
-<<<<<<< HEAD
-
-=======
-//void moveBaseCallback()
->>>>>>> 50e3becbc8f39bc81e8f8d0b8f5612568763bc11
-int main(int argc, char **argv)
+int main(int argc, char** argv)
     {
-    putenv((char*) "ROS_NAMESPACE=locobot");
+    putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_goal_pose", 1, moveBaseCallback);
-   pub_status = node_handle.advertise<std_msgs::String>("locobot/frodo/base_status", 1);
+    pub_status = node_handle.advertise<std_msgs::Int64>("locobot/frodo/base_status", 1);
     ros::Rate loop_rate(1);
-    while (ros::ok())
-    {
-        ros::spinOnce();
-        loop_rate.sleep();
+    ros::spin();
     }
-    return 0;
-}
