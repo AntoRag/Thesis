@@ -177,6 +177,13 @@ int main(int argc, char** argv)
 
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "communication_manager");
+    HOME_POSE_GOAL.pose.position.x = 0;
+    HOME_POSE_GOAL.pose.position.y = 0;
+    HOME_POSE_GOAL.pose.position.z = 0;
+    HOME_POSE_GOAL.pose.orientation.x = 0;
+    HOME_POSE_GOAL.pose.orientation.y = 0;
+    HOME_POSE_GOAL.pose.orientation.z = 0;
+    HOME_POSE_GOAL.pose.orientation.w = 1;
     ros::NodeHandle node_handle;
     ros::Subscriber sub_id_request = node_handle.subscribe("/locobot/frodo/id_request", 1, id_callback);
     ros::Subscriber sub_artag = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, artag_callback);
