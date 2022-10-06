@@ -61,7 +61,11 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     }
 
 }
+<<<<<<< HEAD
 
+=======
+//void moveBaseCallback()
+>>>>>>> 50e3becbc8f39bc81e8f8d0b8f5612568763bc11
 int main(int argc, char **argv)
     {
     putenv((char*) "ROS_NAMESPACE=locobot");
