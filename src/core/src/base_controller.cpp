@@ -15,11 +15,9 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 
-
 //frodo costants
 #include "../include/elrond_macro.h"
-
-
+#include <move_base/move_base.h>
 //Auxiliary functions
 #include "../include/auxiliaryFunctions.h"
 ros::Publisher pub_status;
@@ -37,31 +35,30 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseGoal rGoal;
-    fMultiplyQuaternion(rGoal,pPose);
+    fMultiplyQuaternion(rGoal, pPose);
     rGoal.target_pose.pose.position.x = 0.7 * pPose.pose.position.x;
     rGoal.target_pose.pose.position.y = 0.7 * pPose.pose.position.y;
     rGoal.target_pose.header.frame_id = "map";
     rGoal.target_pose.header.stamp = ros::Time::now();
     MoveBaseClient client("/locobot/move_base", true);
     while (!client.waitForServer(ros::Duration(5.0)))
-        { 
-            ROS_INFO("Waiting for the move_base action server to come up");
+        {
+        ROS_INFO("Waiting for the move_base action server to come up");
         }
     base_status_msg.data = BASE_TO_GOAL;
     pub_status.publish(base_status_msg);
     client.sendGoal(rGoal);
     client.waitForResult();
-    
-    // if (wait)
+    auto rState = client.getState();
+    // switch (rState.state_)
     //     {
-    //     rResult = client.getState();
+    //     case actionlib::SimpleClientGoalState::SUCCEEDED:
+    //         break;
+    //     case actionlib::SimpleClientGoalState::REJECTED:
+    //         break;
+    //     case actionlib::SimpleClientGoalState::LOST:
+    //         break;
     //     }
-    // else
-    //     {
-    //     ROS_ERROR("Action server not available!");
-    //     ros::requestShutdown();
-    //     }
-
     if (client.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
         {
         ROS_INFO("Goal execution done!");
@@ -73,6 +70,9 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
         base_status_msg.data = BASE_GOAL_FAIL;
         pub_status.publish(base_status_msg);
         }
+
+
+
 
     }
 int main(int argc, char** argv)

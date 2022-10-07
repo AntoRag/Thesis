@@ -2,32 +2,32 @@
 #include <tf/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
-{
+    {
     int i = 0;
     for (auto iter : markers_poses.markers)
-    {
+        {
         if (id_request == iter.id)
             return i;
         i++;
-    }
+        }
     return -1;
-}
+    }
 
-void fGetPoseFromMarker(geometry_msgs::PoseStamped &grasp_pose_goal, ar_track_alvar_msgs::AlvarMarkers markers_pose, int32_t index)
-{
+void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_msgs::PoseStamped  markers_pose)
+    {
     ROS_INFO("fGetPoseFromMaker, calculating...");
-    grasp_pose_goal.pose.position.x = markers_pose.markers[index].pose.pose.position.x;
-    grasp_pose_goal.pose.position.y = markers_pose.markers[index].pose.pose.position.y;
-    grasp_pose_goal.pose.position.z = markers_pose.markers[index].pose.pose.position.z;
-    grasp_pose_goal.pose.orientation.x = markers_pose.markers[index].pose.pose.orientation.x;
-    grasp_pose_goal.pose.orientation.y = markers_pose.markers[index].pose.pose.orientation.y;
-    grasp_pose_goal.pose.orientation.z = markers_pose.markers[index].pose.pose.orientation.z;
-    grasp_pose_goal.pose.orientation.w = markers_pose.markers[index].pose.pose.orientation.w;
-    
-}
+    grasp_pose_goal.pose.position.x = markers_pose.pose.position.x;
+    grasp_pose_goal.pose.position.y = markers_pose.pose.position.y;
+    grasp_pose_goal.pose.position.z = markers_pose.pose.position.z;
+    grasp_pose_goal.pose.orientation.x = markers_pose.pose.orientation.x;
+    grasp_pose_goal.pose.orientation.y = markers_pose.pose.orientation.y;
+    grasp_pose_goal.pose.orientation.z = markers_pose.pose.orientation.z;
+    grasp_pose_goal.pose.orientation.w = markers_pose.pose.orientation.w;
 
-void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal &base_pose_goal, geometry_msgs::PoseStamped &pose_goal)
-{
+    }
+
+void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal)
+    {
 
     geometry_msgs::PoseStamped q1;
 
@@ -56,4 +56,4 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal &base_pose_goal, geometry_
     // pose_goal.pose.orientation.y = r2 * y1 - x2 * z1 + y2 * r1 + z2 * x1;        // y component
     // pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1;        // z component
     // pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1;        // r component
-}
+    }
