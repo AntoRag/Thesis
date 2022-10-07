@@ -52,6 +52,8 @@ ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
 void id_callback(std_msgs::String id_request)
     {
+
+    ROS_INFO("Entered id_callback");
     int i;
     ID_REQUESTED = stoi(id_request.data);
     id_request_buffer.push_back(ID_REQUESTED);
@@ -61,12 +63,16 @@ void id_callback(std_msgs::String id_request)
     //FOUND
     if (i >= 0)
         {
+
+    ROS_INFO("Id BASE_STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE)
             {
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[i].pose);
             pick_place.data = "pick";
             pub_pick_place.publish(pick_place);
             pub_mobile_pose_goal.publish(base_pose_goal);
+
+    ROS_INFO("Id finished publishing goal");
             }
         else
             {
@@ -86,6 +92,7 @@ void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
 
 void arm_status_callback(std_msgs::Int64 arm_status)
     {
+        ROS_INFO("Entered arm_callback");
     switch (arm_status.data)
         {
         case ARM_SUCCESS:
@@ -150,6 +157,7 @@ void base_status_GoalOk_switchHandler()
     }
 void base_status_callback(std_msgs::Int64 base_status)
     {
+        ROS_INFO("Entered base_callback");
     //Need previous status to handle switching
     BASE_PREV_STATUS = BASE_STATUS;
     BASE_STATUS = base_status.data;
@@ -196,79 +204,6 @@ int main(int argc, char** argv)
     pub_no_marker = node_handle.advertise<std_msgs::String>("locobot/frodo/no_marker", 1);
     bond::Bond bond_pick_arm("/locobot/pick_arm", "PickArm");
     bond::Bond bond_place_arm("/locobot/place_arm", "PlaceArm");
-
-    int i;
-    int rCurrentIdRequest;
-    ros::Rate loop_rate(1);
-    while (ros::ok())
-        {
-        ros::spinOnce();
-        //Wait for artag id request
-        while (id_request_buffer.empty()) {}
-        i = fFindIdInMarkers(markers_poses, id_request_buffer.front());
-        if (i >= 0)
-            {
-            ROS_INFO("Lettura n%d OK, trovato id richiesto", i);
-            //remove request from circular buffer
-            id_request_buffer.pop_front();
-            fGetPoseFromMarker(base_pose_goal, markers_poses.markers[i].pose);
-            ROS_INFO("Movimento base a posizione id richiesto");
-            pub_mobile_pose_goal.publish(base_pose_goal);
-
-            }
-        // BASE MOVING TO TARGET
-
-        // BASE SEARCHING FOR TARGET
-
-       // ARM COMMUNICATION PART PICK;
-        i = fFindIdInMarkers(markers_poses, id_request_buffer.front());
-        if (i >= 0)
-            {
-            ROS_INFO("Lettura n%d OK, trovato id richiesto", i);
-
-            if (ARM_STATUS == 0)
-                {
-                fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[i].pose);
-                pick_place.data = "pick";
-
-                pub_grasp_pose_goal.publish(grasp_pose_goal);
-                ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
-                pub_pick_place.publish(pick_place);
-                bond_pick_arm.start();
-                if (!bond_pick_arm.waitUntilFormed(ros::Duration(10.0)))
-                    {
-                    ROS_ERROR("ERROR bond not formed!");
-                    return false;
-                    }
-                bond_pick_arm.waitUntilBroken(ros::Duration(-1.0));
-                ROS_INFO("Arm finished the pick routine");
-                }
-            else
-                {
-                ROS_INFO("Arm currently running");
-                }
-            }
-
-        // BASE MOVING TO DEPOT
-
-        // ARM COMMUNICATION PART PLACE
-        if (ARM_STATUS == 0)
-            {
-            pick_place.data = "place";
-            pub_grasp_pose_goal.publish(HOME_POSE_GOAL);
-            ros::Duration(5).sleep(); // Wait 5 seconds that the topic receives the pick command
-            pub_pick_place.publish(pick_place);
-
-            bond_place_arm.start();
-            if (!bond_place_arm.waitUntilFormed(ros::Duration(10.0)))
-                {
-                ROS_ERROR("ERROR bond not formed!");
-                }
-            bond_place_arm.waitUntilBroken(ros::Duration(-1.0));
-            ROS_INFO("Arm finished the place routine");
-            }
-
-        loop_rate.sleep();
-        }
+    ros::spin();
     return 0;
     }

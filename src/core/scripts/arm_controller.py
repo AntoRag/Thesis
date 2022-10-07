@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-
+import sys
+import os
+os.environ['ROS_NAMESPACE'] = 'locobot'
 from numpy import int64
 from xml.etree.ElementInclude import include
 from bondpy import bondpy
@@ -11,9 +13,7 @@ from std_msgs.msg import Int64
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 import moveit_commander
-import sys
-import os
-os.environ['ROS_NAMESPACE'] = 'locobot'
+
 
 # Must set `os.environ['ROS_NAMESPACE']` BEFORE importing `rospy`
 
