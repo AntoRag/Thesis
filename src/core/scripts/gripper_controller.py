@@ -9,7 +9,7 @@ import rospy
 import moveit_commander  
 
 from std_msgs.msg import String
-from moveit_commander.conversions import pose_to_list
+
 
 
 
