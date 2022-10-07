@@ -2,30 +2,13 @@
 import sys
 import os
 os.environ['ROS_NAMESPACE'] = 'locobot'
-from numpy import int64
-from xml.etree.ElementInclude import include
 from bondpy import bondpy
 import rospy
-import moveit_msgs.msg
 from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Pose
 from std_msgs.msg import Int64
 from std_msgs.msg import String
-from moveit_commander.conversions import pose_to_list
 import moveit_commander
-
-
-# Must set `os.environ['ROS_NAMESPACE']` BEFORE importing `rospy`
-
-# try:
-#    from math import pi, tau, dist, fabs, cos
-# except:  # For Python 2 compatibility
-#    from math import pi, fabs, cos, sqrt
-#
-#    tau = 2.0 * pi
-#
-#    def dist(p, q):
-#        return sqrt(sum((p_i - q_i) ** 2.0 for p_i, q_i in zip(p, q)))
 
 
 # //ARM STATUS MACRO
@@ -123,10 +106,8 @@ def PickPlaceCallback(pick_place_string):
 
     # define the topic used by the arm to communicate its status: running, idle or fail
     # define the topic used by the arm to communicate whenever close or open the gripper
-    arm_status_pub = rospy.Publisher(
-        '/locobot/frodo/arm_status', Int64, queue_size=1)
-    gripper_command_pub = rospy.Publisher(
-        '/locobot/frodo/gripper_command', String, queue_size=1)
+    arm_status_pub = rospy.Publisher('/locobot/frodo/arm_status', Int64, queue_size=1)
+    gripper_command_pub = rospy.Publisher('/locobot/frodo/gripper_command', String, queue_size=1)
 
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
@@ -170,6 +151,8 @@ def PickPlaceCallback(pick_place_string):
         gripper_command_pub.publish('Open')
         bond_open.start()
         if not bond_open.wait_until_formed(rospy.Duration(10.0)):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
         rospy.loginfo("Gripped Opened")
@@ -184,7 +167,10 @@ def PickPlaceCallback(pick_place_string):
         gripper_command_pub.publish('Close')
         bond_close.start()
         if not bond_close.wait_until_formed(rospy.Duration(10.0)):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
             raise Exception('Bond could not be formed')
+            
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
 
@@ -213,6 +199,8 @@ def PickPlaceCallback(pick_place_string):
         gripper_command_pub.publish('Open')
         bond_open.start()
         if not bond_open.wait_until_formed(rospy.Duration(10.0)):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
         rospy.loginfo("Gripped Opened")
@@ -235,11 +223,13 @@ def PickPlaceCallback(pick_place_string):
         gripper_command_pub.publish('Close')
         bond_close.start()
         if not bond_close.wait_until_formed(rospy.Duration(10.0)):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
 
-        current_arm_status.data = ARM_SUCCESS
+        current_arm_status.data = ARM_IDLE
         arm_status_pub.publish(current_arm_status)
         bond_place_arm.break_bond()
 
@@ -251,8 +241,7 @@ def listener():
 
     rospy.init_node('arm_controller')
     rospy.Subscriber("/locobot/frodo/pick_or_place", String, PickPlaceCallback)
-    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",
-                     PoseStamped, GraspCallback)
+    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",PoseStamped, GraspCallback)
     rospy.spin()
 
 
