@@ -27,16 +27,15 @@ std_msgs::Int64 base_status_msg;
 
 bool wait;
 bool success_navigation;
+
 //Handles simple case of goal pose from Communication Manacer
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
-        ROS_INFO("Inside movebasecallback");
+    ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseActionGoal rGoal;
-
-    MoveBaseClient client("/locobot/move_base", true);
     rGoal.goal.target_pose = pPose;
-
+    MoveBaseClient client("/locobot/move_base", true);
     client.waitForServer();
     client.sendGoal(rGoal.goal);
     base_status_msg.data = BASE_TO_GOAL;
@@ -67,11 +66,11 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     }
 int main(int argc, char** argv)
     {
+    ROS_INFO("Inside movebasecallback");
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
-    pub_status = node_handle.advertise<std_msgs::Int64>("locobot/frodo/base_status", 1);
-    ros::Rate loop_rate(1);
+    pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     ros::spin();
     }

@@ -50,12 +50,12 @@ ros::Publisher pub_grasp_pose_goal;
 ros::Publisher pub_pick_place;
 ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
-void id_callback(std_msgs::String id_request)
+void id_callback(std_msgs::Int64 id_request)
     {
 
     ROS_INFO("Entered id_callback");
     int i;
-    ID_REQUESTED = stoi(id_request.data);
+    ID_REQUESTED = id_request.data;
     id_request_buffer.push_back(ID_REQUESTED);
 
     ROS_INFO("Id requested: %d", ID_REQUESTED);
@@ -64,7 +64,7 @@ void id_callback(std_msgs::String id_request)
     if (i >= 0)
         {
 
-    ROS_INFO("Id BASE_STATUS: %d", BASE_STATUS);
+        ROS_INFO("Id BASE_STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE)
             {
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[i].pose);
@@ -72,7 +72,7 @@ void id_callback(std_msgs::String id_request)
             pub_pick_place.publish(pick_place);
             pub_mobile_pose_goal.publish(base_pose_goal);
 
-    ROS_INFO("Id finished publishing goal");
+            ROS_INFO("Id finished publishing goal");
             }
         else
             {
@@ -92,7 +92,7 @@ void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
 
 void arm_status_callback(std_msgs::Int64 arm_status)
     {
-        ROS_INFO("Entered arm_callback");
+    ROS_INFO("Entered arm_callback");
     switch (arm_status.data)
         {
         case ARM_SUCCESS:
@@ -157,7 +157,7 @@ void base_status_GoalOk_switchHandler()
     }
 void base_status_callback(std_msgs::Int64 base_status)
     {
-        ROS_INFO("Entered base_callback");
+    ROS_INFO("Entered base_callback");
     //Need previous status to handle switching
     BASE_PREV_STATUS = BASE_STATUS;
     BASE_STATUS = base_status.data;
@@ -198,10 +198,10 @@ int main(int argc, char** argv)
     ros::Subscriber sub_status_arm = node_handle.subscribe("/locobot/frodo/arm_status", 1, arm_status_callback);
     ros::Subscriber sub_status_base = node_handle.subscribe("/locobot/frodo/base_status", 1, base_status_callback);
 
-    pub_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("locobot/frodo/grasp_pose_goal", 1);
-    pub_pick_place = node_handle.advertise<std_msgs::String>("locobot/frodo/pick_or_place", 1);
-    pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("locobot/frodo/mobile_pose_goal", 1);
-    pub_no_marker = node_handle.advertise<std_msgs::String>("locobot/frodo/no_marker", 1);
+    pub_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/grasp_pose_goal", 1);
+    pub_pick_place = node_handle.advertise<std_msgs::String>("/locobot/frodo/pick_or_place", 1);
+    pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
+    pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);
     bond::Bond bond_pick_arm("/locobot/pick_arm", "PickArm");
     bond::Bond bond_place_arm("/locobot/place_arm", "PlaceArm");
     ros::spin();
