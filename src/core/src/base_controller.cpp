@@ -77,11 +77,10 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     }
 int main(int argc, char** argv)
     {
-    ROS_INFO("Inside movebasecallback");
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
-    ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/frodo/mobile_pose_goal", 1, moveBaseCallback);
+    ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
     pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     ros::spin();
     }

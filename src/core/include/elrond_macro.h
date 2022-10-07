@@ -12,7 +12,8 @@
 #define ARM_IDLE 1
 #define ARM_RUNNING 2
 #define ARM_SUCCESS 3
-
+#define PICK 0
+#define PLACE 1
 //PICK AND PLACE MACRO
 
 #define PICK 0

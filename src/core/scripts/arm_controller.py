@@ -16,6 +16,8 @@ ARM_FAIL = 0
 ARM_IDLE = 1
 ARM_RUNNING = 2
 ARM_SUCCESS = 3
+PICK = 0
+PLACE = 1
 
 # //PICK AND PLACE MACR
 PICK = 0
@@ -92,7 +94,7 @@ def go_to_pose_goal(move_group, target_pose):
 
 
 pose_goal = PoseStamped()
-
+pick_place = Int64()
 
 def GraspCallback(data):
     global pose_goal
@@ -100,14 +102,14 @@ def GraspCallback(data):
     return
 
 
-def PickPlaceCallback(pick_place_string):
+def PickPlaceCallback(pick_place):
     # get the pose_goal from the GraspCallback
     global pose_goal
 
     # define the topic used by the arm to communicate its status: running, idle or fail
     # define the topic used by the arm to communicate whenever close or open the gripper
-    arm_status_pub = rospy.Publisher('/frodo/arm_status', Int64, queue_size=1)
-    gripper_command_pub = rospy.Publisher('/frodo/gripper_command', String, queue_size=1)
+    arm_status_pub = rospy.Publisher('locobot/frodo/arm_status', Int64, queue_size=1)
+    gripper_command_pub = rospy.Publisher('locobot/frodo/gripper_command', String, queue_size=1)
 
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
@@ -117,12 +119,10 @@ def PickPlaceCallback(pick_place_string):
     # initialize the communication with the moveit_commander
     moveit_commander.roscpp_initialize(sys.argv)
     arm_name = "interbotix_arm"  # define the planning interface for the arm
-    move_group_arm = moveit_commander.MoveGroupCommander(
-        arm_name, robot_description="locobot/robot_description")
+    move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="locobot/robot_description")
 
     # get some parameters for the arm and the scene
-    robot = moveit_commander.RobotCommander(
-        robot_description="/locobot/robot_description")
+    robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
     scene = moveit_commander.PlanningSceneInterface()
 
     # initialize the bond used for synchronizing
@@ -132,7 +132,7 @@ def PickPlaceCallback(pick_place_string):
     bond_pick_arm = bondpy.Bond("/locobot/pick_arm", "PickArm")
     bond_place_arm = bondpy.Bond("/locobot/place_arm", "PlaceArm")
 
-    if pick_place_string == "pick":
+    if pick_place.data == PICK:
 
         bond_pick_arm.start()
 
@@ -142,8 +142,7 @@ def PickPlaceCallback(pick_place_string):
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
         pre_grasp_pose = pose_goal
-        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - \
-            0.05  # we arrive 5 cm far from the goal position
+        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - 0.05  # we arrive 5 cm far from the goal position
         # actuate the motion
         go_to_pose_goal(move_group_arm, pre_grasp_pose)
 
@@ -177,8 +176,7 @@ def PickPlaceCallback(pick_place_string):
         # going into retraction pose
         retraction_pose = PoseStamped()
         retraction_pose = pose_goal
-        retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
-            0.1  # we go 10 cm far from the goal position
+        retraction_pose.pose.position.x = retraction_pose.pose.position.x - 0.1  # we go 10 cm far from the goal position
         # actuate the motion
         go_to_pose_goal(move_group_arm, retraction_pose)
 
@@ -186,7 +184,7 @@ def PickPlaceCallback(pick_place_string):
         arm_status_pub.publish(current_arm_status)
         bond_pick_arm.break_bond()
 
-    elif pick_place_string == "place":
+    elif pick_place.data == PLACE:
 
         bond_place_arm.start()
 
@@ -211,8 +209,7 @@ def PickPlaceCallback(pick_place_string):
         # going into retraction pose
         retraction_pose = PoseStamped()
         retraction_pose = pose_goal
-        retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
-            0.1  # we go 10 cm far from the goal position
+        retraction_pose.pose.position.x = retraction_pose.pose.position.x - 0.1  # we go 10 cm far from the goal position
         # actuate the motion
         go_to_pose_goal(move_group_arm, retraction_pose)
 
@@ -220,7 +217,7 @@ def PickPlaceCallback(pick_place_string):
         remove_box(scene)
 
         # then we close the gripper
-        gripper_command_pub.publish('Close')
+        gripper_command_pub.publish("Close")
         bond_close.start()
         if not bond_close.wait_until_formed(rospy.Duration(10.0)):
             current_arm_status.data = ARM_FAIL
@@ -240,7 +237,7 @@ def PickPlaceCallback(pick_place_string):
 def listener():
 
     rospy.init_node('arm_controller')
-    rospy.Subscriber("/locobot/frodo/pick_or_place", String, PickPlaceCallback)
+    rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
     rospy.Subscriber("/locobot/frodo/grasp_pose_goal",PoseStamped, GraspCallback)
     rospy.spin()
 
