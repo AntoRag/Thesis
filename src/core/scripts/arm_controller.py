@@ -93,18 +93,9 @@ def go_to_pose_goal(move_group, target_pose):
     return
 
 
-pose_goal = PoseStamped()
 pick_place = Int64()
 
-def GraspCallback(data):
-    global pose_goal
-    pose_goal = data
-    return
-
-
-def PickPlaceCallback(pick_place):
-    # get the pose_goal from the GraspCallback
-    global pose_goal
+def GraspCallback(pose_goal):
 
     # define the topic used by the arm to communicate its status: running, idle or fail
     # define the topic used by the arm to communicate whenever close or open the gripper
@@ -232,6 +223,13 @@ def PickPlaceCallback(pick_place):
 
     else:
         rospy.ERROR("Error in giving command to pick or place")
+
+
+def PickPlaceCallback(data):
+    global pick_place
+    pick_place = data.data
+    return
+
 
 
 def listener():

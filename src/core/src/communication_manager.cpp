@@ -35,7 +35,7 @@ std_msgs::Int64 arm_status;
 int64_t BASE_STATUS = BASE_IDLE;
 int64_t BASE_PREV_STATUS = BASE_IDLE;
 int ID_REQUESTED = 0;
-tf::TransformListener rTrasform;
+
 const std::string planning_frame_arm = "locobot/base_footprint"; 
 
 geometry_msgs::PoseStamped grasp_pose_goal;
@@ -46,7 +46,7 @@ ar_track_alvar_msgs::AlvarMarkers markers_poses;
 std_msgs::Int64 pick_place;
 
 // DATABASE FOR REQUEST AND AR TAG
-boost::circular_buffer<int32_t> id_request_buffer;
+boost::circular_buffer<int32_t> id_request_buffer(10);
 
 // ---------- PUBLISHERS ------------------------
 ros::Publisher pub_grasp_pose_goal;
@@ -54,17 +54,7 @@ ros::Publisher pub_pick_place;
 ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
 
-void fGetPoseFromMarker(geometry_msgs::PoseStamped &grasp_pose_goal, ar_track_alvar_msgs::AlvarMarkers markers_pose, int32_t index)
-{
-    grasp_pose_goal.pose.position.x = markers_pose.markers[index].pose.pose.position.x;
-    grasp_pose_goal.pose.position.y = markers_pose.markers[index].pose.pose.position.y;
-    grasp_pose_goal.pose.position.z = markers_pose.markers[index].pose.pose.position.z;
-    grasp_pose_goal.pose.orientation.x = markers_pose.markers[index].pose.pose.orientation.x;
-    grasp_pose_goal.pose.orientation.y = markers_pose.markers[index].pose.pose.orientation.y;
-    grasp_pose_goal.pose.orientation.z = markers_pose.markers[index].pose.pose.orientation.z;
-    grasp_pose_goal.pose.orientation.w = markers_pose.markers[index].pose.pose.orientation.w;
-    
-}
+
 
 
 void id_callback(std_msgs::Int64 id_request)
@@ -124,7 +114,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
         }
         break;
     case ARM_IDLE:
-            id_request_buffer.pop_front();
+                id_request_buffer.pop_front();
         break;
     case ARM_FAIL:
         break;
@@ -155,6 +145,9 @@ void base_status_GoalFail_switchHandler()
 
 void base_status_GoalOk_switchHandler()
 {
+    tf::TransformListener rTrasform;
+
+        auto idx =id_request_buffer.front();
     switch (ARM_STATUS)
     {
     case ARM_SUCCESS:
@@ -162,8 +155,8 @@ void base_status_GoalOk_switchHandler()
         break;
     case ARM_IDLE:
         ROS_INFO("Arm idle after base status ok");
-        ros::Duration(5).sleep();
-        fGetPoseFromMarker(grasp_pose_goal, markers_poses ,id_request_buffer.front());
+        fGetPoseFromMarker(grasp_pose_goal, markers_poses ,idx );
+        ROS_INFO("Sono vivo");
         rTrasform.transformPose(planning_frame_arm,grasp_pose_goal,grasp_pose_goal);
         ROS_INFO("Non sono morto, mando il goal");
         pub_grasp_pose_goal.publish(grasp_pose_goal);
