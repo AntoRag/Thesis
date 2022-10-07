@@ -146,6 +146,15 @@ void base_status_GoalFail_switchHandler()
 void base_status_GoalOk_switchHandler()
     {
     tf::TransformListener rTrasform;
+    try {
+        rTrasform.waitForTransform(planning_frame_arm, "locobot/odom", ros::Time(0), ros::Duration(3.0));
+        std::cout << "transform exist\n";
+        }
+    catch (tf::TransformException ex) {
+        ROS_ERROR("%s", ex.what());
+        ros::Duration(1.0).sleep();
+        }
+    geometry_msgs::PoseStamped new_grasp_pose_goal;
 
     auto idx = id_request_buffer.front();
     switch (ARM_STATUS)
@@ -157,7 +166,8 @@ void base_status_GoalOk_switchHandler()
             ROS_INFO("Arm idle after base status ok");
             fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
             ROS_INFO("Sono vivo");
-            rTrasform.transformPose(planning_frame_arm, grasp_pose_goal, grasp_pose_goal);
+            rTrasform.transformPose(planning_frame_arm, grasp_pose_goal, new_grasp_pose_goal);
+            grasp_pose_goal = new_grasp_pose_goal;
             ROS_INFO("Non sono morto, mando il goal");
             pub_grasp_pose_goal.publish(grasp_pose_goal);
             break;

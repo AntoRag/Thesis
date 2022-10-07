@@ -237,6 +237,8 @@ Visualization Manager:
       Frame Timeout: 60
       Frames:
         All Enabled: false
+        ar_marker_0:
+          Value: true
         locobot/ar_tag_link:
           Value: true
         locobot/arm_base_link:
@@ -328,7 +330,8 @@ Visualization Manager:
                     locobot/tilt_link:
                       locobot/camera_link:
                         locobot/camera_depth_link:
-                          {}
+                          ar_marker_0:
+                            {}
                 locobot/caster_back_link:
                   {}
                 locobot/caster_front_link:
@@ -707,7 +710,7 @@ Visualization Manager:
       Value: false
       Velocity_Scaling_Factor: 0.1
     - Class: moveit_rviz_plugin/PlanningScene
-      Enabled: true
+      Enabled: false
       Move Group Namespace: ""
       Name: PlanningScene
       Planning Scene Topic: /locobot/move_group/monitored_planning_scene
@@ -891,7 +894,7 @@ Visualization Manager:
         Robot Alpha: 1
         Show Robot Collision: true
         Show Robot Visual: true
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 0; 176; 240
@@ -962,5 +965,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1440
-  X: 2043
-  Y: 176
+  X: 2042
+  Y: 139
