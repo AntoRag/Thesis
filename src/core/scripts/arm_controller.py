@@ -106,8 +106,8 @@ def PickPlaceCallback(pick_place_string):
 
     # define the topic used by the arm to communicate its status: running, idle or fail
     # define the topic used by the arm to communicate whenever close or open the gripper
-    arm_status_pub = rospy.Publisher('/locobot/frodo/arm_status', Int64, queue_size=1)
-    gripper_command_pub = rospy.Publisher('/locobot/frodo/gripper_command', String, queue_size=1)
+    arm_status_pub = rospy.Publisher('/frodo/arm_status', Int64, queue_size=1)
+    gripper_command_pub = rospy.Publisher('/frodo/gripper_command', String, queue_size=1)
 
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING

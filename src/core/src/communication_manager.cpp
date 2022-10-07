@@ -198,10 +198,10 @@ int main(int argc, char** argv)
     ros::Subscriber sub_status_arm = node_handle.subscribe("/locobot/frodo/arm_status", 1, arm_status_callback);
     ros::Subscriber sub_status_base = node_handle.subscribe("/locobot/frodo/base_status", 1, base_status_callback);
 
-    pub_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/grasp_pose_goal", 1);
-    pub_pick_place = node_handle.advertise<std_msgs::String>("/locobot/frodo/pick_or_place", 1);
-    pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
-    pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);
+    pub_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/frodo/grasp_pose_goal", 1);
+    pub_pick_place = node_handle.advertise<std_msgs::String>("/frodo/pick_or_place", 1);
+    pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/frodo/mobile_pose_goal", 1);
+    pub_no_marker = node_handle.advertise<std_msgs::String>("/frodo/no_marker", 1);
     bond::Bond bond_pick_arm("/locobot/pick_arm", "PickArm");
     bond::Bond bond_place_arm("/locobot/place_arm", "PlaceArm");
     ros::spin();
