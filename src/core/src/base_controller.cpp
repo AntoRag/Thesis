@@ -38,6 +38,8 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseGoal rGoal;
     fMultiplyQuaternion(rGoal,pPose);
+    rGoal.target_pose.pose.position.x = 0.7 * pPose.pose.position.x;
+    rGoal.target_pose.pose.position.y = 0.7 * pPose.pose.position.y;
     rGoal.target_pose.header.frame_id = "map";
     rGoal.target_pose.header.stamp = ros::Time::now();
     MoveBaseClient client("/locobot/move_base", true);
@@ -45,6 +47,8 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
         { 
             ROS_INFO("Waiting for the move_base action server to come up");
         }
+    base_status_msg.data = BASE_TO_GOAL;
+    pub_status.publish(base_status_msg);
     client.sendGoal(rGoal);
     client.waitForResult();
     
@@ -69,8 +73,7 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
         base_status_msg.data = BASE_GOAL_FAIL;
         pub_status.publish(base_status_msg);
         }
-    base_status_msg.data = BASE_TO_GOAL;
-    pub_status.publish(base_status_msg);
+
     }
 int main(int argc, char** argv)
     {
