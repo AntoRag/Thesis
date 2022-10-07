@@ -123,7 +123,7 @@ def GraspCallback(pose_goal):
     bond_pick_arm = bondpy.Bond("/locobot/pick_arm", "PickArm")
     bond_place_arm = bondpy.Bond("/locobot/place_arm", "PlaceArm")
 
-    if pick_place.data == PICK:
+    if pick_place == PICK:
 
         bond_pick_arm.start()
 
@@ -175,7 +175,7 @@ def GraspCallback(pose_goal):
         arm_status_pub.publish(current_arm_status)
         bond_pick_arm.break_bond()
 
-    elif pick_place.data == PLACE:
+    elif pick_place == PLACE:
 
         bond_place_arm.start()
 
