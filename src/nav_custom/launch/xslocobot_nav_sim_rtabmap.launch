@@ -15,7 +15,7 @@
   <arg name="camera_tilt_angle"                 default="0.2618"/>
   <arg name="use_rviz"                          default="true"/>
   <arg name="rviz_frame"                        default="map"/>
-  <arg name="world_name"                        default="$(find interbotix_xslocobot_gazebo)/worlds/xslocobot_gazebo.world"/>
+  <arg name="world_name"                        default="$(find gazebo_custom)/worlds/xslocobot_gazebo.world"/>
   <arg name="gui"                               default="true"/>
   <arg name="debug"                             default="false"/>
   <arg name="paused"                            default="true"/>

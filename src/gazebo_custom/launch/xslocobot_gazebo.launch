@@ -1,4 +1,6 @@
 <launch>
+  <env name="GAZEBO_RESOURCE_PATH"              value="$(env GAZEBO_RESOURCE_PATH):$(find gazebo_custom):$(find gazebo_custom)/worlds"/>
+  <env name="GAZEBO_MODEL_PATH"              value="$(env GAZEBO_MODEL_PATH):$(find gazebo_custom):$(find gazebo_custom)/models"/>
 
   <arg name="robot_model"                       default="locobot_wx250s"/>
   <arg name="robot_name"                        default="locobot"/>
@@ -10,7 +12,7 @@
   <arg name="use_rviz"                          default="false"/>
   <arg name="rviz_frame"                        default="$(arg robot_name)/base_footprint"/>
   <arg name="rvizconfig"                        default="$(find description_custom)/rviz/xslocobot_description.rviz" />
-  <arg name="world_name"                        default="$(find gazebo_custom/worlds/xslocobot_gazebo.world"/>
+  <arg name="world_name"                        default="$(find gazebo_custom)/worlds/xslocobot_gazebo.world"/>
   <arg name="gui"                               default="true"/>
   <arg name="debug"                             default="false"/>
   <arg name="paused"                            default="true"/>
@@ -23,8 +25,6 @@
 
 
 
-  <env name="GAZEBO_RESOURCE_PATH"              value="$(env GAZEBO_RESOURCE_PATH):$(find gazebo_custom):$(find gazebo_custom)/worlds"/>
-  <env name="GAZEBO_MODEL_PATH"              value="$(env GAZEBO_MODEL_PATH):$(find gazebo_custom):$(find gazebo_custom)/models"/>
 
   <rosparam file="$(find gazebo_custom)/config/locobot_gazebo_controllers.yaml" command="load" ns="$(arg robot_name)"/>
 
