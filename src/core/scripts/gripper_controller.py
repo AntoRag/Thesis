@@ -3,23 +3,25 @@
 import sys
 import os
 os.environ['ROS_NAMESPACE'] = 'locobot'
-# Must set `os.environ['ROS_NAMESPACE']` BEFORE importing `rospy`
 from bondpy import bondpy
 import rospy
-import moveit_commander  
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
+from std_msgs.msg import Int64
+import moveit_commander
 
-from std_msgs.msg import String
-
+GRIPPER_OPEN = 1
+GRIPPER_CLOSE = 0
 
 
 
 def gripper_callback(data):
     gripper_name = "interbotix_gripper"
-    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="locobot/robot_description")
+    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
     
     bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
     bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
-    if data.data == 'Open':
+    if data.data == GRIPPER_OPEN:
         bond_open.start()
         joint_goal = move_group_gripper.get_current_joint_values()
         print("joint status",joint_goal[0]," ",joint_goal[1])
@@ -34,7 +36,8 @@ def gripper_callback(data):
         ## END_SUB_TUTORIAL
         # For testing:
         bond_open.break_bond()
-    elif data.data == 'Close':
+
+    elif data.data == GRIPPER_CLOSE:
         bond_close.start()
         joint_goal_close = move_group_gripper.get_current_joint_values()
         print("joint status",joint_goal_close[0]," ",joint_goal_close[1])
@@ -54,8 +57,7 @@ def gripper_callback(data):
 def listener():
 
     rospy.init_node('gripper_controller')
-    rospy.Subscriber("/locobot/frodo/gripper_command", String , gripper_callback)
-
+    rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
     rospy.spin()
 
 

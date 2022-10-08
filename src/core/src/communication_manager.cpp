@@ -34,7 +34,7 @@ int64_t ARM_STATUS = ARM_IDLE; // ARM_STATUS = 0 is arm idle
 std_msgs::Int64 arm_status;
 int64_t BASE_STATUS = BASE_IDLE;
 int64_t BASE_PREV_STATUS = BASE_IDLE;
-int ID_REQUESTED = 0;
+int ID_REQUESTED = 100;
 
 const std::string planning_frame_arm = "locobot/base_footprint";
 
@@ -159,9 +159,7 @@ void base_status_GoalOk_switchHandler()
     case ARM_IDLE:
         ROS_INFO("Arm idle after base status ok");
         fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
-        ROS_INFO("Sono vivo");
         tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
-        ROS_INFO("Non sono morto, mando il goal");
         pub_grasp_pose_goal.publish(grasp_pose_goal);
         break;
     case ARM_FAIL:
