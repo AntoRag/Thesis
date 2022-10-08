@@ -67,7 +67,7 @@ def add_box(target_pose, scene):
     box_pose.pose.orientation.z = 1e-6
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = target_pose.pose.position.z
-    box_pose.pose.position.x = target_pose.pose.position.x+0.03
+    box_pose.pose.position.x = target_pose.pose.position.x + 0.02
     box_pose.pose.position.y = target_pose.pose.position.y
     scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.06))
     success = ObjectInScene(scene,box_name,False,True)
@@ -76,20 +76,20 @@ def add_box(target_pose, scene):
     return
 
 
-def attach_box(robot, scene, move_group):
+def attach_box(scene):
     box_name = 'medicine'
-    eef_link = move_group.get_end_effector_link()
-    grasping_group = 'interbotix_arm'
-    touch_links = robot.get_link_names(group=grasping_group)
+    eef_link = 'locobot/ee_gripper_link'
+    touch_links = ['locobot/ee_gripper_link','locobot/left_finger_link','locobot/right_finger_link','locobot/fingers_link']
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
+    
 
     rospy.sleep(5)
     return
 
 
-def detach_box(scene, move_group):
+def detach_box(scene):
     box_name = 'medicine'
-    eef_link = move_group.get_end_effector_link()
+    eef_link = 'locobot/ee_gripper_link'
     scene.remove_attached_object(eef_link, name=box_name)
     rospy.sleep(5)
     return
@@ -169,8 +169,7 @@ def GraspCallback(pose_goal):
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
         pre_grasp_pose = pose_goal
-        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - \
-            0.05  # we arrive 5 cm far from the goal position
+        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - 0.1  # we arrive 10 cm far from the goal position
         # actuate the motion
         go_to_pose_goal(move_group_arm, pre_grasp_pose)
 
@@ -186,10 +185,11 @@ def GraspCallback(pose_goal):
         rospy.loginfo("Gripped Opened")
 
         # then we approach the object
+        pose_goal.pose.position.x = pose_goal.pose.position.x + 0.01
         go_to_pose_goal(move_group_arm, pose_goal)
 
         # now we add the box to the end effector link
-        attach_box(robot, scene, move_group_arm)
+        attach_box(scene)
 
         # then we close the gripper
         gripper_command.data = GRIPPER_CLOSE
@@ -233,7 +233,7 @@ def GraspCallback(pose_goal):
         rospy.loginfo("Gripped Opened")
 
         # now we add the box to the end effector link
-        detach_box(scene, move_group_arm)
+        detach_box(scene)
 
         # going into retraction pose
         retraction_pose = PoseStamped()
