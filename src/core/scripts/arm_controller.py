@@ -69,11 +69,12 @@ def add_box(target_pose, scene):
     box_pose.pose.position.z = target_pose.pose.position.z
     box_pose.pose.position.x = target_pose.pose.position.x + 0.02
     box_pose.pose.position.y = target_pose.pose.position.y
-    scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.06))
+    scene.add_box(box_name, box_pose, size=(0.05, 0.05, 0.07))
     success = ObjectInScene(scene,box_name,False,True)
     if  not success:
         rospy.logerr('Not added any box')
-    return
+        return
+    rospy.sleep(10)
 
 
 def attach_box(scene):
@@ -81,11 +82,12 @@ def attach_box(scene):
     eef_link = 'locobot/ee_gripper_link'
     touch_links = ['locobot/ee_gripper_link','locobot/left_finger_link','locobot/right_finger_link','locobot/fingers_link']
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
-    
-
+    success = ObjectInScene(scene,box_name,True,False)
+    if  not success:
+        rospy.logerr('Not added any box')
+        return
     rospy.sleep(5)
-    return
-
+    
 
 def detach_box(scene):
     box_name = 'medicine'
@@ -124,7 +126,6 @@ def go_to_pose_goal(move_group, target_pose):
     rospy.loginfo("Clear pose target")
     move_group.clear_pose_targets()
     current_pose = move_group.get_current_pose().pose
-    rospy.sleep(5)
     return
 
 
@@ -134,9 +135,9 @@ pick_place = Int64()
 def GraspCallback(pose_goal):
 
     # define the topic used by the arm to communicate its status: running, idle or fail
-    # define the topic used by the arm to communicate whenever close or open the gripper
     arm_status_pub = rospy.Publisher(
         '/locobot/frodo/arm_status', Int64, queue_size=1)
+    # define the topic used by the arm to communicate whenever close or open the gripper
     gripper_command_pub = rospy.Publisher(
         '/locobot/frodo/gripper_command', Int64, queue_size=1)
 
@@ -163,8 +164,7 @@ def GraspCallback(pose_goal):
 
     if pick_place == PICK:
 
-        # first we add the box to be grasped to the planning scene
-        add_box(pose_goal, scene)
+
 
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
@@ -185,8 +185,11 @@ def GraspCallback(pose_goal):
         rospy.loginfo("Gripped Opened")
 
         # then we approach the object
-        pose_goal.pose.position.x = pose_goal.pose.position.x + 0.01
+        pose_goal.pose.position.x = pose_goal.pose.position.x + 0.08
         go_to_pose_goal(move_group_arm, pose_goal)
+
+        # first we add the box to be grasped to the planning scene
+        add_box(pose_goal, scene)
 
         # now we add the box to the end effector link
         attach_box(scene)
