@@ -31,7 +31,6 @@ current_arm_status = Int64()
 gripper_command = Int64()
 current_arm_status.data = ARM_IDLE
 
-
 def ObjectInScene(scene,box_name,box_is_attached,box_is_known):
     timeout = 10 # timeout in seconds before error
     start = rospy.get_time()
@@ -69,11 +68,11 @@ def add_box(target_pose, scene):
     box_pose.pose.position.z = target_pose.pose.position.z
     box_pose.pose.position.x = target_pose.pose.position.x + 0.02
     box_pose.pose.position.y = target_pose.pose.position.y
-    scene.add_box(box_name, box_pose, size=(0.05, 0.05, 0.07))
+    scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.07))
     success = ObjectInScene(scene,box_name,False,True)
     if  not success:
         rospy.logerr('Not added any box')
-        return
+        return False
     rospy.sleep(10)
 
 
@@ -85,7 +84,7 @@ def attach_box(scene):
     success = ObjectInScene(scene,box_name,True,False)
     if  not success:
         rospy.logerr('Not added any box')
-        return
+        return False
     rospy.sleep(5)
     
 
@@ -123,55 +122,39 @@ def go_to_pose_goal(move_group, target_pose):
         rospy.loginfo("Problem during motion")
     rospy.loginfo("Stop any residual motion")
     move_group.stop()
+
     rospy.loginfo("Clear pose target")
     move_group.clear_pose_targets()
     current_pose = move_group.get_current_pose().pose
-    return
+    return success
 
 
 pick_place = Int64()
 
 
 def GraspCallback(pose_goal):
-
-    # define the topic used by the arm to communicate its status: running, idle or fail
-    arm_status_pub = rospy.Publisher(
-        '/locobot/frodo/arm_status', Int64, queue_size=1)
-    # define the topic used by the arm to communicate whenever close or open the gripper
-    gripper_command_pub = rospy.Publisher(
-        '/locobot/frodo/gripper_command', Int64, queue_size=1)
+    global bond_open,bond_close,robot, scene, move_group_arm, arm_status_pub, gripper_command_pub
 
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
     rospy.loginfo("Arm currently running")  # log when running
 
-    # initialize the communication with the moveit_commander
-    moveit_commander.roscpp_initialize(sys.argv)
-    arm_name = "interbotix_arm"  # define the planning interface for the arm
-    move_group_arm = moveit_commander.MoveGroupCommander(
-        arm_name, robot_description="/locobot/robot_description")
-
-    # get some parameters for the arm and the scene
-    robot = moveit_commander.RobotCommander(
-        robot_description="/locobot/robot_description")
-    scene = moveit_commander.PlanningSceneInterface()
-    rospy.sleep(5)
-    # initialize the bond used for synchronizing
-    # the opening and the close of the gripper
-    bond_open = bondpy.Bond("/locobot/open_gripper", "opengripper")
-    bond_close = bondpy.Bond("/locobot/close_gripper", "closegripper")
-
     if pick_place == PICK:
-
-
 
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
         pre_grasp_pose = pose_goal
         pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - 0.1  # we arrive 10 cm far from the goal position
         # actuate the motion
-        go_to_pose_goal(move_group_arm, pre_grasp_pose)
+        if (go_to_pose_goal(move_group_arm, pre_grasp_pose)== False):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
+            return
+
+        # Wait for OctoMap update
+        while (rospy.sleep(10)):
+            rospy.loginfo("Waiting for Octomap update")
 
         # then we open the gripper
         gripper_command.data = GRIPPER_OPEN
@@ -184,15 +167,28 @@ def GraspCallback(pose_goal):
         bond_open.wait_until_broken()
         rospy.loginfo("Gripped Opened")
 
-        # then we approach the object
-        pose_goal.pose.position.x = pose_goal.pose.position.x + 0.08
-        go_to_pose_goal(move_group_arm, pose_goal)
-
         # first we add the box to be grasped to the planning scene
-        add_box(pose_goal, scene)
+        pose_goal.pose.position.x = pose_goal.pose.position.x + 0.08
+        if (add_box(pose_goal, scene) == False):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
+            return
+
+
+        # then we approach the object
+        pose_goal.pose.position.x = pose_goal.pose.position.x - 0.01
+        if (go_to_pose_goal(move_group_arm, pose_goal)== False):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
+            return
+
+
 
         # now we add the box to the end effector link
-        attach_box(scene)
+        if (attach_box(scene) == False):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)   
+            return         
 
         # then we close the gripper
         gripper_command.data = GRIPPER_CLOSE
@@ -212,7 +208,10 @@ def GraspCallback(pose_goal):
         retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
             0.1  # we go 10 cm far from the goal position
         # actuate the motion
-        go_to_pose_goal(move_group_arm, retraction_pose)
+        if (go_to_pose_goal(move_group_arm, retraction_pose)==False):
+            current_arm_status.data = ARM_FAIL
+            arm_status_pub.publish(current_arm_status)
+            return
 
         current_arm_status.data = ARM_SUCCESS
         arm_status_pub.publish(current_arm_status)
@@ -274,11 +273,28 @@ def PickPlaceCallback(data):
 
 
 def listener():
-
+    global bond_close, scene, bond_open,move_group_arm,robot,arm_status_pub,gripper_command_pub
     rospy.init_node('arm_controller')
     rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
-    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",
-                     PoseStamped, GraspCallback)
+    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",PoseStamped, GraspCallback)
+    # initialize the communication with the moveit_commander
+    moveit_commander.roscpp_initialize(sys.argv)
+    rospy.sleep(5)
+    arm_name = "interbotix_arm"  # define the planning interface for the arm
+    move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
+    move_group_arm.allow_replanning(True)
+    move_group_arm.set_num_planning_attempts(10)
+    # get some parameters for the arm and the scene
+    robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
+    scene = moveit_commander.PlanningSceneInterface()
+    # initialize the bond used for synchronizing
+    # the opening and the close of the gripper
+    bond_open = bondpy.Bond("/locobot/open_gripper", "opengripper")
+    bond_close = bondpy.Bond("/locobot/close_gripper", "closegripper")
+    # define the topic used by the arm to communicate its status: running, idle or fail
+    arm_status_pub = rospy.Publisher('/locobot/frodo/arm_status', Int64, queue_size=1)
+    # define the topic used by the arm to communicate whenever close or open the gripper
+    gripper_command_pub = rospy.Publisher('/locobot/frodo/gripper_command', Int64, queue_size=1)
     rospy.spin()
 
 

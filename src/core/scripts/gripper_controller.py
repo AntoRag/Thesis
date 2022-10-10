@@ -16,11 +16,7 @@ GRIPPER_CLOSE = 0
 
 
 def gripper_callback(data):
-    gripper_name = "interbotix_gripper"
-    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
-    
-    bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
-    bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
+    global bond_close, bond_open, move_group_gripper
     if data.data == GRIPPER_OPEN:
         bond_open.start()
         joint_goal = move_group_gripper.get_current_joint_values()
@@ -55,9 +51,14 @@ def gripper_callback(data):
     
 
 def listener():
-
+    global bond_close, bond_open, move_group_gripper
     rospy.init_node('gripper_controller')
     rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
+    gripper_name = "interbotix_gripper"
+    rospy.sleep(10)
+    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
+    bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
+    bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
     rospy.spin()
 
 

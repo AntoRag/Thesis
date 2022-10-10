@@ -41,6 +41,7 @@ const std::string planning_frame_arm = "locobot/base_footprint";
 geometry_msgs::PoseStamped grasp_pose_goal;
 geometry_msgs::PoseStamped base_pose_goal;
 geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
+geometry_msgs::PoseStamped PLACE_GRASP_GOAL;
 
 ar_track_alvar_msgs::AlvarMarkers markers_poses;
 std_msgs::Int64 pick_place;
@@ -102,9 +103,10 @@ void arm_status_callback(std_msgs::Int64 arm_status)
     case ARM_SUCCESS:
         if (pick_place.data == PICK)
         {
-            if (BASE_STATUS == BASE_IDLE)
+            if (BASE_STATUS == BASE_GOAL_OK)
             {
                 pick_place.data = PLACE;
+                ROS_INFO("Comincio il place");
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 pub_pick_place.publish(pick_place);
             }
@@ -114,8 +116,11 @@ void arm_status_callback(std_msgs::Int64 arm_status)
         id_request_buffer.pop_front();
         break;
     case ARM_FAIL:
+        // Reposition the base TO-DO
+        ROS_ERROR("ARM FAILED");
         break;
     case ARM_RUNNING:
+        ROS_INFO("ARM CURRENTLY RUNNING");
         break;
     default:
         break;
@@ -155,11 +160,15 @@ void base_status_GoalOk_switchHandler()
     {
     case ARM_SUCCESS:
         ROS_INFO("Arm success after base status ok");
+        grasp_pose_goal = PLACE_GRASP_GOAL;
+        ros::Duration(5).sleep();
+        pub_grasp_pose_goal.publish(grasp_pose_goal);
         break;
     case ARM_IDLE:
         ROS_INFO("Arm idle after base status ok");
         fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
         tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+        ros::Duration(5).sleep();
         pub_grasp_pose_goal.publish(grasp_pose_goal);
         break;
     case ARM_FAIL:
@@ -174,10 +183,10 @@ void base_status_callback(std_msgs::Int64 base_status)
 {
     ROS_INFO("Entered base_callback");
     // Need previous status to handle switching
-    BASE_PREV_STATUS = BASE_STATUS;
+    // BASE_PREV_STATUS = BASE_STATUS;
     BASE_STATUS = base_status.data;
-    if (BASE_STATUS == BASE_PREV_STATUS)
-        return;
+    // if (BASE_STATUS == BASE_PREV_STATUS)
+    //     return;
     switch (BASE_STATUS)
     {
     case BASE_IDLE:
@@ -211,7 +220,17 @@ int main(int argc, char **argv)
     HOME_POSE_GOAL.pose.orientation.y = 0;
     HOME_POSE_GOAL.pose.orientation.z = 0;
     HOME_POSE_GOAL.pose.orientation.w = 1;
+
+    PLACE_GRASP_GOAL.pose.position.x = 0.2;
+    PLACE_GRASP_GOAL.pose.position.y = 0;
+    PLACE_GRASP_GOAL.pose.position.z = 0.1;
+    PLACE_GRASP_GOAL.pose.orientation.x = 0;
+    PLACE_GRASP_GOAL.pose.orientation.y = 0;
+    PLACE_GRASP_GOAL.pose.orientation.z = 0;
+    PLACE_GRASP_GOAL.pose.orientation.w = 1;
+
     arm_status.data = ARM_IDLE; // Initialize arm as idle
+
     ros::NodeHandle node_handle;
     ros::Subscriber sub_id_request = node_handle.subscribe("/locobot/frodo/id_request", 1, id_callback);
     ros::Subscriber sub_artag = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, artag_callback);
@@ -222,8 +241,7 @@ int main(int argc, char **argv)
     pub_pick_place = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/pick_or_place", 1);
     pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
     pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);
-    bond::Bond bond_pick_arm("/locobot/pick_arm", "PickArm");
-    bond::Bond bond_place_arm("/locobot/place_arm", "PlaceArm");
+
     ros::spin();
     return 0;
 }
