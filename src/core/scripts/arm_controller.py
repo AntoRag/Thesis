@@ -1,15 +1,14 @@
 #!/usr/bin/env python
-
 import sys
 import os
 os.environ['ROS_NAMESPACE'] = 'locobot'
-from numpy import True_
-import moveit_commander
-from std_msgs.msg import Int64
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import PoseStamped
-import rospy
 from bondpy import bondpy
+import rospy
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
+from std_msgs.msg import Int64
+import moveit_commander
+from numpy import True_
 
 
 
@@ -31,8 +30,9 @@ current_arm_status = Int64()
 gripper_command = Int64()
 current_arm_status.data = ARM_IDLE
 
-def ObjectInScene(scene,box_name,box_is_attached,box_is_known):
-    timeout = 10 # timeout in seconds before error
+
+def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
+    timeout = 10  # timeout in seconds before error
     start = rospy.get_time()
     seconds = rospy.get_time()
     while (seconds - start < timeout) and not rospy.is_shutdown():
@@ -58,35 +58,38 @@ def ObjectInScene(scene,box_name,box_is_attached,box_is_known):
 
 def add_box(target_pose, scene):
 
+    
     box_name = "medicine"
     box_pose = PoseStamped()
     box_pose.header.frame_id = "locobot/base_footprint"
-    box_pose.pose.orientation.x = 1e-6 
-    box_pose.pose.orientation.y = 1e-6
-    box_pose.pose.orientation.z = 1e-6
+    box_pose.pose.orientation.x = 0.00001
+    box_pose.pose.orientation.y = 0.00001
+    box_pose.pose.orientation.z = 0.00001
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = target_pose.pose.position.z
     box_pose.pose.position.x = target_pose.pose.position.x + 0.02
-    box_pose.pose.position.y = target_pose.pose.position.y
+    box_pose.pose.position.y = target_pose.pose.position.y    
     scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.07))
-    success = ObjectInScene(scene,box_name,False,True)
-    if  not success:
+    success = ObjectInScene(scene, box_name, False, True)
+    if not success:
         rospy.logerr('Not added any box')
         return False
-    rospy.sleep(10)
+    rospy.sleep(5)
+    
 
 
 def attach_box(scene):
     box_name = 'medicine'
     eef_link = 'locobot/ee_gripper_link'
-    touch_links = ['locobot/ee_gripper_link','locobot/left_finger_link','locobot/right_finger_link','locobot/fingers_link']
+    touch_links = ['locobot/ee_gripper_link', 'locobot/left_finger_link',
+                   'locobot/right_finger_link', 'locobot/fingers_link']
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
-    success = ObjectInScene(scene,box_name,True,False)
-    if  not success:
+    success = ObjectInScene(scene, box_name, True, False)
+    if not success:
         rospy.logerr('Not added any box')
         return False
     rospy.sleep(5)
-    
+
 
 def detach_box(scene):
     box_name = 'medicine'
@@ -133,8 +136,7 @@ pick_place = Int64()
 
 
 def GraspCallback(pose_goal):
-    global bond_open,bond_close,robot, scene, move_group_arm, arm_status_pub, gripper_command_pub
-
+    global bond_open, bond_close, robot, move_group_arm, arm_status_pub, gripper_command_pub, scene
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
@@ -145,16 +147,17 @@ def GraspCallback(pose_goal):
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
         pre_grasp_pose = pose_goal
-        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - 0.1  # we arrive 10 cm far from the goal position
+        pre_grasp_pose.pose.position.x = pre_grasp_pose.pose.position.x - \
+            0.1  # we arrive 10 cm far from the goal position
         # actuate the motion
-        if (go_to_pose_goal(move_group_arm, pre_grasp_pose)== False):
+        if (go_to_pose_goal(move_group_arm, pre_grasp_pose) == False):
             current_arm_status.data = ARM_FAIL
             arm_status_pub.publish(current_arm_status)
             return
 
         # Wait for OctoMap update
-        while (rospy.sleep(10)):
-            rospy.loginfo("Waiting for Octomap update")
+        rospy.loginfo("Waiting for Octomap update")
+        rospy.sleep(10)
 
         # then we open the gripper
         gripper_command.data = GRIPPER_OPEN
@@ -174,21 +177,18 @@ def GraspCallback(pose_goal):
             arm_status_pub.publish(current_arm_status)
             return
 
-
         # then we approach the object
-        pose_goal.pose.position.x = pose_goal.pose.position.x - 0.01
-        if (go_to_pose_goal(move_group_arm, pose_goal)== False):
+        pose_goal.pose.position.x = pose_goal.pose.position.x
+        if (go_to_pose_goal(move_group_arm, pose_goal) == False):
             current_arm_status.data = ARM_FAIL
             arm_status_pub.publish(current_arm_status)
             return
 
-
-
         # now we add the box to the end effector link
         if (attach_box(scene) == False):
             current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)   
-            return         
+            arm_status_pub.publish(current_arm_status)
+            return
 
         # then we close the gripper
         gripper_command.data = GRIPPER_CLOSE
@@ -208,7 +208,7 @@ def GraspCallback(pose_goal):
         retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
             0.1  # we go 10 cm far from the goal position
         # actuate the motion
-        if (go_to_pose_goal(move_group_arm, retraction_pose)==False):
+        if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
             current_arm_status.data = ARM_FAIL
             arm_status_pub.publish(current_arm_status)
             return
@@ -273,28 +273,34 @@ def PickPlaceCallback(data):
 
 
 def listener():
-    global bond_close, scene, bond_open,move_group_arm,robot,arm_status_pub,gripper_command_pub
+    global bond_close, bond_open, move_group_arm, robot, arm_status_pub, gripper_command_pub, scene
     rospy.init_node('arm_controller')
     rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
-    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",PoseStamped, GraspCallback)
+    rospy.Subscriber("/locobot/frodo/grasp_pose_goal",
+                     PoseStamped, GraspCallback)
     # initialize the communication with the moveit_commander
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.sleep(5)
     arm_name = "interbotix_arm"  # define the planning interface for the arm
-    move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
+    move_group_arm = moveit_commander.MoveGroupCommander(
+        arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
     # get some parameters for the arm and the scene
-    robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
-    scene = moveit_commander.PlanningSceneInterface()
+    robot = moveit_commander.RobotCommander(
+        robot_description="/locobot/robot_description")
+    scene = moveit_commander.PlanningSceneInterface(synchronous=True)
+
     # initialize the bond used for synchronizing
     # the opening and the close of the gripper
     bond_open = bondpy.Bond("/locobot/open_gripper", "opengripper")
     bond_close = bondpy.Bond("/locobot/close_gripper", "closegripper")
     # define the topic used by the arm to communicate its status: running, idle or fail
-    arm_status_pub = rospy.Publisher('/locobot/frodo/arm_status', Int64, queue_size=1)
+    arm_status_pub = rospy.Publisher(
+        '/locobot/frodo/arm_status', Int64, queue_size=1)
     # define the topic used by the arm to communicate whenever close or open the gripper
-    gripper_command_pub = rospy.Publisher('/locobot/frodo/gripper_command', Int64, queue_size=1)
+    gripper_command_pub = rospy.Publisher(
+        '/locobot/frodo/gripper_command', Int64, queue_size=1)
     rospy.spin()
 
 

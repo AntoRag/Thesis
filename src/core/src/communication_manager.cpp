@@ -10,7 +10,6 @@
 #include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
-
 // Ar_track_alvar
 #include <tf2/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
@@ -152,8 +151,8 @@ void base_status_GoalOk_switchHandler()
     tf2_ros::TransformListener tf2_listener(tf_buffer);
     geometry_msgs::TransformStamped odom_to_footprint;
     geometry_msgs::PoseStamped new_grasp_pose_goal;
-    
-    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0) );
+
+    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
 
     auto idx = id_request_buffer.front();
     switch (ARM_STATUS)
@@ -173,7 +172,7 @@ void base_status_GoalOk_switchHandler()
         break;
     case ARM_FAIL:
         ROS_INFO("Arm fail after base status ok");
-        pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+        pub_mobile_pose_goal.publish(HOME_POSE_GOAL); // repositioning to do
         break;
     default:
         break;
@@ -221,14 +220,14 @@ int main(int argc, char **argv)
     HOME_POSE_GOAL.pose.orientation.z = 0;
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
-    PLACE_GRASP_GOAL.pose.position.x = 0.2;
+    PLACE_GRASP_GOAL.header.frame_id = "locobot/base_footprint";
+    PLACE_GRASP_GOAL.pose.position.x = 0.3;
     PLACE_GRASP_GOAL.pose.position.y = 0;
     PLACE_GRASP_GOAL.pose.position.z = 0.1;
     PLACE_GRASP_GOAL.pose.orientation.x = 0;
     PLACE_GRASP_GOAL.pose.orientation.y = 0;
     PLACE_GRASP_GOAL.pose.orientation.z = 0;
     PLACE_GRASP_GOAL.pose.orientation.w = 1;
-
     arm_status.data = ARM_IDLE; // Initialize arm as idle
 
     ros::NodeHandle node_handle;

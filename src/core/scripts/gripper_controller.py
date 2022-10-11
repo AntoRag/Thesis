@@ -37,8 +37,8 @@ def gripper_callback(data):
         bond_close.start()
         joint_goal_close = move_group_gripper.get_current_joint_values()
         print("joint status",joint_goal_close[0]," ",joint_goal_close[1])
-        joint_goal_close[0] = 0.025
-        joint_goal_close[1] = -0.025
+        joint_goal_close[0] = 0.03
+        joint_goal_close[1] = -0.03
         # The go command can be called with joint values, poses, or without any
         # parameters if you have already set the pose or joint target for the group
         move_group_gripper.go(joint_goal_close, wait=True)
