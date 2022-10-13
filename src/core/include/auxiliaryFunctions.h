@@ -106,7 +106,11 @@ bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& p
     nav_msgs::MapMetaData info = pMap.info;
     float x = pPose.pose.position.x;
     float y = pPose.pose.position.y;
-    int index = floor(x / info.resolution) + floor(y / info.resolution) * info.width;
+    int indexX = floor(x / info.resolution);
+
+    int indexY = floor(y / info.resolution);
+    int indexY2 = indexY * info.width;
+    int index = indexX + indexY2;
     if (pMap.data.at(index) > 20)
         return false;
     return true;

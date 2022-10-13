@@ -31,24 +31,24 @@ std_msgs::Int64 base_status_msg;
 
 bool wait;
 bool success_navigation;
+nav_msgs::OccupancyGrid localMap;
 nav_msgs::OccupancyGrid globalMap;
-void localMapCallback(nav_msgs::OccupancyGrid& rMap)
+void localMapCallback(nav_msgs::OccupancyGrid rMap)
     {
     localMap = rMap;
     }
-void  globalMapCallback(nav_msgs::OccupancyGrid& rMap)
+void  globalMapCallback(nav_msgs::OccupancyGrid rMap)
     {
     globalMap = rMap;
     }
 //Handles simple case of goal pose from Communication Manacer
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
-    float distance = 0.5;
+    float distance = 0.6;
     ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseGoal rGoal;
     fMultiplyQuaternion(rGoal, pPose, distance);
-    fIsMapOccupied(localMap, rGoal.target_pose);
     if (fIsMapOccupied(localMap, rGoal.target_pose) || fIsMapOccupied(globalMap, rGoal.target_pose))
         {
         ROS_INFO("GOAL OCCUPIED!");
@@ -94,7 +94,6 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
 
 
     }
-nav_msgs::OccupancyGrid localMap;
 
 int main(int argc, char** argv)
     {
