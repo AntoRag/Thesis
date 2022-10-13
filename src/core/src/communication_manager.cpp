@@ -145,24 +145,12 @@ void base_status_GoalFail_switchHandler()
     }
 
 void base_status_GoalOk_switchHandler()
-<<<<<< < HEAD
     {
-    tf::TransformListener rTrasform(planning_frame_arm);
-    try {
-        rTrasform.waitForTransform(planning_frame_arm, "locobot/odom", ros::Time(0), ros::Duration(3.0));
-        std::cout << "transform exist\n";
-        }
-    catch (tf::TransformException ex) {
-        ROS_ERROR("%s", ex.what());
-        ros::Duration(1.0).sleep();
-        }
-====== =
-{
 
     tf2_ros::Buffer tf_buffer;
     tf2_ros::TransformListener tf2_listener(tf_buffer);
     geometry_msgs::TransformStamped odom_to_footprint;
->>>>>> > 9a753bb8b93bee66fc576eb476ce062213267081
+
     geometry_msgs::PoseStamped new_grasp_pose_goal;
 
     odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));

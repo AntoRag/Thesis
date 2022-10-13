@@ -14,7 +14,11 @@
       <uri>model://office_env_w</uri>
     </include>
     <include>     
-      <pose>0.832096 0.073682 0 0 0 0</pose>
+      <pose>0.392889 1.759657 0 0 0 -0.011248</pose>
+      <uri>model://6_Cube_StorageE</uri>
+    </include>
+    <include>     
+      <pose>0.551735 1.685606 0.430943 0 0 1.539267</pose>
       <uri>model://marker0</uri>
     </include>
     <!-- Trossen Robotics Offices -->

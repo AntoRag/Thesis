@@ -24,10 +24,13 @@
   <arg name="dof"                               default="6"/>
   <arg name="x"                                 default="0"/>
   <arg name="y"                                 default="0"/>
-  <arg name="z"                                 default="0"/> 
+  <arg name="z"                                 default="0"/>
+  <arg name="R"                                 default="0"/>
+  <arg name="P"                                 default="0"/>
+  <arg name="Y"                                 default="0"/> 
   <arg name="show_lidar"                        default="true"/>
   <arg name="use_camera"                        default="true"/> 
-  <arg name="spawner_configuration"             default="-J tilt $(arg camera_tilt_angle) -x $(arg x) -y $(arg y) -z $(arg z) "/>
+  <arg name="spawner_configuration"             default="-J tilt $(arg camera_tilt_angle) -x $(arg x) -y $(arg y) -z $(arg z) -R $(arg R) -P $(arg P) -Y $(arg Y)"/>
   <arg name="use_moveit_rviz"                   default="false"/>
   <arg name="use_moveit"                        default="false"/>    
   <arg name="use_fake"                          default="false"/>
