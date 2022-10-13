@@ -46,3 +46,8 @@ TebLocalPlannerROS:
   min_obstacle_dist: 0.3
   inflation_dist: 0.47
   dynamic_obstacle_inflation_dist: 0.47
+
+  #reduce backwards motion
+  weight_kinematics_forward_drive : 1000 #really high to discourage backwards movement
+  allow_init_with_backwards_motion: false
+  max_vel_x_backwards : 0.01

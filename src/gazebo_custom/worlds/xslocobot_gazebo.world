@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<sdf version="1.5">
+<sdf version="1.4">
   <world name="default">
     <!-- A global light source -->
     <include>
@@ -8,9 +8,14 @@
     <!-- A ground plane -->
     <include>
       <uri>model://ground_plane</uri>
-    <include>
+    </include>
+        <include>
+      <pose>0 2 0 0 0 0</pose>
+      <uri>model://office_env_w</uri>
+    </include>
+    <include>     
+      <pose>0.832096 0.073682 0 0 0 0</pose>
       <uri>model://marker0</uri>
-      <pose>2 2 0 0 0 0</pose>
     </include>
     <!-- Trossen Robotics Offices -->
     <!-- <include>
