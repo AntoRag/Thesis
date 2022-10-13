@@ -1,6 +1,8 @@
 
 #include <tf/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
+
+#include <nav_msgs/OccupancyGrid.h>
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
     {
     int i = 0;
@@ -28,7 +30,7 @@ void fQuatProd(float vector_a[], float vector_b[], float vector_result[]) {
 }
 
 
-void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal)
+void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
     {
     double roll, pitch, yaw;
     geometry_msgs::PoseStamped q1;
@@ -44,6 +46,29 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     Vector_subtract.pose.orientation.z = 0;
     Vector_subtract.pose.orientation.w = 1;
     
+    geometry_msgs::PoseStamped Vector_subtract;
+    geometry_msgs::Quaternion poseQ = pose_goal.pose.orientation;
+    geometry_msgs::Point poseP = pose_goal.pose.position;
+    tf::Quaternion poseQuaternion(poseQ.x, poseQ.y, poseQ.z, poseQ.w);
+
+    // float x = 2 * (poseQ.y * poseQ.w + poseQ.x * poseQ.z);
+    // float y = 2 * (poseQ.z * poseQ.w - poseQ.x * poseQ.y);
+    // float z = 1 - 2 * (poseQ.y * poseQ.y + poseQ.z * poseQ.z);
+    poseQuaternion.normalize();
+    base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
+    base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
+    //base_pose_goal.target_pose.pose.position.z = poseP.z + distance * poseQuaternion.getZ();
+
+
+    //poseQuaternion = poseQuaternion * distance;
+    // Vector_subtract.pose.position.x = -distance;
+    // Vector_subtract.pose.position.y = 0;
+    // Vector_subtract.pose.position.z = 0;
+    // Vector_subtract.pose.orientation.x = 0;
+    // Vector_subtract.pose.orientation.y = 0;
+    // Vector_subtract.pose.orientation.z = 0;
+    // Vector_subtract.pose.orientation.w = 1;
+
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
     q1.pose.orientation.x = 0.5;
@@ -61,7 +86,7 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     const float y2 = pose_goal.pose.orientation.y;
     const float z2 = pose_goal.pose.orientation.z;
     const float r2 = pose_goal.pose.orientation.w;
-
+    
 
     tf2::Quaternion q(x2,y2,z2,r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);
@@ -86,3 +111,18 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
 
     }
 
+
+bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
+    {
+    nav_msgs::MapMetaData info = pMap.info;
+    float x = pPose.pose.position.x;
+    float y = pPose.pose.position.y;
+    int indexX = floor(x / info.resolution);
+
+    int indexY = floor(y / info.resolution);
+    int indexY2 = indexY * info.width;
+    int index = indexX + indexY2;
+    if (pMap.data.at(index) > 20)
+        return true;
+    return false;
+    }

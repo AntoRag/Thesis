@@ -8,6 +8,7 @@ Panels:
         - /Move Base1/Local Plan1
         - /PlanningScene1/Scene Geometry1
         - /PlanningScene1/Scene Robot1
+        - /Pose1
       Splitter Ratio: 0.5944444537162781
     Tree Height: 500
   - Class: rviz/Selection
@@ -760,6 +761,22 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.30000001192092896
+      Head Radius: 0.10000000149011612
+      Name: Pose
+      Queue Size: 10
+      Shaft Length: 1
+      Shaft Radius: 0.05000000074505806
+      Shape: Arrow
+      Topic: /locobot/frodo/mobile_pose_goal
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 176; 240
