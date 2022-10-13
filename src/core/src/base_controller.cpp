@@ -14,10 +14,13 @@
 // Move base
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
+#include <nav_msgs/OccupancyGrid.h>
+#include <nav_msgs/GetMap.h>
 
 //frodo costants
 #include "../include/elrond_macro.h"
 #include <move_base/move_base.h>
+
 //Auxiliary functions
 #include "../include/auxiliaryFunctions.h"
 ros::Publisher pub_status;
@@ -28,16 +31,32 @@ std_msgs::Int64 base_status_msg;
 
 bool wait;
 bool success_navigation;
-
+nav_msgs::OccupancyGrid globalMap;
+void localMapCallback(nav_msgs::OccupancyGrid& rMap)
+    {
+    localMap = rMap;
+    }
+void  globalMapCallback(nav_msgs::OccupancyGrid& rMap)
+    {
+    globalMap = rMap;
+    }
 //Handles simple case of goal pose from Communication Manacer
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
+    float distance = 0.5;
     ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseGoal rGoal;
-    fMultiplyQuaternion(rGoal, pPose);
-    rGoal.target_pose.pose.position.x = pPose.pose.position.x;
-    rGoal.target_pose.pose.position.y = pPose.pose.position.y;
+    fMultiplyQuaternion(rGoal, pPose, distance);
+    fIsMapOccupied(localMap, rGoal.target_pose);
+    if (fIsMapOccupied(localMap, rGoal.target_pose) || fIsMapOccupied(globalMap, rGoal.target_pose))
+        {
+        ROS_INFO("GOAL OCCUPIED!");
+        return;
+        }
+
+    //rGoal.target_pose.pose.position.x = pPose.pose.position.x;
+   //rGoal.target_pose.pose.position.y = pPose.pose.position.y;
     rGoal.target_pose.header.frame_id = "map";
     rGoal.target_pose.header.stamp = ros::Time::now();
     MoveBaseClient client("/locobot/move_base", true);
@@ -75,12 +94,16 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
 
 
     }
+nav_msgs::OccupancyGrid localMap;
+
 int main(int argc, char** argv)
     {
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
+    ros::Subscriber sub_map_local = node_handle.subscribe("/locobot/move_base/local_costmap/costmap", 1, localMapCallback);
+    ros::Subscriber sub_map_global = node_handle.subscribe("/locobot/move_base/global_costmap/costmap", 1, globalMapCallback);
     pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     ros::spin();
     }
