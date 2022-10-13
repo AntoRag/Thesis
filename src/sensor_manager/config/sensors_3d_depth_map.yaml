@@ -1,7 +1,7 @@
 
 sensors:
   - sensor_plugin: occupancy_map_monitor/PointCloudOctomapUpdater
-    point_cloud_topic: /locobot/camera/depth_registered/points
+    point_cloud_topic: /locobot/rtabmap/depth/color/voxels
     point_subsample: 1
     padding_offset: 0.1
     padding_scale: 1
