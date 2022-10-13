@@ -20,7 +20,6 @@
       <arg name="use_octomap"                       value="$(arg use_octomap)"/>
       <arg name="use_moveit"                        value="$(arg use_moveit)"/>
       <arg name="use_artag"                         value="$(arg use_artag)"/>
-      <arg name="world_name"                         value="$(find gazebo_custom)/worlds/xslocobot_gazebo.world"/>
     </include>
   </group>
 
