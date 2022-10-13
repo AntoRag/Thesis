@@ -36,8 +36,8 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
     move_base_msgs::MoveBaseGoal rGoal;
     fMultiplyQuaternion(rGoal, pPose);
-    rGoal.target_pose.pose.position.x = pPose.pose.position.x-0.5;
-    rGoal.target_pose.pose.position.y =pPose.pose.position.y;
+    rGoal.target_pose.pose.position.x = pPose.pose.position.x;
+    rGoal.target_pose.pose.position.y = pPose.pose.position.y;
     rGoal.target_pose.header.frame_id = "map";
     rGoal.target_pose.header.stamp = ros::Time::now();
     MoveBaseClient client("/locobot/move_base", true);

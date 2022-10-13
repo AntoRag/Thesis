@@ -55,7 +55,7 @@ ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
 
 void id_callback(std_msgs::Int64 id_request)
-    {
+{
 
     ROS_INFO("Entered id_callback");
     int i;
@@ -66,86 +66,93 @@ void id_callback(std_msgs::Int64 id_request)
     i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
     // FOUND
     if (i >= 0)
-        {
+    {
 
         ROS_INFO("Id BASE_STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE)
-            {
+        {
+
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[id_request_buffer.front()].pose);
+            // double roll, pitch, yaw;
+            // tf::Quaternion qinv;
+            // tf::Quaternion q(base_pose_goal.pose.orientation.x, base_pose_goal.pose.orientation.y, base_pose_goal.pose.orientation.z, base_pose_goal.pose.orientation.w);
+            // qinv = q;
+            // tf::Matrix3x3 m(q);
+            // m.getRPY(roll, pitch, yaw);
             pick_place.data = PICK;
             pub_pick_place.publish(pick_place);
             pub_mobile_pose_goal.publish(base_pose_goal);
 
             ROS_INFO("Id finished publishing goal");
-            }
-        else
-            {
-            // TODO DO SOMETHING
-            }
         }
-    else // NOT FOUND
+        else
         {
-        ROS_ERROR("IL TESSSSOROOOO");
+            // TODO DO SOMETHING
         }
     }
+    else // NOT FOUND
+    {
+        ROS_ERROR("IL TESSSSOROOOO");
+    }
+}
 
 void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
-    {
+{
     markers_poses = req;
-    }
+}
 
 void arm_status_callback(std_msgs::Int64 arm_status)
-    {
+{
     ROS_INFO("Entered arm_callback");
     switch (arm_status.data)
+    {
+    case ARM_SUCCESS:
+        if (pick_place.data == PICK)
         {
-        case ARM_SUCCESS:
-            if (pick_place.data == PICK)
-                {
-                if (BASE_STATUS == BASE_GOAL_OK)
-                    {
-                    pick_place.data = PLACE;
-                    ROS_INFO("Comincio il place");
-                    pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
-                    pub_pick_place.publish(pick_place);
-                    }
-                }
-            break;
-        case ARM_IDLE:
-            id_request_buffer.pop_front();
-            break;
-        case ARM_FAIL:
-            // Reposition the base TO-DO
-            ROS_ERROR("ARM FAILED");
-            break;
-        case ARM_RUNNING:
-            ROS_INFO("ARM CURRENTLY RUNNING");
-            break;
-        default:
-            break;
+            if (BASE_STATUS == BASE_GOAL_OK)
+            {
+                pick_place.data = PLACE;
+                ROS_INFO("Comincio il place");
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+                pub_pick_place.publish(pick_place);
+            }
         }
+        break;
+    case ARM_IDLE:
+        id_request_buffer.pop_front();
+        break;
+    case ARM_FAIL:
+        // Reposition the base TO-DO
+        ROS_ERROR("ARM FAILED");
+        break;
+    case ARM_RUNNING:
+        ROS_INFO("ARM CURRENTLY RUNNING");
+        break;
+    default:
+        break;
     }
+}
 
 void base_status_idle_switchHandler()
-    {
+{
     // todo
     return;
-    }
+}
 void base_status_ToGoal_switchHandler()
 
-    {
+{
     // todo
     return;
-    }
+}
 void base_status_GoalFail_switchHandler()
 
-    {
+{
     // todo
     return;
-    }
+}
 
 void base_status_GoalOk_switchHandler()
-    {
+{
 
     tf2_ros::Buffer tf_buffer;
     tf2_ros::TransformListener tf2_listener(tf_buffer);
@@ -209,10 +216,10 @@ void base_status_callback(std_msgs::Int64 base_status)
     }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
 
-    putenv((char*)"ROS_NAMESPACE=locobot");
+    putenv((char *)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "communication_manager");
     HOME_POSE_GOAL.pose.position.x = 0;
     HOME_POSE_GOAL.pose.position.y = 0;
