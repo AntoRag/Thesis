@@ -5,8 +5,6 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /Status1
-        - /TF1
         - /Move Base1/Local Plan1
         - /PlanningScene1/Scene Geometry1
         - /PlanningScene1/Scene Robot1
@@ -53,7 +51,7 @@ Visualization Manager:
         Z: 0
       Plane: XY
       Plane Cell Count: 10
-      Reference Frame: locobot/odom
+      Reference Frame: map
       Value: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -237,8 +235,6 @@ Visualization Manager:
       Frame Timeout: 60
       Frames:
         All Enabled: false
-        ar_marker_0:
-          Value: true
         locobot/ar_tag_link:
           Value: true
         locobot/arm_base_link:
@@ -330,8 +326,7 @@ Visualization Manager:
                     locobot/tilt_link:
                       locobot/camera_link:
                         locobot/camera_depth_link:
-                          ar_marker_0:
-                            {}
+                          {}
                 locobot/caster_back_link:
                   {}
                 locobot/caster_front_link:
@@ -734,6 +729,34 @@ Visualization Manager:
         Show Robot Collision: true
         Show Robot Visual: true
       Value: false
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: ""
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: PointCloud2
+      Position Transformer: ""
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: ""
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 0; 176; 240
@@ -762,7 +785,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.0143465995788574
+      Distance: 4.5536885261535645
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -770,17 +793,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.08540748059749603
-        Y: 0.22730916738510132
-        Z: 0.2936592400074005
+        X: -0.026652490720152855
+        Y: -0.09356376528739929
+        Z: 0.6087855696678162
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1098442077636719
+      Pitch: 0.45520323514938354
       Target Frame: <Fixed Frame>
-      Yaw: 4.292745113372803
+      Yaw: 4.3240580558776855
     Saved: ~
 Window Geometry:
   Displays:
@@ -805,4 +828,4 @@ Window Geometry:
     collapsed: false
   Width: 1440
   X: 370
-  Y: 135
+  Y: 27

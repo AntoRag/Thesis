@@ -161,6 +161,7 @@ void base_status_GoalOk_switchHandler()
         ROS_INFO("Arm success after base status ok");
         grasp_pose_goal = PLACE_GRASP_GOAL;
         ros::Duration(5).sleep();
+        tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
         break;
     case ARM_IDLE:
@@ -201,7 +202,7 @@ void base_status_callback(std_msgs::Int64 base_status)
         base_status_GoalOk_switchHandler();
         break;
     case BASE_GOAL_FAIL:
-        ROS_INFO("Base fail");
+        ROS_ERROR("Base fail");
         base_status_GoalFail_switchHandler();
         break;
     }
@@ -220,9 +221,9 @@ int main(int argc, char **argv)
     HOME_POSE_GOAL.pose.orientation.z = 0;
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
-    PLACE_GRASP_GOAL.header.frame_id = "locobot/base_footprint";
-    PLACE_GRASP_GOAL.pose.position.x = 0.3;
-    PLACE_GRASP_GOAL.pose.position.y = 0;
+    PLACE_GRASP_GOAL.header.frame_id = "map";
+    PLACE_GRASP_GOAL.pose.position.x = -0.3;
+    PLACE_GRASP_GOAL.pose.position.y = 0.3;
     PLACE_GRASP_GOAL.pose.position.z = 0.1;
     PLACE_GRASP_GOAL.pose.orientation.x = 0;
     PLACE_GRASP_GOAL.pose.orientation.y = 0;

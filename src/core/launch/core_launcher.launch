@@ -3,15 +3,26 @@
     <arg name="use_octomap"                       default="true"/>
     <arg name="use_moveit"                        default="true"/>
     <arg name="use_artag"                         default="true"/>
+    <arg name="sim"                               default="true"/>
 
 
-
+  <group if="$(arg sim)">
     <include file="$(find nav_custom)/launch/xslocobot_nav_sim_rtabmap.launch">
       <arg name="use_octomap"                       value="$(arg use_octomap)"/>
       <arg name="use_moveit"                        value="$(arg use_moveit)"/>
       <arg name="use_artag"                         value="$(arg use_artag)"/>
       <arg name="world_name"                         value="$(find gazebo_custom)/worlds/xslocobot_gazebo.world"/>
     </include>
+  </group>
+
+  <group unless="$(arg sim)">
+    <include file="$(find nav_custom)/launch/xslocobot_nav.launch">
+      <arg name="use_octomap"                       value="$(arg use_octomap)"/>
+      <arg name="use_moveit"                        value="$(arg use_moveit)"/>
+      <arg name="use_artag"                         value="$(arg use_artag)"/>
+      <arg name="world_name"                         value="$(find gazebo_custom)/worlds/xslocobot_gazebo.world"/>
+    </include>
+  </group>
 
     <node
       pkg="core"
