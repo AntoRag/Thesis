@@ -89,10 +89,9 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
         base_status_msg.data = BASE_GOAL_FAIL;
         pub_status.publish(base_status_msg);
         }
-
-
-
-
+    ::sleep(5);
+    base_status_msg.data = BASE_IDLE;
+    pub_status.publish(base_status_msg);
     }
 
 int main(int argc, char** argv)

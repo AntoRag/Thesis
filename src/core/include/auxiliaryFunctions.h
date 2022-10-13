@@ -35,16 +35,27 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     geometry_msgs::PoseStamped q1;
     geometry_msgs::PoseStamped q1_conj;
     geometry_msgs::PoseStamped Vector_subtract;
+    geometry_msgs::Quaternion poseQ = pose_goal.pose.orientation;
+    geometry_msgs::Point poseP = pose_goal.pose.position;
+    tf::Quaternion poseQuaternion(poseQ.x, poseQ.y, poseQ.z, poseQ.w);
+
+    // float x = 2 * (poseQ.y * poseQ.w + poseQ.x * poseQ.z);
+    // float y = 2 * (poseQ.z * poseQ.w - poseQ.x * poseQ.y);
+    // float z = 1 - 2 * (poseQ.y * poseQ.y + poseQ.z * poseQ.z);
+    poseQuaternion.normalize();
+    base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
+    base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
+    //base_pose_goal.target_pose.pose.position.z = poseP.z + distance * poseQuaternion.getZ();
 
 
-
-    Vector_subtract.pose.position.x = -distance;
-    Vector_subtract.pose.position.y = 0;
-    Vector_subtract.pose.position.z = 0;
-    Vector_subtract.pose.orientation.x = 0;
-    Vector_subtract.pose.orientation.y = 0;
-    Vector_subtract.pose.orientation.z = 0;
-    Vector_subtract.pose.orientation.w = 1;
+    //poseQuaternion = poseQuaternion * distance;
+    // Vector_subtract.pose.position.x = -distance;
+    // Vector_subtract.pose.position.y = 0;
+    // Vector_subtract.pose.position.z = 0;
+    // Vector_subtract.pose.orientation.x = 0;
+    // Vector_subtract.pose.orientation.y = 0;
+    // Vector_subtract.pose.orientation.z = 0;
+    // Vector_subtract.pose.orientation.w = 1;
 
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
@@ -63,33 +74,33 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     const float y2 = pose_goal.pose.orientation.y;
     const float z2 = pose_goal.pose.orientation.z;
     const float r2 = pose_goal.pose.orientation.w;
-    // Conjugate second quaternion
-    const float x2_conj = -pose_goal.pose.orientation.x;
-    const float y2_conj = -pose_goal.pose.orientation.y;
-    const float z2_conj = -pose_goal.pose.orientation.z;
-    const float r2_conj = pose_goal.pose.orientation.w;
+    // // Conjugate second quaternion
+    // const float x2_conj = -pose_goal.pose.orientation.x;
+    // const float y2_conj = -pose_goal.pose.orientation.y;
+    // const float z2_conj = -pose_goal.pose.orientation.z;
+    // const float r2_conj = pose_goal.pose.orientation.w;
 
-    //Third quaternion
-    float x3 = Vector_subtract.pose.position.x;
-    float y3 = Vector_subtract.pose.position.y;
-    float z3 = Vector_subtract.pose.position.z;
+    // // //Third quaternion
+    // float x3 = Vector_subtract.pose.position.x;
+    // float y3 = Vector_subtract.pose.position.y;
+    // float z3 = Vector_subtract.pose.position.z;
 
-    float vecA[] = { x2_conj,y2_conj,z2_conj };
-    float vecB[] = { x2,y2,z2 };
-    float vecC[] = { x3,y3,z3 };
-    float temp[3];
-
-
-    fcross_product(vecC, vecB, temp);
-    fcross_product(vecA, temp, vecC);
-
-    Vector_subtract.pose.position.x = vecC[1];
-    Vector_subtract.pose.position.y = vecC[2];
-    Vector_subtract.pose.position.z = vecC[3];
+    // float vecA[] = { x2_conj,y2_conj,z2_conj };
+    // float vecB[] = { x2,y2,z2 };
+    // float vecC[] = { x3,y3,z3 };
+    // float temp[3];
 
 
-    base_pose_goal.target_pose.pose.position.x = base_pose_goal.target_pose.pose.position.x - Vector_subtract.pose.position.x;
-    base_pose_goal.target_pose.pose.position.y = base_pose_goal.target_pose.pose.position.y - Vector_subtract.pose.position.y;
+    // fcross_product(vecC, vecB, temp);
+    // fcross_product(vecA, temp, vecC);
+
+    // Vector_subtract.pose.position.x = vecC[1];
+    // Vector_subtract.pose.position.y = vecC[2];
+    // Vector_subtract.pose.position.z = vecC[3];
+
+
+    // base_pose_goal.target_pose.pose.position.x = base_pose_goal.target_pose.pose.position.x - Vector_subtract.pose.position.x;
+    // base_pose_goal.target_pose.pose.position.y = base_pose_goal.target_pose.pose.position.y - Vector_subtract.pose.position.y;
     // base_pose_goal.target_pose.pose.position.z = base_pose_goal.target_pose.pose.position.z - Vector_subtract.pose.position.z;
 
     base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
@@ -112,6 +123,6 @@ bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& p
     int indexY2 = indexY * info.width;
     int index = indexX + indexY2;
     if (pMap.data.at(index) > 20)
-        return false;
-    return true;
+        return true;
+    return false;
     }
