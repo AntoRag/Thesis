@@ -14,7 +14,6 @@
     <xacro:arg name="external_srdf_loc" default=""/>
 
     <xacro:property name="srdf_loc" value="$(arg external_srdf_loc)"/>
-
     <group name="interbotix_arm">
         <joint name="arm_base_link_joint" />
         <joint name="waist" />
@@ -32,6 +31,7 @@
         <link name="$(arg robot_name)/left_finger_link" />
         <link name="$(arg robot_name)/right_finger_link" />
     </group>
+
     <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
     <group_state name="Home" group="interbotix_arm">
         <joint name="elbow" value="0" />
@@ -71,6 +71,8 @@
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="interbotix_gripper" parent_link="$(arg robot_name)/ee_gripper_link" group="interbotix_gripper" />
+    <!-- Virtual Joint for ocotmap, currently not working beacuse of planning frame that cannot be changed -->
+    <virtual_joint name="map_to_base" type="floating" parent_frame="map" child_link="$(arg robot_name)/base_footprint"/>
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="$(arg robot_name)/ar_tag_link" link2="$(arg robot_name)/gripper_bar_link" reason="Default" />
     <disable_collisions link1="$(arg robot_name)/ar_tag_link" link2="$(arg robot_name)/gripper_link" reason="Adjacent" />

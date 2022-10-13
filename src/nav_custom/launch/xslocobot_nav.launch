@@ -55,9 +55,8 @@
                                                                       --Mem/STMSize 30"/>
 
 <!--/////////////////////////////MoveIt planner selection////////////////////////////////////-->
-<rosparam file="$(find interbotix_xslocobot_ros_control)/config/$(arg dof)dof_controllers_wCamera.yaml" command="load" ns="$(arg robot_name)"/>
+<rosparam file="$(find interbotix_xslocobot_ros_control)/config/$(arg dof)dof_controllers.yaml" command="load" ns="$(arg robot_name)"/>
 <rosparam file="$(find interbotix_xslocobot_ros_control)/config/hardware.yaml" command="load" ns="$(arg robot_name)"/>
-_wCamera
   <node
     name="controller_spawner"
     pkg="controller_manager"

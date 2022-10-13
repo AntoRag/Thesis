@@ -7,12 +7,11 @@
 #include <iostream>
 #include <string>
 // TF2
-#include <tf/transform_listener.h>
+#include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 // Ar_track_alvar
-#include <tf/transform_datatypes.h>
-#include <tf/transform_broadcaster.h>
+#include <tf2/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 
 // Move base
@@ -34,13 +33,14 @@ int64_t ARM_STATUS = ARM_IDLE; // ARM_STATUS = 0 is arm idle
 std_msgs::Int64 arm_status;
 int64_t BASE_STATUS = BASE_IDLE;
 int64_t BASE_PREV_STATUS = BASE_IDLE;
-int ID_REQUESTED = 0;
+int ID_REQUESTED = 100;
 
 const std::string planning_frame_arm = "locobot/base_footprint";
 
 geometry_msgs::PoseStamped grasp_pose_goal;
 geometry_msgs::PoseStamped base_pose_goal;
 geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
+geometry_msgs::PoseStamped PLACE_GRASP_GOAL;
 
 ar_track_alvar_msgs::AlvarMarkers markers_poses;
 std_msgs::Int64 pick_place;
@@ -53,9 +53,6 @@ ros::Publisher pub_grasp_pose_goal;
 ros::Publisher pub_pick_place;
 ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
-
-
-
 
 void id_callback(std_msgs::Int64 id_request)
     {
@@ -105,9 +102,10 @@ void arm_status_callback(std_msgs::Int64 arm_status)
         case ARM_SUCCESS:
             if (pick_place.data == PICK)
                 {
-                if (BASE_STATUS == BASE_IDLE)
+                if (BASE_STATUS == BASE_GOAL_OK)
                     {
                     pick_place.data = PLACE;
+                    ROS_INFO("Comincio il place");
                     pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                     pub_pick_place.publish(pick_place);
                     }
@@ -117,8 +115,11 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             id_request_buffer.pop_front();
             break;
         case ARM_FAIL:
+            // Reposition the base TO-DO
+            ROS_ERROR("ARM FAILED");
             break;
         case ARM_RUNNING:
+            ROS_INFO("ARM CURRENTLY RUNNING");
             break;
         default:
             break;
@@ -144,6 +145,7 @@ void base_status_GoalFail_switchHandler()
     }
 
 void base_status_GoalOk_switchHandler()
+<<<<<< < HEAD
     {
     tf::TransformListener rTrasform(planning_frame_arm);
     try {
@@ -154,62 +156,73 @@ void base_status_GoalOk_switchHandler()
         ROS_ERROR("%s", ex.what());
         ros::Duration(1.0).sleep();
         }
+====== =
+{
+
+    tf2_ros::Buffer tf_buffer;
+    tf2_ros::TransformListener tf2_listener(tf_buffer);
+    geometry_msgs::TransformStamped odom_to_footprint;
+>>>>>> > 9a753bb8b93bee66fc576eb476ce062213267081
     geometry_msgs::PoseStamped new_grasp_pose_goal;
+
+    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
 
     auto idx = id_request_buffer.front();
     switch (ARM_STATUS)
-        {
-        case ARM_SUCCESS:
-            ROS_INFO("Arm success after base status ok");
-            break;
-        case ARM_IDLE:
-            ROS_INFO("Arm idle after base status ok");
-            fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
-            ROS_INFO("Sono vivo");
-            rTrasform.transformPose("locobot/odom", grasp_pose_goal, new_grasp_pose_goal);
-            grasp_pose_goal = new_grasp_pose_goal;
-            ROS_INFO("Non sono morto, mando il goal");
-            pub_grasp_pose_goal.publish(grasp_pose_goal);
-            break;
-        case ARM_FAIL:
-            ROS_INFO("Arm fail after base status ok");
-            pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
-            break;
-        default:
-            break;
-        }
-    }
-void base_status_callback(std_msgs::Int64 base_status)
     {
+    case ARM_SUCCESS:
+        ROS_INFO("Arm success after base status ok");
+        grasp_pose_goal = PLACE_GRASP_GOAL;
+        ros::Duration(5).sleep();
+        tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+        pub_grasp_pose_goal.publish(grasp_pose_goal);
+        break;
+    case ARM_IDLE:
+        ROS_INFO("Arm idle after base status ok");
+        fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
+        tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+        ros::Duration(5).sleep();
+        pub_grasp_pose_goal.publish(grasp_pose_goal);
+        break;
+    case ARM_FAIL:
+        ROS_INFO("Arm fail after base status ok");
+        pub_mobile_pose_goal.publish(HOME_POSE_GOAL); // repositioning to do
+        break;
+    default:
+        break;
+    }
+}
+void base_status_callback(std_msgs::Int64 base_status)
+{
     ROS_INFO("Entered base_callback");
     // Need previous status to handle switching
-    BASE_PREV_STATUS = BASE_STATUS;
+    // BASE_PREV_STATUS = BASE_STATUS;
     BASE_STATUS = base_status.data;
-    if (BASE_STATUS == BASE_PREV_STATUS)
-        return;
+    // if (BASE_STATUS == BASE_PREV_STATUS)
+    //     return;
     switch (BASE_STATUS)
-        {
-        case BASE_IDLE:
-            ROS_INFO("Base idle");
-            base_status_idle_switchHandler();
-            break;
-        case BASE_TO_GOAL:
-            ROS_INFO("Base to goal");
-            base_status_ToGoal_switchHandler();
-            break;
-        case BASE_GOAL_OK:
-            ROS_INFO("Base goal ok");
-            base_status_GoalOk_switchHandler();
-            break;
-        case BASE_GOAL_FAIL:
-            ROS_INFO("Base fail");
-            base_status_GoalFail_switchHandler();
-            break;
-        }
+    {
+    case BASE_IDLE:
+        ROS_INFO("Base idle");
+        base_status_idle_switchHandler();
+        break;
+    case BASE_TO_GOAL:
+        ROS_INFO("Base to goal");
+        base_status_ToGoal_switchHandler();
+        break;
+    case BASE_GOAL_OK:
+        ROS_INFO("Base goal ok");
+        base_status_GoalOk_switchHandler();
+        break;
+    case BASE_GOAL_FAIL:
+        ROS_ERROR("Base fail");
+        base_status_GoalFail_switchHandler();
+        break;
     }
+}
 
 int main(int argc, char** argv)
-    {
+{
 
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "communication_manager");
@@ -220,7 +233,17 @@ int main(int argc, char** argv)
     HOME_POSE_GOAL.pose.orientation.y = 0;
     HOME_POSE_GOAL.pose.orientation.z = 0;
     HOME_POSE_GOAL.pose.orientation.w = 1;
+
+    PLACE_GRASP_GOAL.header.frame_id = "map";
+    PLACE_GRASP_GOAL.pose.position.x = -0.3;
+    PLACE_GRASP_GOAL.pose.position.y = 0.3;
+    PLACE_GRASP_GOAL.pose.position.z = 0.1;
+    PLACE_GRASP_GOAL.pose.orientation.x = 0;
+    PLACE_GRASP_GOAL.pose.orientation.y = 0;
+    PLACE_GRASP_GOAL.pose.orientation.z = 0;
+    PLACE_GRASP_GOAL.pose.orientation.w = 1;
     arm_status.data = ARM_IDLE; // Initialize arm as idle
+
     ros::NodeHandle node_handle;
     ros::Subscriber sub_id_request = node_handle.subscribe("/locobot/frodo/id_request", 1, id_callback);
     ros::Subscriber sub_artag = node_handle.subscribe("/locobot/move_group/ar_pose_marker", 1, artag_callback);
@@ -231,9 +254,7 @@ int main(int argc, char** argv)
     pub_pick_place = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/pick_or_place", 1);
     pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
     pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);
-    bond::Bond bond_pick_arm("/locobot/pick_arm", "PickArm");
-    bond::Bond bond_place_arm("/locobot/place_arm", "PlaceArm");
+
     ros::spin();
     return 0;
-    }
-
+}

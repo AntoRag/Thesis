@@ -7,8 +7,22 @@
   <arg name="use_actual"  default="false"/>
   <arg name="use_artag"   default="false"/>
   <arg name="use_octomap" default="false"/>
-  
-  
+
+<!-- ////////////////// TEST ////////////////// -->
+<!-- 
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+                <param name="resolution" type="double" value="0.03" />
+                <param name="frame_id" type="string" value="map" />
+                <param name="sensor_model/hit" value="0.8" />
+                <param name="sensor_model/miss" value="0.3" />
+                <param name="sensor_model/max_range" value="4.0" />
+                <param name="occupancy_min_z" value="0.8" />
+                <param name="occupancy_max_z" value="10.0" />
+                <param name="pointcloud_min_z" value="0.8" />
+                <param name="pointcloud_max_z" value="10.0" />
+                <remap from="cloud_in" to="/locobot/camera/depth_registered/points" />
+  </node> -->
+
   <group if="$(arg use_camera)">
     <!-- Params for 3D sensors config -->
     <!-- Load the robot specific sensor manager; this sets the moveit_sensor_manager ROS parameter -->
@@ -16,9 +30,11 @@
     <group if="$(arg use_actual)">
       <!--/////////////////////////////Octomap implementation////////////////////////////////////-->
       <group if="$(arg use_octomap)">
-        <param name="octomap_frame" type="string" value="map" /> 
-        <param name="octomap_resolution" type="double" value="0.015" /> <!--Maximum accurancy in mapping-->
-        <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
+        <param name="octomap_frame" type="string" value="locobot/base_footprint" />  -->
+        <!--Maximum accurancy in mapping-->
+        <param name="octomap_resolution" type="double" value="0.05" /> 
+        <!--Measurement range of the camera-->
+        <param name="max_range" type="double" value="2.0" /> 
         <rosparam command="load" file="$(find sensor_manager)/config/sensors_3d_depth_map.yaml" />
       </group>
         <!--/////////////////////////////Artag implementation////////////////////////////////////-->
@@ -31,9 +47,11 @@
     <group unless="$(arg use_actual)">
       <!--/////////////////////////////Octomap implementation////////////////////////////////////-->
       <group if="$(arg use_octomap)">
-        <param name="octomap_frame" type="string" value="locobot/odom" /> 
-        <param name="octomap_resolution" type="double" value="0.025" /> <!--Maximum accurancy in mapping-->
-        <param name="max_range" type="double" value="4.0" /> <!--Measurement range of the camera-->
+        <param name="octomap_frame" type="string" value="locobot/base_footprint" /> 
+        <!--Maximum accurancy in mapping-->
+        <param name="octomap_resolution" type="double" value="0.05" /> 
+        <!--Measurement range of the camera-->
+        <param name="max_range" type="double" value="2.0" /> 
         <rosparam command="load" file="$(find sensor_manager)/config/sensors_3d_depth_map_sim.yaml" />
       </group>
         <!--/////////////////////////////Artag implementation////////////////////////////////////-->
@@ -41,7 +59,7 @@
           <arg name="use_actual"       value="$(arg use_actual)"/>
         </include> 
     </group>
-
+  
   </group>
 
 </launch>
