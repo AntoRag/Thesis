@@ -55,7 +55,7 @@ ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
 
 void id_callback(std_msgs::Int64 id_request)
-{
+    {
 
     ROS_INFO("Entered id_callback");
     int i;
@@ -66,89 +66,86 @@ void id_callback(std_msgs::Int64 id_request)
     i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
     // FOUND
     if (i >= 0)
-    {
+        {
 
         ROS_INFO("Id BASE_STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE)
-        {
+            {
 
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[id_request_buffer.front()].pose);
             pick_place.data = PICK;
             pub_pick_place.publish(pick_place);
             pub_mobile_pose_goal.publish(base_pose_goal);
             ROS_INFO("Id finished publishing goal");
-        }
+            }
         else
-        {
+            {
             // TODO DO SOMETHING
+            }
+        }
+    else // NOT FOUND
+        {
+        ROS_ERROR("ARTag not found in the scene!");
         }
     }
-    else // NOT FOUND
-    {
-        ROS_ERROR("ARTag not found in the scene!");
-    }
-}
 
 void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
-{
+    {
     markers_poses = req;
-}
+    }
+
 
 void arm_status_callback(std_msgs::Int64 arm_status)
-{
+    {
     ROS_INFO("Entered arm_callback");
     switch (arm_status.data)
-    {
-    case ARM_SUCCESS:
-        if (pick_place.data == PICK)
         {
-            while (BASE_STATUS != BASE_IDLE)
-            {
-                ros::Duration(1).sleep();
-            }
-
-            pick_place.data = PLACE;
-            ROS_INFO("Comincio il place");
-            pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
-            pub_pick_place.publish(pick_place);
+        case ARM_SUCCESS:
+            if (pick_place.data == PICK)
+                {
+                WaitOnVariable(BASE_STATUS, BASE_IDLE);
+                pick_place.data = PLACE;
+                ROS_INFO("Comincio il place");
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+                pub_pick_place.publish(pick_place);
+                }
+            else {
+                id_request_buffer.pop_front();
+                }
+            break;
+        case ARM_IDLE:
+            break;
+        case ARM_FAIL:
+            ROS_ERROR("ARM FAILED");
+            break;
+        case ARM_RUNNING:
+            ROS_INFO("ARM CURRENTLY RUNNING");
+            break;
+        default:
+            break;
         }
-        else {
-            id_request_buffer.pop_front();
-        }
-        break;
-    case ARM_IDLE:
-        break;
-    case ARM_FAIL:
-        ROS_ERROR("ARM FAILED");
-        break;
-    case ARM_RUNNING:
-        ROS_INFO("ARM CURRENTLY RUNNING");
-        break;
-    default:
-        break;
     }
-}
 
 void base_status_idle_switchHandler()
-{
+    {
     // todo
     return;
-}
+    }
 void base_status_ToGoal_switchHandler()
 
-{
+    {
     // todo
     return;
-}
+    }
 void base_status_GoalFail_switchHandler()
 
-{
+    {
     // todo
     return;
-}
+    }
 
 void base_status_GoalOk_switchHandler()
-{
+    {
 
     tf2_ros::Buffer tf_buffer;
     tf2_ros::TransformListener tf2_listener(tf_buffer);
@@ -159,51 +156,26 @@ void base_status_GoalOk_switchHandler()
     odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
 
     auto idx = id_request_buffer.front();
-    // switch (ARM_STATUS)
-    // {
-    // case ARM_SUCCESS:
-    //     ROS_INFO("Arm success after base status ok");
-    //     grasp_pose_goal = PLACE_GRASP_GOAL;
-    //     ros::Duration(5).sleep();
-    //     tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
-    //     pub_grasp_pose_goal.publish(grasp_pose_goal);
-    //     break;
-    // case ARM_IDLE:
-    //     ROS_INFO("Arm idle after base status ok");
-    //     fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
-    //     tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
-    //     ros::Duration(5).sleep();
-    //     pub_grasp_pose_goal.publish(grasp_pose_goal);
-    //     break;
-    // case ARM_FAIL:
-    //     ROS_ERROR("Arm fail after base status ok");
-    //     pub_mobile_pose_goal.publish(HOME_POSE_GOAL); // repositioning to do
-    //     break;
-    // default:
-    //     break;
-    // }
-    while (ARM_STATUS != ARM_IDLE){
-        ros::Duration(1).sleep();
-    }
 
-    if (pick_place.data == PICK){
+    WaitOnVariable(ARM_STATUS, ARM_IDLE);
+    if (pick_place.data == PICK) {
         ROS_INFO("Sending grasp pick goal");
         fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
         tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
         ros::Duration(5).sleep();
         pub_grasp_pose_goal.publish(grasp_pose_goal);
-    }
-    else{
+        }
+    else {
         ROS_INFO("Sending grasp place goal");
         grasp_pose_goal = PLACE_GRASP_GOAL;
         ros::Duration(5).sleep();
         tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
-    }
+        }
 
-}
+    }
 void base_status_callback(std_msgs::Int64 base_status)
-{
+    {
     ROS_INFO("Entered base_callback");
     // Need previous status to handle switching
     // BASE_PREV_STATUS = BASE_STATUS;
@@ -211,30 +183,30 @@ void base_status_callback(std_msgs::Int64 base_status)
     // if (BASE_STATUS == BASE_PREV_STATUS)
     //     return;
     switch (BASE_STATUS)
-    {
-    case BASE_IDLE:
-        ROS_INFO("Base idle");
-        base_status_idle_switchHandler();
-        break;
-    case BASE_TO_GOAL:
-        ROS_INFO("Base to goal");
-        base_status_ToGoal_switchHandler();
-        break;
-    case BASE_GOAL_OK:
-        ROS_INFO("Base goal ok");
-        base_status_GoalOk_switchHandler();
-        break;
-    case BASE_GOAL_FAIL:
-        ROS_ERROR("Base fail");
-        base_status_GoalFail_switchHandler();
-        break;
+        {
+        case BASE_IDLE:
+            ROS_INFO("Base idle");
+            base_status_idle_switchHandler();
+            break;
+        case BASE_TO_GOAL:
+            ROS_INFO("Base to goal");
+            base_status_ToGoal_switchHandler();
+            break;
+        case BASE_GOAL_OK:
+            ROS_INFO("Base goal ok");
+            base_status_GoalOk_switchHandler();
+            break;
+        case BASE_GOAL_FAIL:
+            ROS_ERROR("Base fail");
+            base_status_GoalFail_switchHandler();
+            break;
+        }
     }
-}
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv)
+    {
 
-    putenv((char *)"ROS_NAMESPACE=locobot");
+    putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "communication_manager");
     HOME_POSE_GOAL.pose.position.x = 0;
     HOME_POSE_GOAL.pose.position.y = 0;
@@ -267,4 +239,4 @@ int main(int argc, char **argv)
 
     ros::spin();
     return 0;
-}
+    }

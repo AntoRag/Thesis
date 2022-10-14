@@ -3,6 +3,8 @@
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 
 #include <nav_msgs/OccupancyGrid.h>
+
+
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
     {
     int i = 0;
@@ -25,7 +27,7 @@ void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_ms
 void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
     {
     geometry_msgs::PoseStamped q1;
-    geometry_msgs::PoseStamped new_pose; // defined in Marker frame
+    geometry_msgs::PoseStamped new_pose;
 
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
@@ -44,7 +46,6 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     const float y2 = pose_goal.pose.orientation.y;
     const float z2 = pose_goal.pose.orientation.z;
     const float r2 = pose_goal.pose.orientation.w;
-    
 
     tf2::Quaternion q(x2,y2,z2,r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);   
@@ -64,22 +65,17 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
 
-    ROS_INFO("Pose goal: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f",pose_goal.pose.position.x,pose_goal.pose.position.y,base_pose_goal.target_pose.pose.position.x,base_pose_goal.target_pose.pose.position.y);
+    ROS_INFO("Pose goal: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.pose.position.x, pose_goal.pose.position.y, base_pose_goal.target_pose.pose.position.x, base_pose_goal.target_pose.pose.position.y);
 
     }
 
 
-bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
+void WaitOnVariable(int64_t& pVariable, int64_t pPredicate)
     {
-    nav_msgs::MapMetaData info = pMap.info;
-    float x = pPose.pose.position.x;
-    float y = pPose.pose.position.y;
-    int indexX = floor(x / info.resolution);
-
-    int indexY = floor(y / info.resolution);
-    int indexY2 = indexY * info.width;
-    int index = indexX + indexY2;
-    if (pMap.data.at(index) > 20)
-        return true;
-    return false;
+    ros::Rate loop_rate(10);
+    while (pVariable != pPredicate)
+        {
+        ros::spinOnce();
+        loop_rate.sleep();
+        }
     }
