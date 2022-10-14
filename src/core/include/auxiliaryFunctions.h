@@ -108,3 +108,13 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
 
     }
 
+
+void WaitOnVariable(int64_t& pVariable, int64_t pPredicate)
+    {
+    ros::Rate loop_rate(10);
+    while (pVariable != pPredicate)
+        {
+        ros::spinOnce();
+        loop_rate.sleep();
+        }
+    }
