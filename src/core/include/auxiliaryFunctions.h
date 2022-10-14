@@ -45,29 +45,6 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     Vector_subtract.pose.orientation.y = 0;
     Vector_subtract.pose.orientation.z = 0;
     Vector_subtract.pose.orientation.w = 1;
-    
-    geometry_msgs::PoseStamped Vector_subtract;
-    geometry_msgs::Quaternion poseQ = pose_goal.pose.orientation;
-    geometry_msgs::Point poseP = pose_goal.pose.position;
-    tf::Quaternion poseQuaternion(poseQ.x, poseQ.y, poseQ.z, poseQ.w);
-
-    // float x = 2 * (poseQ.y * poseQ.w + poseQ.x * poseQ.z);
-    // float y = 2 * (poseQ.z * poseQ.w - poseQ.x * poseQ.y);
-    // float z = 1 - 2 * (poseQ.y * poseQ.y + poseQ.z * poseQ.z);
-    poseQuaternion.normalize();
-    base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
-    base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
-    //base_pose_goal.target_pose.pose.position.z = poseP.z + distance * poseQuaternion.getZ();
-
-
-    //poseQuaternion = poseQuaternion * distance;
-    // Vector_subtract.pose.position.x = -distance;
-    // Vector_subtract.pose.position.y = 0;
-    // Vector_subtract.pose.position.z = 0;
-    // Vector_subtract.pose.orientation.x = 0;
-    // Vector_subtract.pose.orientation.y = 0;
-    // Vector_subtract.pose.orientation.z = 0;
-    // Vector_subtract.pose.orientation.w = 1;
 
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
@@ -91,7 +68,7 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     tf2::Quaternion q(x2,y2,z2,r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);
     tf2::Matrix3x3 m_FromMarkertoMap=m_FromMaptoMarker.inverse();    
-    tf2::Vector3 vector(0,0,-0.5);
+    tf2::Vector3 vector(0,0,-distance);
     tf2::Vector3 raw1,raw2,raw3,vector1;
     raw1 = m_FromMarkertoMap.getRow(0);
     raw2 = m_FromMarkertoMap.getRow(1);

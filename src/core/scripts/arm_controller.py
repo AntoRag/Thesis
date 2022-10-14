@@ -29,7 +29,7 @@ PLACE = 1
 current_arm_status = Int64()
 gripper_command = Int64()
 current_arm_status.data = ARM_IDLE
-
+pick_place = Int64()
 
 def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
     timeout = 10  # timeout in seconds before error
@@ -131,8 +131,14 @@ def go_to_pose_goal(move_group, target_pose):
     current_pose = move_group.get_current_pose().pose
     return success
 
+def dummySuccess():
+        current_arm_status.data = ARM_SUCCESS
+        arm_status_pub.publish(current_arm_status)
+        rospy.sleep(5)
+        current_arm_status.data = ARM_IDLE
+        arm_status_pub.publish(current_arm_status)
 
-pick_place = Int64()
+
 
 
 def GraspCallback(pose_goal):
@@ -141,7 +147,7 @@ def GraspCallback(pose_goal):
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
     rospy.loginfo("Arm currently running")  # log when running
-
+    return dummySuccess()
     if pick_place == PICK:
 
         # then we proceed by approaching the object defining a pre_grasp_pose
@@ -259,9 +265,11 @@ def GraspCallback(pose_goal):
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
 
+        current_arm_status.data = ARM_SUCCESS
+        arm_status_pub.publish(current_arm_status)
+        rospy.sleep(5)
         current_arm_status.data = ARM_IDLE
         arm_status_pub.publish(current_arm_status)
-
     else:
         rospy.ERROR("Error in giving command to pick or place")
 
@@ -306,3 +314,4 @@ def listener():
 
 if __name__ == '__main__':
     listener()
+
