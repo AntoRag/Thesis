@@ -47,21 +47,20 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     const float z2 = pose_goal.pose.orientation.z;
     const float r2 = pose_goal.pose.orientation.w;
 
-    tf2::Quaternion q(x2,y2,z2,r2);
-    tf2::Matrix3x3 m_FromMaptoMarker(q);   
-    tf2::Vector3 vector(0,0,distance);
-    tf2::Vector3 raw1,raw2,raw3;
+    tf2::Quaternion q(x2, y2, z2, r2);
+    tf2::Matrix3x3 m_FromMaptoMarker(q);
+    tf2::Vector3 vector(0, 0, distance);
+    tf2::Vector3 raw1, raw2, raw3;
 
     raw1 = m_FromMaptoMarker.getRow(0);
     raw2 = m_FromMaptoMarker.getRow(1);
     raw3 = m_FromMaptoMarker.getRow(2);
 
-    new_pose.pose.position.x = raw1.getX()*vector.getX()+raw1.getY()*vector.getY()+raw1.getZ()*vector.getZ()+pose_goal.pose.position.x;
-    new_pose.pose.position.y = raw2.getX()*vector.getX()+raw2.getY()*vector.getY()+raw2.getZ()*vector.getZ()+pose_goal.pose.position.y;
-    new_pose.pose.position.z = raw3.getX()*vector.getX()+raw3.getY()*vector.getY()+raw3.getZ()*vector.getZ()+pose_goal.pose.position.z;
-
-    base_pose_goal.target_pose.pose.position.x = new_pose.pose.position.x ; 
-    base_pose_goal.target_pose.pose.position.y = new_pose.pose.position.y ;
+    new_pose.pose.position.x = raw1.getX() * vector.getX() + raw1.getY() * vector.getY() + raw1.getZ() * vector.getZ() + pose_goal.pose.position.x;
+    new_pose.pose.position.y = raw2.getX() * vector.getX() + raw2.getY() * vector.getY() + raw2.getZ() * vector.getZ() + pose_goal.pose.position.y;
+    new_pose.pose.position.z = raw3.getX() * vector.getX() + raw3.getY() * vector.getY() + raw3.getZ() * vector.getZ() + pose_goal.pose.position.z;
+    base_pose_goal.target_pose.pose.position.x = new_pose.pose.position.x;
+    base_pose_goal.target_pose.pose.position.y = new_pose.pose.position.y;
     base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
 
@@ -72,7 +71,7 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
 
 void WaitOnVariable(int64_t& pVariable, int64_t pPredicate)
     {
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(1);
     while (pVariable != pPredicate)
         {
         ros::spinOnce();

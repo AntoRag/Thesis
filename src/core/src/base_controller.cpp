@@ -29,15 +29,14 @@
 
 
 
-tf2_ros::Buffer tfbuf(ros::Duration(10));
-costmap_2d::Costmap2DROS local_costmap("local_costmap", tfbuf);
-costmap_2d::Costmap2DROS global_costmap("global_costmap", tfbuf);
+
+
+
+typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 MoveBaseClient moveBaseClient("/locobot/move_base", true);
-
 ros::Publisher pub_status;
 ros::Publisher goal_pub;
-typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
 std_msgs::Int64 base_status_msg;
 
@@ -47,6 +46,10 @@ nav_msgs::OccupancyGrid localMap;
 nav_msgs::OccupancyGrid globalMap;
 
 
+
+tf2_ros::Buffer tfbuf(ros::Duration(10));
+costmap_2d::Costmap2DROS local_costmap("local_costmap", tfbuf);
+costmap_2d::Costmap2DROS global_costmap("global_costmap", tfbuf);
 
 bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
     {
@@ -61,7 +64,7 @@ bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& p
         }
 
     global_costmap.getCostmap()->worldToMap(x, y, mx, my);
-    unsigned char cost = global_costmap.getCostmap()->getCost(mx, my);
+    cost = global_costmap.getCostmap()->getCost(mx, my);
     if (cost < 20)
         {
         return false;
@@ -149,8 +152,6 @@ int main(int argc, char** argv)
     ros::NodeHandle node_handle;
 
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
-    ros::Subscriber sub_map_local = node_handle.subscribe("/locobot/move_base/local_costmap/costmap", 1, localMapCallback);
-    ros::Subscriber sub_map_global = node_handle.subscribe("/locobot/move_base/global_costmap/costmap", 1, globalMapCallback);
     pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     ros::spin();
     }
