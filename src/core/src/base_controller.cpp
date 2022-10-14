@@ -35,7 +35,6 @@
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-MoveBaseClient moveBaseClient("/locobot/move_base", true);
 ros::Publisher pub_status;
 ros::Publisher goal_pub;
 
@@ -43,29 +42,34 @@ std_msgs::Int64 base_status_msg;
 
 bool wait;
 bool success_navigation;
-nav_msgs::OccupancyGrid localMap;
-nav_msgs::OccupancyGrid globalMap;
 
 
 
-tf2_ros::Buffer tfbuf(ros::Duration(10));
-costmap_2d::Costmap2DROS local_costmap("local_costmap", tfbuf);
-costmap_2d::Costmap2DROS global_costmap("global_costmap", tfbuf);
+costmap_2d::Costmap2DROS* local_costmap = nullptr;
+costmap_2d::Costmap2DROS* global_costmap= nullptr;
 
-bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
+bool fIsMapOccupied(geometry_msgs::PoseStamped& pPose)
     {
+if(local_costmap == nullptr)
+{
+tf2_ros::Buffer tfbuf(ros::Duration(10));
+tfbuf.setUsingDedicatedThread(true);
+local_costmap  = new costmap_2d::Costmap2DROS("local_costmap", tfbuf);
+global_costmap = new costmap_2d::Costmap2DROS("global_costmap", tfbuf);
+ 
+ }
     unsigned int mx, my;
     float x = pPose.pose.position.x;
     float y = pPose.pose.position.y;
-    local_costmap.getCostmap()->worldToMap(x, y, mx, my);
-    unsigned char cost = local_costmap.getCostmap()->getCost(mx, my);
+    local_costmap->getCostmap()->worldToMap(x, y, mx, my);
+    unsigned char cost = local_costmap->getCostmap()->getCost(mx, my);
     if (cost < 20)
         {
         return false;
         }
 
-    global_costmap.getCostmap()->worldToMap(x, y, mx, my);
-    cost = global_costmap.getCostmap()->getCost(mx, my);
+    global_costmap->getCostmap()->worldToMap(x, y, mx, my);
+    cost = global_costmap->getCostmap()->getCost(mx, my);
     if (cost < 20)
         {
         return false;
@@ -89,9 +93,15 @@ bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseSt
     float distance = 0.4;
     ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
-
+     
+    if (pPose.pose.position.x == 0 &&
+    pPose.pose.position.y == 0 &&
+    pPose.pose.position.z == 0)
+    {
+        distance = 0;
+    }
     fMultiplyQuaternion(pGoal, pPose, distance);
-    while (fIsMapOccupied(localMap, pGoal.target_pose) || fIsMapOccupied(globalMap, pGoal.target_pose))
+    while (fIsMapOccupied( pGoal.target_pose) || fIsMapOccupied(pGoal.target_pose))
         {
         retry++;
         if (retry >= 2)
@@ -112,6 +122,7 @@ bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseSt
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
     move_base_msgs::MoveBaseGoal rGoal;
+    MoveBaseClient moveBaseClient("/locobot/move_base", true);
     if (moveBaseGoalCalc(rGoal, pPose))
         {
         while (!moveBaseClient.waitForServer(ros::Duration(5.0)))
@@ -151,7 +162,6 @@ int main(int argc, char** argv)
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
-
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
     pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     ros::spin();

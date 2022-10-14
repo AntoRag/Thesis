@@ -294,7 +294,7 @@ def listener():
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(
         robot_description="/locobot/robot_description")
-    scene = moveit_commander.PlanningSceneInterface(synchronous=True)
+    scene = moveit_commander.PlanningSceneInterface()
 
     # initialize the bond used for synchronizing
     # the opening and the close of the gripper
