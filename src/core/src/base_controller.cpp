@@ -18,6 +18,7 @@
 #include <nav_msgs/GetMap.h>
 
 #include <costmap_2d/costmap_2d_ros.h>
+#include <costmap_2d/costmap_2d.h>
 #include <tf2_ros/buffer.h>
 
 //frodo costants

@@ -99,7 +99,8 @@ void arm_status_callback(std_msgs::Int64 arm_status)
     {
     ROS_INFO("Entered arm_callback");
     ARM_STATUS = arm_status.data;
-    switch (arm_status.data)
+
+    switch (ARM_STATUS)
         {
         case ARM_SUCCESS:
             if (pick_place.data == PICK)
@@ -110,7 +111,8 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 pub_pick_place.publish(pick_place);
                 }
-            else {
+            else 
+                {
                 id_request_buffer.pop_front();
                 }
             break;
