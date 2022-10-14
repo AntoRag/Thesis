@@ -33,6 +33,7 @@ tf2_ros::Buffer tfbuf(ros::Duration(10));
 costmap_2d::Costmap2DROS local_costmap("local_costmap", tfbuf);
 costmap_2d::Costmap2DROS global_costmap("global_costmap", tfbuf);
 
+MoveBaseClient moveBaseClient("/locobot/move_base", true);
 
 ros::Publisher pub_status;
 ros::Publisher goal_pub;
@@ -78,49 +79,61 @@ bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& p
 //     globalMap = rMap;
 //     }
 //Handles simple case of goal pose from Communication Manacer
-void moveBaseCallback(geometry_msgs::PoseStamped pPose)
+bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseStamped pPose)
     {
-    float distance = 0.6;
+    uint retry = 0;
+    float distance = 0.4;
     ROS_INFO("Inside movebasecallback");
     actionlib::SimpleClientGoalState rResult = actionlib::SimpleClientGoalState::ABORTED;
-    move_base_msgs::MoveBaseGoal rGoal;
-    fMultiplyQuaternion(rGoal, pPose, distance);
-    if (fIsMapOccupied(localMap, rGoal.target_pose) || fIsMapOccupied(globalMap, rGoal.target_pose))
+
+    fMultiplyQuaternion(pGoal, pPose, distance);
+    while (fIsMapOccupied(localMap, pGoal.target_pose) || fIsMapOccupied(globalMap, pGoal.target_pose))
         {
-        ROS_INFO("GOAL OCCUPIED!");
-        return;
+        retry++;
+        if (retry >= 2)
+            {
+            ROS_INFO("GOAL OCCUPIED! Max retry reached, FAIL!");
+            return false;
+            }
+
+        ROS_INFO("GOAL OCCUPIED! Trying new position. Retry : %d", retry);
+        distance += 0.1;
+        fMultiplyQuaternion(pGoal, pPose, distance);
         }
 
-    //rGoal.target_pose.pose.position.x = pPose.pose.position.x;
-   //rGoal.target_pose.pose.position.y = pPose.pose.position.y;
-    rGoal.target_pose.header.frame_id = "map";
-    rGoal.target_pose.header.stamp = ros::Time::now();
-    MoveBaseClient client("/locobot/move_base", true);
-    while (!client.waitForServer(ros::Duration(5.0)))
+    pGoal.target_pose.header.frame_id = "map";
+    pGoal.target_pose.header.stamp = ros::Time::now();
+    return true;
+    }
+void moveBaseCallback(geometry_msgs::PoseStamped pPose)
+    {
+    move_base_msgs::MoveBaseGoal rGoal;
+    if (moveBaseGoalCalc(rGoal, pPose))
         {
-        ROS_INFO("Waiting for the move_base action server to come up");
-        }
-    base_status_msg.data = BASE_TO_GOAL;
-    pub_status.publish(base_status_msg);
-    client.sendGoal(rGoal);
-    client.waitForResult();
-    auto rState = client.getState();
-    // switch (rState.state_)
-    //     {
-    //     case actionlib::SimpleClientGoalState::SUCCEEDED:
-    //         break;
-    //     case actionlib::SimpleClientGoalState::REJECTED:
-    //         break;
-    //     case actionlib::SimpleClientGoalState::LOST:
-    //         break;
-    //     }
-    if (client.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
-        {
-        ROS_INFO("Goal execution done!");
-        base_status_msg.data = BASE_GOAL_OK;
+        while (!moveBaseClient.waitForServer(ros::Duration(5.0)))
+            {
+            ROS_INFO("Waiting for the move_base action server to come up");
+            }
+        base_status_msg.data = BASE_TO_GOAL;
         pub_status.publish(base_status_msg);
+        moveBaseClient.sendGoal(rGoal);
+        moveBaseClient.waitForResult();
+        auto rState = moveBaseClient.getState();
+
+        if (moveBaseClient.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+            {
+            ROS_INFO("Goal execution done!");
+            base_status_msg.data = BASE_GOAL_OK;
+            pub_status.publish(base_status_msg);
+            }
+        else {
+            ROS_INFO("Goal not reached!");
+            base_status_msg.data = BASE_GOAL_FAIL;
+            pub_status.publish(base_status_msg);
+            }
         }
-    else {
+    else
+        {
         ROS_INFO("Goal not reached!");
         base_status_msg.data = BASE_GOAL_FAIL;
         pub_status.publish(base_status_msg);
