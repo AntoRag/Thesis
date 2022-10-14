@@ -3,6 +3,8 @@
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
 
 #include <nav_msgs/OccupancyGrid.h>
+
+
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
     {
     int i = 0;
@@ -42,9 +44,9 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     // float x = 2 * (poseQ.y * poseQ.w + poseQ.x * poseQ.z);
     // float y = 2 * (poseQ.z * poseQ.w - poseQ.x * poseQ.y);
     // float z = 1 - 2 * (poseQ.y * poseQ.y + poseQ.z * poseQ.z);
-    poseQuaternion.normalize();
-    base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
-    base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
+    // poseQuaternion.normalize();
+    // base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
+    // base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
     //base_pose_goal.target_pose.pose.position.z = poseP.z + distance * poseQuaternion.getZ();
 
 
@@ -111,18 +113,3 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     // pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1;        // r component
     }
 
-
-bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
-    {
-    nav_msgs::MapMetaData info = pMap.info;
-    float x = pPose.pose.position.x;
-    float y = pPose.pose.position.y;
-    int indexX = floor(x / info.resolution);
-
-    int indexY = floor(y / info.resolution);
-    int indexY2 = indexY * info.width;
-    int index = indexX + indexY2;
-    if (pMap.data.at(index) > 20)
-        return true;
-    return false;
-    }

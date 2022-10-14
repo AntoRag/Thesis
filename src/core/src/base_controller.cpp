@@ -17,12 +17,23 @@
 #include <nav_msgs/OccupancyGrid.h>
 #include <nav_msgs/GetMap.h>
 
+#include <costmap_2d/costmap_2d_ros.h>
+#include <tf2_ros/buffer.h>
+
 //frodo costants
 #include "../include/elrond_macro.h"
 #include <move_base/move_base.h>
 
 //Auxiliary functions
 #include "../include/auxiliaryFunctions.h"
+
+
+
+tf2_ros::Buffer tfbuf(ros::Duration(10));
+costmap_2d::Costmap2DROS local_costmap("local_costmap", tfbuf);
+costmap_2d::Costmap2DROS global_costmap("global_costmap", tfbuf);
+
+
 ros::Publisher pub_status;
 ros::Publisher goal_pub;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -33,14 +44,39 @@ bool wait;
 bool success_navigation;
 nav_msgs::OccupancyGrid localMap;
 nav_msgs::OccupancyGrid globalMap;
-void localMapCallback(nav_msgs::OccupancyGrid rMap)
+
+
+
+bool fIsMapOccupied(nav_msgs::OccupancyGrid& pMap, geometry_msgs::PoseStamped& pPose)
     {
-    localMap = rMap;
+    unsigned int mx, my;
+    float x = pPose.pose.position.x;
+    float y = pPose.pose.position.y;
+    local_costmap.getCostmap()->worldToMap(x, y, mx, my);
+    unsigned char cost = local_costmap.getCostmap()->getCost(mx, my);
+    if (cost < 20)
+        {
+        return false;
+        }
+
+    global_costmap.getCostmap()->worldToMap(x, y, mx, my);
+    unsigned char cost = global_costmap.getCostmap()->getCost(mx, my);
+    if (cost < 20)
+        {
+        return false;
+        }
+    return true;
+
     }
-void  globalMapCallback(nav_msgs::OccupancyGrid rMap)
-    {
-    globalMap = rMap;
-    }
+
+// void localMapCallback(nav_msgs::OccupancyGrid rMap)
+//     {
+//     localMap = rMap;
+//     }
+// void  globalMapCallback(nav_msgs::OccupancyGrid rMap)
+//     {
+//     globalMap = rMap;
+//     }
 //Handles simple case of goal pose from Communication Manacer
 void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
@@ -93,12 +129,12 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     base_status_msg.data = BASE_IDLE;
     pub_status.publish(base_status_msg);
     }
-
 int main(int argc, char** argv)
     {
     putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
+
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
     ros::Subscriber sub_map_local = node_handle.subscribe("/locobot/move_base/local_costmap/costmap", 1, localMapCallback);
     ros::Subscriber sub_map_global = node_handle.subscribe("/locobot/move_base/global_costmap/costmap", 1, globalMapCallback);
