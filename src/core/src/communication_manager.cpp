@@ -98,6 +98,7 @@ void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
 void arm_status_callback(std_msgs::Int64 arm_status)
     {
     ROS_INFO("Entered arm_callback");
+    ARM_STATUS = arm_status.data;
     switch (arm_status.data)
         {
         case ARM_SUCCESS:
@@ -105,7 +106,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 {
                 WaitOnVariable(BASE_STATUS, BASE_IDLE);
                 pick_place.data = PLACE;
-                ROS_INFO("Comincio il place");
+                ROS_INFO("Starting PLACE");
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 pub_pick_place.publish(pick_place);
                 }

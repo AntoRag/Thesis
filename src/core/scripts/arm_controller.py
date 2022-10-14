@@ -96,14 +96,11 @@ def detach_box(scene):
     eef_link = 'locobot/ee_gripper_link'
     scene.remove_attached_object(eef_link, name=box_name)
     rospy.sleep(5)
-    return
-
 
 def remove_box(scene):
     box_name = 'medicine'
     scene.remove_world_object(box_name)
     rospy.sleep(5)
-    return
 
 
 def go_to_pose_goal(move_group, target_pose):
