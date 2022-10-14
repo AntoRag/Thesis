@@ -1,15 +1,14 @@
 #!/usr/bin/env python
+from numpy import True_
+import moveit_commander
+from std_msgs.msg import Int64
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import PoseStamped
+import rospy
+from bondpy import bondpy
 import sys
 import os
 os.environ['ROS_NAMESPACE'] = 'locobot'
-from bondpy import bondpy
-import rospy
-from geometry_msgs.msg import PoseStamped
-from geometry_msgs.msg import Pose
-from std_msgs.msg import Int64
-import moveit_commander
-from numpy import True_
-
 
 
 # //ARM STATUS MACRO
@@ -29,6 +28,7 @@ PLACE = 1
 current_arm_status = Int64()
 gripper_command = Int64()
 current_arm_status.data = ARM_IDLE
+pick_place = Int64()
 
 
 def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
@@ -58,7 +58,6 @@ def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
 
 def add_box(target_pose, scene):
 
-    
     box_name = "medicine"
     box_pose = PoseStamped()
     box_pose.header.frame_id = "locobot/base_footprint"
@@ -68,14 +67,13 @@ def add_box(target_pose, scene):
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = target_pose.pose.position.z
     box_pose.pose.position.x = target_pose.pose.position.x + 0.02
-    box_pose.pose.position.y = target_pose.pose.position.y    
+    box_pose.pose.position.y = target_pose.pose.position.y
     scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.07))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr('Not added any box')
         return False
     rospy.sleep(5)
-    
 
 
 def attach_box(scene):
@@ -132,7 +130,21 @@ def go_to_pose_goal(move_group, target_pose):
     return success
 
 
-pick_place = Int64()
+def dummySuccess():
+        current_arm_status.data = ARM_SUCCESS
+        arm_status_pub.publish(current_arm_status)
+        rospy.sleep(5)
+        current_arm_status.data = ARM_IDLE
+        arm_status_pub.publish(current_arm_status)
+
+
+def fArmFail():
+        current_arm_status.data = ARM_SUCCESS
+        arm_status_pub.publish(current_arm_status)
+        rospy.sleep(5)
+        current_arm_status.data = ARM_IDLE
+        arm_status_pub.publish(current_arm_status)  
+
 
 
 def GraspCallback(pose_goal):
@@ -141,7 +153,7 @@ def GraspCallback(pose_goal):
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
     rospy.loginfo("Arm currently running")  # log when running
-
+    return dummySuccess()
     if pick_place == PICK:
 
         # then we proceed by approaching the object defining a pre_grasp_pose
@@ -259,9 +271,11 @@ def GraspCallback(pose_goal):
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
 
+        current_arm_status.data = ARM_SUCCESS
+        arm_status_pub.publish(current_arm_status)
+        rospy.sleep(5)
         current_arm_status.data = ARM_IDLE
         arm_status_pub.publish(current_arm_status)
-
     else:
         rospy.ERROR("Error in giving command to pick or place")
 
@@ -306,3 +320,4 @@ def listener():
 
 if __name__ == '__main__':
     listener()
+

@@ -222,7 +222,7 @@
     <arg name="fake_execution"                    value="false"/>
     <arg name="publish_monitored_planning_scene"  value="true" />
     <arg name="pipeline"                          value="$(arg pipeline)"/>
-    <arg name="use_actual"                        value="true"/>
+    <arg name="use_actual"                        value="false"/>
     <!-- To avoid to call two times the controller of the joints -->
     <arg name="use_rtabmap"                       value="true"/>
     <arg name="use_octomap"                       value="$(arg use_octomap)"/>

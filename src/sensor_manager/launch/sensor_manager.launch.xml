@@ -32,7 +32,7 @@
       <group if="$(arg use_octomap)">
         <param name="octomap_frame" type="string" value="locobot/base_footprint" />  -->
         <!--Maximum accurancy in mapping-->
-        <param name="octomap_resolution" type="double" value="0.05" /> 
+        <param name="octomap_resolution" type="double" value="0.02" /> 
         <!--Measurement range of the camera-->
         <param name="max_range" type="double" value="2.0" /> 
         <rosparam command="load" file="$(find sensor_manager)/config/sensors_3d_depth_map.yaml" />

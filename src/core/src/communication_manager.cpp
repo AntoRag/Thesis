@@ -73,16 +73,9 @@ void id_callback(std_msgs::Int64 id_request)
         {
 
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[id_request_buffer.front()].pose);
-            // double roll, pitch, yaw;
-            // tf::Quaternion qinv;
-            // tf::Quaternion q(base_pose_goal.pose.orientation.x, base_pose_goal.pose.orientation.y, base_pose_goal.pose.orientation.z, base_pose_goal.pose.orientation.w);
-            // qinv = q;
-            // tf::Matrix3x3 m(q);
-            // m.getRPY(roll, pitch, yaw);
             pick_place.data = PICK;
             pub_pick_place.publish(pick_place);
             pub_mobile_pose_goal.publish(base_pose_goal);
-
             ROS_INFO("Id finished publishing goal");
         }
         else
@@ -92,7 +85,7 @@ void id_callback(std_msgs::Int64 id_request)
     }
     else // NOT FOUND
     {
-        ROS_ERROR("IL TESSSSOROOOO");
+        ROS_ERROR("ARTag not found in the scene!");
     }
 }
 
@@ -109,20 +102,23 @@ void arm_status_callback(std_msgs::Int64 arm_status)
     case ARM_SUCCESS:
         if (pick_place.data == PICK)
         {
-            if (BASE_STATUS == BASE_GOAL_OK)
+            while (BASE_STATUS != BASE_IDLE)
             {
-                pick_place.data = PLACE;
-                ROS_INFO("Comincio il place");
-                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
-                pub_pick_place.publish(pick_place);
+                ros::Duration(1).sleep();
             }
+
+            pick_place.data = PLACE;
+            ROS_INFO("Comincio il place");
+            pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+            pub_pick_place.publish(pick_place);
+        }
+        else {
+            id_request_buffer.pop_front();
         }
         break;
     case ARM_IDLE:
-        id_request_buffer.pop_front();
         break;
     case ARM_FAIL:
-        // Reposition the base TO-DO
         ROS_ERROR("ARM FAILED");
         break;
     case ARM_RUNNING:
@@ -163,29 +159,48 @@ void base_status_GoalOk_switchHandler()
     odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
 
     auto idx = id_request_buffer.front();
-    switch (ARM_STATUS)
-    {
-    case ARM_SUCCESS:
-        ROS_INFO("Arm success after base status ok");
-        grasp_pose_goal = PLACE_GRASP_GOAL;
-        ros::Duration(5).sleep();
-        tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
-        pub_grasp_pose_goal.publish(grasp_pose_goal);
-        break;
-    case ARM_IDLE:
-        ROS_INFO("Arm idle after base status ok");
+    // switch (ARM_STATUS)
+    // {
+    // case ARM_SUCCESS:
+    //     ROS_INFO("Arm success after base status ok");
+    //     grasp_pose_goal = PLACE_GRASP_GOAL;
+    //     ros::Duration(5).sleep();
+    //     tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+    //     pub_grasp_pose_goal.publish(grasp_pose_goal);
+    //     break;
+    // case ARM_IDLE:
+    //     ROS_INFO("Arm idle after base status ok");
+    //     fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
+    //     tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+    //     ros::Duration(5).sleep();
+    //     pub_grasp_pose_goal.publish(grasp_pose_goal);
+    //     break;
+    // case ARM_FAIL:
+    //     ROS_ERROR("Arm fail after base status ok");
+    //     pub_mobile_pose_goal.publish(HOME_POSE_GOAL); // repositioning to do
+    //     break;
+    // default:
+    //     break;
+    // }
+    while (ARM_STATUS != ARM_IDLE){
+        ros::Duration(1).sleep();
+    }
+
+    if (pick_place.data == PICK){
+        ROS_INFO("Sending grasp pick goal");
         fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);
         tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
         ros::Duration(5).sleep();
         pub_grasp_pose_goal.publish(grasp_pose_goal);
-        break;
-    case ARM_FAIL:
-        ROS_INFO("Arm fail after base status ok");
-        pub_mobile_pose_goal.publish(HOME_POSE_GOAL); // repositioning to do
-        break;
-    default:
-        break;
     }
+    else{
+        ROS_INFO("Sending grasp place goal");
+        grasp_pose_goal = PLACE_GRASP_GOAL;
+        ros::Duration(5).sleep();
+        tf2::doTransform(grasp_pose_goal, grasp_pose_goal, odom_to_footprint);
+        pub_grasp_pose_goal.publish(grasp_pose_goal);
+    }
+
 }
 void base_status_callback(std_msgs::Int64 base_status)
 {

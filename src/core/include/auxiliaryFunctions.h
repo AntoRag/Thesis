@@ -23,41 +23,30 @@ void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_ms
     grasp_pose_goal = markers_pose;
     }
 
-void fcross_product(float vector_a[], float vector_b[], float temp[]) {
-    // a cross product b
-    temp[0] = vector_a[1] * vector_b[2] - vector_a[2] * vector_b[1];
-    temp[1] = -(vector_a[0] * vector_b[2] - vector_a[2] * vector_b[0]);
-    temp[2] = vector_a[0] * vector_b[1] - vector_a[1] * vector_b[0];
+void fQuatProd(float vector_a[], float vector_b[], float vector_result[]) {
+
+    vector_result[3] = vector_a[3] * vector_b[3] - vector_a[0] * vector_b[0] - vector_a[2] * vector_b[1] - vector_a[3] * vector_b[0];  // 1
+    vector_result[0] = vector_a[3] * vector_b[0] + vector_a[0] * vector_b[3] + vector_a[2] * vector_b[2] - vector_a[3] * vector_b[1];  // i
+    vector_result[1] = vector_a[3] * vector_b[1] - vector_a[0] * vector_b[2] + vector_a[2] * vector_b[3] + vector_a[3] * vector_b[0];  // j
+    vector_result[2] = vector_a[3] * vector_b[2] + vector_a[0] * vector_b[1] - vector_a[2] * vector_b[0] + vector_a[3] * vector_b[3];  // k
     }
 
 
 void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
     {
-
+    double roll, pitch, yaw;
     geometry_msgs::PoseStamped q1;
     geometry_msgs::PoseStamped q1_conj;
-    geometry_msgs::PoseStamped Vector_subtract;
-    geometry_msgs::Quaternion poseQ = pose_goal.pose.orientation;
-    geometry_msgs::Point poseP = pose_goal.pose.position;
-    tf::Quaternion poseQuaternion(poseQ.x, poseQ.y, poseQ.z, poseQ.w);
-
-    // float x = 2 * (poseQ.y * poseQ.w + poseQ.x * poseQ.z);
-    // float y = 2 * (poseQ.z * poseQ.w - poseQ.x * poseQ.y);
-    // float z = 1 - 2 * (poseQ.y * poseQ.y + poseQ.z * poseQ.z);
-    // poseQuaternion.normalize();
-    // base_pose_goal.target_pose.pose.position.x = poseP.x + distance * poseQuaternion.getX();
-    // base_pose_goal.target_pose.pose.position.y = poseP.y + distance * poseQuaternion.getY();
-    //base_pose_goal.target_pose.pose.position.z = poseP.z + distance * poseQuaternion.getZ();
+    geometry_msgs::PoseStamped Vector_subtract; // defined in Marker frame
 
 
-    //poseQuaternion = poseQuaternion * distance;
-    // Vector_subtract.pose.position.x = -distance;
-    // Vector_subtract.pose.position.y = 0;
-    // Vector_subtract.pose.position.z = 0;
-    // Vector_subtract.pose.orientation.x = 0;
-    // Vector_subtract.pose.orientation.y = 0;
-    // Vector_subtract.pose.orientation.z = 0;
-    // Vector_subtract.pose.orientation.w = 1;
+    Vector_subtract.pose.position.x = 0;
+    Vector_subtract.pose.position.y = 0;
+    Vector_subtract.pose.position.z = 0;
+    Vector_subtract.pose.orientation.x = 0;
+    Vector_subtract.pose.orientation.y = 0;
+    Vector_subtract.pose.orientation.z = 0;
+    Vector_subtract.pose.orientation.w = 1;
 
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
@@ -96,20 +85,26 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     // fcross_product(vecC, vecB, temp);
     // fcross_product(vecA, temp, vecC);
 
-    // Vector_subtract.pose.position.x = vecC[1];
-    // Vector_subtract.pose.position.y = vecC[2];
-    // Vector_subtract.pose.position.z = vecC[3];
+    tf2::Quaternion q(x2, y2, z2, r2);
+    tf2::Matrix3x3 m_FromMaptoMarker(q);
+    tf2::Matrix3x3 m_FromMarkertoMap = m_FromMaptoMarker.inverse();
+    tf2::Vector3 vector(0, 0, -distance);
+    tf2::Vector3 raw1, raw2, raw3, vector1;
+    raw1 = m_FromMarkertoMap.getRow(0);
+    raw2 = m_FromMarkertoMap.getRow(1);
+    raw3 = m_FromMarkertoMap.getRow(2);
+
+    Vector_subtract.pose.position.x = raw1.getX() * vector.getX() + raw1.getY() * vector.getY() + raw1.getZ() * vector.getZ();
+    Vector_subtract.pose.position.y = raw2.getX() * vector.getX() + raw2.getY() * vector.getY() + raw2.getZ() * vector.getZ();
+    Vector_subtract.pose.position.z = raw3.getX() * vector.getX() + raw3.getY() * vector.getY() + raw3.getZ() * vector.getZ();
 
 
-    // base_pose_goal.target_pose.pose.position.x = base_pose_goal.target_pose.pose.position.x - Vector_subtract.pose.position.x;
-    // base_pose_goal.target_pose.pose.position.y = base_pose_goal.target_pose.pose.position.y - Vector_subtract.pose.position.y;
-    // base_pose_goal.target_pose.pose.position.z = base_pose_goal.target_pose.pose.position.z - Vector_subtract.pose.position.z;
-
+    base_pose_goal.target_pose.pose.position.x = pose_goal.pose.position.x - Vector_subtract.pose.position.x;
+    base_pose_goal.target_pose.pose.position.y = pose_goal.pose.position.y - Vector_subtract.pose.position.y;
     base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
-    // pose_goal.pose.orientation.x = x2 * r1 + r2 * x1 + y2 * z1 - z2 * y1;        // x component
-    // pose_goal.pose.orientation.y = r2 * y1 - x2 * z1 + y2 * r1 + z2 * x1;        // y component
-    // pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1;        // z component
-    // pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1;        // r component
+
+    ROS_INFO("Pose goal: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.pose.position.x, pose_goal.pose.position.y, base_pose_goal.target_pose.pose.position.x, base_pose_goal.target_pose.pose.position.y);
+
     }
 
