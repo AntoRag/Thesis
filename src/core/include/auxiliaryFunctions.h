@@ -21,30 +21,11 @@ void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_ms
     grasp_pose_goal = markers_pose;
     }
 
-void fQuatProd(float vector_a[], float vector_b[], float vector_result[]) {
-
-    vector_result[3] = vector_a[3] * vector_b[3] - vector_a[0] * vector_b[0] - vector_a[2] * vector_b[1] - vector_a[3] * vector_b[0];  // 1
-    vector_result[0] = vector_a[3] * vector_b[0] + vector_a[0] * vector_b[3] + vector_a[2] * vector_b[2] - vector_a[3] * vector_b[1];  // i
-    vector_result[1] = vector_a[3] * vector_b[1] - vector_a[0] * vector_b[2] + vector_a[2] * vector_b[3] + vector_a[3] * vector_b[0];  // j
-    vector_result[2] = vector_a[3] * vector_b[2] + vector_a[0] * vector_b[1] - vector_a[2] * vector_b[0] + vector_a[3] * vector_b[3];  // k
-}
-
 
 void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
     {
-    double roll, pitch, yaw;
     geometry_msgs::PoseStamped q1;
-    geometry_msgs::PoseStamped q1_conj;
-    geometry_msgs::PoseStamped Vector_subtract; // defined in Marker frame
-
-
-    Vector_subtract.pose.position.x = 0;
-    Vector_subtract.pose.position.y = 0;
-    Vector_subtract.pose.position.z = 0;
-    Vector_subtract.pose.orientation.x = 0;
-    Vector_subtract.pose.orientation.y = 0;
-    Vector_subtract.pose.orientation.z = 0;
-    Vector_subtract.pose.orientation.w = 1;
+    geometry_msgs::PoseStamped new_pose; // defined in Marker frame
 
     // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
@@ -66,21 +47,20 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     
 
     tf2::Quaternion q(x2,y2,z2,r2);
-    tf2::Matrix3x3 m_FromMaptoMarker(q);
-    tf2::Matrix3x3 m_FromMarkertoMap=m_FromMaptoMarker.inverse();    
-    tf2::Vector3 vector(0,0,-distance);
-    tf2::Vector3 raw1,raw2,raw3,vector1;
-    raw1 = m_FromMarkertoMap.getRow(0);
-    raw2 = m_FromMarkertoMap.getRow(1);
-    raw3 = m_FromMarkertoMap.getRow(2);
-    
-    Vector_subtract.pose.position.x = raw1.getX()*vector.getX()+raw1.getY()*vector.getY()+raw1.getZ()*vector.getZ();
-    Vector_subtract.pose.position.y = raw2.getX()*vector.getX()+raw2.getY()*vector.getY()+raw2.getZ()*vector.getZ();
-    Vector_subtract.pose.position.z = raw3.getX()*vector.getX()+raw3.getY()*vector.getY()+raw3.getZ()*vector.getZ();
+    tf2::Matrix3x3 m_FromMaptoMarker(q);   
+    tf2::Vector3 vector(0,0,distance);
+    tf2::Vector3 raw1,raw2,raw3;
 
+    raw1 = m_FromMaptoMarker.getRow(0);
+    raw2 = m_FromMaptoMarker.getRow(1);
+    raw3 = m_FromMaptoMarker.getRow(2);
 
-    base_pose_goal.target_pose.pose.position.x = pose_goal.pose.position.x - Vector_subtract.pose.position.x ; 
-    base_pose_goal.target_pose.pose.position.y = pose_goal.pose.position.y - Vector_subtract.pose.position.y ;
+    new_pose.pose.position.x = raw1.getX()*vector.getX()+raw1.getY()*vector.getY()+raw1.getZ()*vector.getZ()+pose_goal.pose.position.x;
+    new_pose.pose.position.y = raw2.getX()*vector.getX()+raw2.getY()*vector.getY()+raw2.getZ()*vector.getZ()+pose_goal.pose.position.y;
+    new_pose.pose.position.z = raw3.getX()*vector.getX()+raw3.getY()*vector.getY()+raw3.getZ()*vector.getZ()+pose_goal.pose.position.z;
+
+    base_pose_goal.target_pose.pose.position.x = new_pose.pose.position.x ; 
+    base_pose_goal.target_pose.pose.position.y = new_pose.pose.position.y ;
     base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
 

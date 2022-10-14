@@ -72,6 +72,7 @@ def add_box(target_pose, scene):
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr('Not added any box')
+        fArmFail()
         return False
     rospy.sleep(5)
 
@@ -85,6 +86,7 @@ def attach_box(scene):
     success = ObjectInScene(scene, box_name, True, False)
     if not success:
         rospy.logerr('Not added any box')
+        fArmFail()
         return False
     rospy.sleep(5)
 
@@ -121,6 +123,7 @@ def go_to_pose_goal(move_group, target_pose):
         rospy.loginfo("Moved correctly")
     else:
         rospy.loginfo("Problem during motion")
+        fArmFail()
     rospy.loginfo("Stop any residual motion")
     move_group.stop()
 
@@ -139,11 +142,12 @@ def dummySuccess():
 
 
 def fArmFail():
-        current_arm_status.data = ARM_SUCCESS
-        arm_status_pub.publish(current_arm_status)
-        rospy.sleep(5)
-        current_arm_status.data = ARM_IDLE
-        arm_status_pub.publish(current_arm_status)  
+    global arm_status_pub
+    current_arm_status.data = ARM_FAIL
+    arm_status_pub.publish(current_arm_status)
+    rospy.sleep(5)
+    current_arm_status.data = ARM_IDLE
+    arm_status_pub.publish(current_arm_status)  
 
 
 
@@ -163,8 +167,6 @@ def GraspCallback(pose_goal):
             0.1  # we arrive 10 cm far from the goal position
         # actuate the motion
         if (go_to_pose_goal(move_group_arm, pre_grasp_pose) == False):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
             return
 
         # Wait for OctoMap update
@@ -185,21 +187,15 @@ def GraspCallback(pose_goal):
         # first we add the box to be grasped to the planning scene
         pose_goal.pose.position.x = pose_goal.pose.position.x + 0.08
         if (add_box(pose_goal, scene) == False):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
             return
 
         # then we approach the object
         pose_goal.pose.position.x = pose_goal.pose.position.x
         if (go_to_pose_goal(move_group_arm, pose_goal) == False):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
             return
 
         # now we add the box to the end effector link
         if (attach_box(scene) == False):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
             return
 
         # then we close the gripper
@@ -221,8 +217,6 @@ def GraspCallback(pose_goal):
             0.1  # we go 10 cm far from the goal position
         # actuate the motion
         if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
             return
 
         current_arm_status.data = ARM_SUCCESS
