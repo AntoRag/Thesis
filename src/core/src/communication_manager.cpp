@@ -64,6 +64,8 @@ void id_callback(std_msgs::Int64 id_request)
 
     ROS_INFO("Id requested: %d", ID_REQUESTED);
     i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+
+
     // FOUND
     if (i >= 0)
         {
@@ -75,7 +77,7 @@ void id_callback(std_msgs::Int64 id_request)
             fGetPoseFromMarker(base_pose_goal, markers_poses.markers[id_request_buffer.front()].pose);
             pick_place.data = PICK;
             pub_pick_place.publish(pick_place);
-            pub_mobile_pose_goal.publish(base_pose_goal);
+            pub_mobile_pose_goal.publish(markers_poses.markers[id_request_buffer.front()].pose);
             ROS_INFO("Id finished publishing goal");
             }
         else
@@ -111,7 +113,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 pub_pick_place.publish(pick_place);
                 }
-            else 
+            else
                 {
                 id_request_buffer.pop_front();
                 }
@@ -156,11 +158,11 @@ void base_status_GoalOk_switchHandler()
 
     geometry_msgs::PoseStamped new_grasp_pose_goal;
 
+
     odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
 
     auto idx = id_request_buffer.front();
 
-    WaitOnVariable(ARM_STATUS, ARM_IDLE);
     if (pick_place.data == PICK) {
         ROS_INFO("Sending grasp pick goal");
         fGetPoseFromMarker(grasp_pose_goal, markers_poses.markers[idx].pose);

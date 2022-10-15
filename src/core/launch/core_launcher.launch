@@ -1,4 +1,4 @@
-<launch>\
+<launch>
 
     <arg name="use_octomap"                       default="true"/>
     <arg name="use_moveit"                        default="true"/>
@@ -55,7 +55,6 @@
       name="base_controller"
       output="screen">
     </node>
-    
 </launch>
 
 
