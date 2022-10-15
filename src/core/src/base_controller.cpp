@@ -55,7 +55,7 @@ bool success_navigation;
 bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseStamped pPose)
     {
     uint retry = 0;
-    float distance = 0.4;
+    float distance = 0.5;
     if (pPose.pose.position.x == 0 &&
         pPose.pose.position.y == 0 &&
         pPose.pose.position.z == 0)
