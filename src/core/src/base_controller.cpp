@@ -55,19 +55,21 @@ bool success_navigation;
 bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseStamped pPose)
     {
     uint retry = 0;
-    float distance = 0.4;
+    float distance = 0.4; //fixed distance to artag position 
     if (pPose.pose.position.x == 0 &&
         pPose.pose.position.y == 0 &&
         pPose.pose.position.z == 0)
         {
         distance = 0;
         }
+
     fMultiplyQuaternion(pGoal, pPose, distance);
     pGoal.target_pose.header.frame_id = "map";
     pGoal.target_pose.header.stamp = ros::Time::now();
     while (true)
         {
-        if (retry > 2)
+        ros::Duration(1).sleep();
+        if (retry > 5)
             {
             ROS_ERROR("[CORE::BASE_CONTROLLER] ---- GOAL OCCUPIED! Max retry reached, FAIL!");
             return false;
@@ -83,7 +85,7 @@ bool moveBaseGoalCalc(move_base_msgs::MoveBaseGoal& pGoal, geometry_msgs::PoseSt
             break;
             }
         ROS_WARN("[CORE::BASE_CONTROLLER] ---- GOAL OCCUPIED! Trying new position. Retry : %d", retry);
-        distance += 0.4;
+        distance += 0.1;
         fMultiplyQuaternion(pGoal, pPose, distance);
         pGoal.target_pose.header.frame_id = "map";
         pGoal.target_pose.header.stamp = ros::Time::now();
