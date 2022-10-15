@@ -116,17 +116,16 @@ def go_to_pose_goal(move_group, target_pose):
     move_group.set_pose_target(pose_goal)
     rospy.loginfo("Moving the arm")
     success = move_group.go(wait=True)
+    move_group.stop()
+    rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
     if success:
         rospy.loginfo("Moved correctly")
     else:
         rospy.loginfo("Problem during motion")
         fArmFail()
     rospy.loginfo("Stop any residual motion")
-    move_group.stop()
-
-    rospy.loginfo("Clear pose target")
-    move_group.clear_pose_targets()
-    current_pose = move_group.get_current_pose().pose
+    # current_pose = move_group.get_current_pose().pose
     return success
 
 
@@ -175,8 +174,7 @@ def GraspCallback(pose_goal):
         gripper_command_pub.publish(gripper_command)
         bond_open.start()
         if not bond_open.wait_until_formed(rospy.Duration(10.0)):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
+            fArmFail()
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
         rospy.loginfo("Gripped Opened")
@@ -200,8 +198,7 @@ def GraspCallback(pose_goal):
         gripper_command_pub.publish(gripper_command)
         bond_close.start()
         if not bond_close.wait_until_formed(rospy.Duration(10.0)):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
+            fArmFail()
             raise Exception('Bond could not be formed')
 
         bond_close.wait_until_broken()
@@ -231,8 +228,7 @@ def GraspCallback(pose_goal):
         gripper_command_pub.publish(gripper_command)
         bond_open.start()
         if not bond_open.wait_until_formed(rospy.Duration(10.0)):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
+            fArmFail()
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
         rospy.loginfo("Gripped Opened")
@@ -256,8 +252,7 @@ def GraspCallback(pose_goal):
         gripper_command_pub.publish(gripper_command)
         bond_close.start()
         if not bond_close.wait_until_formed(rospy.Duration(10.0)):
-            current_arm_status.data = ARM_FAIL
-            arm_status_pub.publish(current_arm_status)
+            fArmFail()
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
         rospy.loginfo("Gripped Closed")
