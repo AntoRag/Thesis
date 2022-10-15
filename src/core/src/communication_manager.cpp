@@ -125,21 +125,39 @@ void arm_status_callback(std_msgs::Int64 arm_status)
         }
         break;
     case ARM_IDLE:
+        ROS_INFO("[CORE::COMM_MANAGER] ---- ARM IDLE");
         break;
     case ARM_FAIL:
-        if (retry_arm > 2)
-        {
-            ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
-            distance_arm = 0.5;
-            break;
+        if (pick_place.data == PICK){
+            if (retry_arm > 2)
+            {
+                ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                distance_arm = 0.5;
+                break;
+            }
+            distance_arm += 0.15;
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
+            WaitOnVariable(BASE_STATUS, BASE_IDLE);
+            fChangePosition(base_pose_goal, MARKER_POSE_GOAL, distance_arm);
+            pub_mobile_pose_goal.publish(base_pose_goal);
+            retry_arm++;
         }
-        distance_arm += 0.15;
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED, Repositioning...");
-        WaitOnVariable(BASE_STATUS, BASE_IDLE);
-        fChangePosition(base_pose_goal, MARKER_POSE_GOAL, distance_arm);
-        pub_mobile_pose_goal.publish(base_pose_goal);
-        retry_arm++;
+        else{
+            if (retry_arm > 2)
+            {
+                ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                distance_arm = 0.5;
+                break;
+            }
+            distance_arm += 0.15;
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
+            WaitOnVariable(BASE_STATUS, BASE_IDLE);
+            fChangePosition(base_pose_goal, HOME_POSE_GOAL, distance_arm);
+            pub_mobile_pose_goal.publish(base_pose_goal);
+            retry_arm++;
+        }
         break;
+
     case ARM_RUNNING:
         ROS_INFO("[CORE::COMM_MANAGER] ---- ARM RUNNING");
         break;
@@ -197,8 +215,8 @@ void base_status_GoalOk_switchHandler()
     else
     {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PLACE...");
-        tf2::doTransform(PLACE_GRASP_GOAL,grasp_pose_goal,odom_to_footprint);
-        pub_grasp_pose_goal.publish(grasp_pose_goal);
+        //tf2::doTransform(PLACE_GRASP_GOAL,grasp_pose_goal,odom_to_footprint);
+        pub_grasp_pose_goal.publish(PLACE_GRASP_GOAL);
     }
 }
 
@@ -243,9 +261,9 @@ int main(int argc, char **argv)
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
     PLACE_GRASP_GOAL.header.frame_id = "map";
-    PLACE_GRASP_GOAL.pose.position.x = 0.5;
+    PLACE_GRASP_GOAL.pose.position.x = 0.4;
     PLACE_GRASP_GOAL.pose.position.y = 0;
-    PLACE_GRASP_GOAL.pose.position.z = 0.1;
+    PLACE_GRASP_GOAL.pose.position.z = 0.2;
     PLACE_GRASP_GOAL.pose.orientation.x = 0;
     PLACE_GRASP_GOAL.pose.orientation.y = 0;
     PLACE_GRASP_GOAL.pose.orientation.z = 0;
