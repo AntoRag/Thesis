@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+import sys
+import os
+os.environ['ROS_NAMESPACE'] = 'locobot'
 from numpy import True_
 import moveit_commander
 from std_msgs.msg import Int64
@@ -6,9 +10,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 import rospy
 from bondpy import bondpy
-import sys
-import os
-os.environ['ROS_NAMESPACE'] = 'locobot'
+
 
 
 # //ARM STATUS MACRO
@@ -71,7 +73,7 @@ def add_box(target_pose, scene):
     scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.07))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
-        rospy.logerr('Not added any box')
+        rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")
         fArmFail()
         return False
     rospy.sleep(5)
@@ -85,7 +87,7 @@ def attach_box(scene):
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
     success = ObjectInScene(scene, box_name, True, False)
     if not success:
-        rospy.logerr('Not added any box')
+        rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ATTACHED ANY BOX")
         fArmFail()
         return False
     rospy.sleep(5)
@@ -112,19 +114,19 @@ def go_to_pose_goal(move_group, target_pose):
     pose_goal.position.x = target_pose.pose.position.x
     pose_goal.position.y = target_pose.pose.position.y
     pose_goal.position.z = target_pose.pose.position.z
-    rospy.loginfo("Setting target pose")
+    # rospy.loginfo("Setting target pose")
     move_group.set_pose_target(pose_goal)
-    rospy.loginfo("Moving the arm")
+    rospy.loginfo("[CORE::ARM_CONTROLLER] ---- MOVING THE ARM...")
     success = move_group.go(wait=True)
     move_group.stop()
-    rospy.loginfo("Clear pose target")
+    # rospy.loginfo("Clear pose target")
     move_group.clear_pose_targets()
     if success:
-        rospy.loginfo("Moved correctly")
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
     else:
-        rospy.loginfo("Problem during motion")
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
         fArmFail()
-    rospy.loginfo("Stop any residual motion")
+    # rospy.loginfo("Stop any residual motion")
     # current_pose = move_group.get_current_pose().pose
     return success
 
@@ -152,8 +154,9 @@ def GraspCallback(pose_goal):
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
-    rospy.loginfo("Arm currently running")  # log when running
-    return dummySuccess()
+    rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM RUNNNING")  # log when running
+    #return dummySuccess()
+    #return fArmFail()
     if pick_place == PICK:
 
         # then we proceed by approaching the object defining a pre_grasp_pose
@@ -166,7 +169,7 @@ def GraspCallback(pose_goal):
             return
 
         # Wait for OctoMap update
-        rospy.loginfo("Waiting for Octomap update")
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- WAITING FOR OCTOMAP")
         rospy.sleep(10)
 
         # then we open the gripper
@@ -177,7 +180,7 @@ def GraspCallback(pose_goal):
             fArmFail()
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
-        rospy.loginfo("Gripped Opened")
+        #rospy.loginfo("Gripped Opened")
 
         # first we add the box to be grasped to the planning scene
         pose_goal.pose.position.x = pose_goal.pose.position.x + 0.08
@@ -202,7 +205,7 @@ def GraspCallback(pose_goal):
             raise Exception('Bond could not be formed')
 
         bond_close.wait_until_broken()
-        rospy.loginfo("Gripped Closed")
+        #rospy.loginfo("Gripped Closed")
 
         # going into retraction pose
         retraction_pose = PoseStamped()
@@ -231,7 +234,7 @@ def GraspCallback(pose_goal):
             fArmFail()
             raise Exception('Bond could not be formed')
         bond_open.wait_until_broken()
-        rospy.loginfo("Gripped Opened")
+        #rospy.loginfo("Gripped Opened")
 
         # now we add the box to the end effector link
         detach_box(scene)
@@ -255,7 +258,7 @@ def GraspCallback(pose_goal):
             fArmFail()
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
-        rospy.loginfo("Gripped Closed")
+        #rospy.loginfo("Gripped Closed")
 
         current_arm_status.data = ARM_SUCCESS
         arm_status_pub.publish(current_arm_status)
@@ -263,7 +266,7 @@ def GraspCallback(pose_goal):
         current_arm_status.data = ARM_IDLE
         arm_status_pub.publish(current_arm_status)
     else:
-        rospy.ERROR("Error in giving command to pick or place")
+        rospy.ERROR("[CORE::GRIPPER_CONTROLLER] ---- ERROR IN PICK/PLACE COMMAND")
 
 
 def PickPlaceCallback(data):

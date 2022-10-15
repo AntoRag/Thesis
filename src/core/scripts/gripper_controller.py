@@ -26,7 +26,7 @@ def gripper_callback(data):
         # The go command can be called with joint values, poses, or without any
         # parameters if you have already set the pose or joint target for the group
         move_group_gripper.go(joint_goal, wait=True)
-        rospy.loginfo("Gripper Opened")
+        rospy.loginfo("[CORE::GRIPPER_CONTROLLER] ---- GRIPPER OPENED")
         # Calling ``stop()`` ensures that there is no residual movement
         move_group_gripper.stop()
         ## END_SUB_TUTORIAL
@@ -42,7 +42,7 @@ def gripper_callback(data):
         # The go command can be called with joint values, poses, or without any
         # parameters if you have already set the pose or joint target for the group
         move_group_gripper.go(joint_goal_close, wait=True)
-        rospy.loginfo("Gripper Closed")
+        rospy.loginfo("[CORE::GRIPPER_CONTROLLER] ---- GRIPPER CLOSED")
         # Calling ``stop()`` ensures that there is no residual movement
         move_group_gripper.stop()
         ## END_SUB_TUTORIAL
@@ -55,7 +55,7 @@ def listener():
     rospy.init_node('gripper_controller')
     rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
     gripper_name = "interbotix_gripper"
-    rospy.sleep(10)
+    rospy.sleep(5)
     move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
     bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
     bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")

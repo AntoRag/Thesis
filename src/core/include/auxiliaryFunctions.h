@@ -17,19 +17,16 @@ int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id
     return -1;
     }
 
-void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_msgs::PoseStamped  markers_pose)
-    {
-    ROS_INFO("fGetPoseFromMaker, calculating...");
-    grasp_pose_goal = markers_pose;
-    }
+//  void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_msgs::PoseStamped  markers_pose)
+//     {
+//     ROS_INFO("fGetPoseFromMaker, calculating...");
+//     grasp_pose_goal = markers_pose;
+//     }
 
 
-void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
-    {
+void fChangeOrientation(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::PoseStamped& pose_goal){
     geometry_msgs::PoseStamped q1;
-    geometry_msgs::PoseStamped new_pose;
 
-    // q1 quaternion for transformation from marker frame to base_footprint
     q1.pose.orientation.w = 0.5;
     q1.pose.orientation.x = 0.5;
     q1.pose.orientation.y = 0.5;
@@ -42,10 +39,28 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     const float r1 = q1.pose.orientation.w;
 
     // Second quaternion q2 (x2 y2 z2 r2)
-    const float x2 = pose_goal.pose.orientation.x;
-    const float y2 = pose_goal.pose.orientation.y;
-    const float z2 = pose_goal.pose.orientation.z;
-    const float r2 = pose_goal.pose.orientation.w;
+    float x2 = pose_goal.pose.orientation.x;
+    float y2 = pose_goal.pose.orientation.y;
+    float z2 = pose_goal.pose.orientation.z;
+    float r2 = pose_goal.pose.orientation.w;
+
+    base_pose_goal.pose.orientation.x = 0;
+    base_pose_goal.pose.orientation.y = 0;
+    base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
+    base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
+    base_pose_goal.header.frame_id = "map";
+    base_pose_goal.header.stamp = ros::Time::now();
+}
+
+
+void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::PoseStamped& pose_goal, float distance)
+    {
+    geometry_msgs::PoseStamped new_pose;
+    float x2 = pose_goal.pose.orientation.x;
+    float y2 = pose_goal.pose.orientation.y;
+    float z2 = pose_goal.pose.orientation.z;
+    float r2 = pose_goal.pose.orientation.w;
+
 
     tf2::Quaternion q(x2, y2, z2, r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);
@@ -59,12 +74,13 @@ void fMultiplyQuaternion(move_base_msgs::MoveBaseGoal& base_pose_goal, geometry_
     new_pose.pose.position.x = raw1.getX() * vector.getX() + raw1.getY() * vector.getY() + raw1.getZ() * vector.getZ() + pose_goal.pose.position.x;
     new_pose.pose.position.y = raw2.getX() * vector.getX() + raw2.getY() * vector.getY() + raw2.getZ() * vector.getZ() + pose_goal.pose.position.y;
     new_pose.pose.position.z = raw3.getX() * vector.getX() + raw3.getY() * vector.getY() + raw3.getZ() * vector.getZ() + pose_goal.pose.position.z;
-    base_pose_goal.target_pose.pose.position.x = new_pose.pose.position.x;
-    base_pose_goal.target_pose.pose.position.y = new_pose.pose.position.y;
-    base_pose_goal.target_pose.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
-    base_pose_goal.target_pose.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
+    base_pose_goal.pose.position.x = new_pose.pose.position.x;
+    base_pose_goal.pose.position.y = new_pose.pose.position.y;
+    base_pose_goal.pose.position.z = 0; 
 
-    ROS_INFO("Pose goal: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.pose.position.x, pose_goal.pose.position.y, base_pose_goal.target_pose.pose.position.x, base_pose_goal.target_pose.pose.position.y);
+    base_pose_goal.header.frame_id = "map";
+    base_pose_goal.header.stamp = ros::Time::now();
+    ROS_INFO("Marker pose: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.pose.position.x, pose_goal.pose.position.y, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y);
 
     }
 
