@@ -21,6 +21,16 @@
       <pose>0.551735 1.685606 0.430943 0 0 1.539267</pose>
       <uri>model://marker0</uri>
     </include>
+
+    <include>     
+      <pose>1 0.0 0.430943 0 0 0 </pose>
+      <uri>model://marker1</uri>
+    </include>
+
+    <include>     
+      <pose>0.131 -4.959 0.430943 0 0 1.523</pose>
+      <uri>model://marker2</uri>
+    </include>
     <!-- Trossen Robotics Offices -->
     <!-- <include>
       <uri>TrossenRoboticsOfficeBuilding</uri>

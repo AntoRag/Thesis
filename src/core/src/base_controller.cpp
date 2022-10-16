@@ -59,6 +59,7 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     {
     move_base_msgs::MoveBaseGoal rGoal;
     ROS_INFO("[CORE::BASE_CONTROLLER] ---- Inside movebasecallback");
+
     rGoal.target_pose.pose.position = pPose.pose.position;
     rGoal.target_pose.pose.orientation = pPose.pose.orientation;
     rGoal.target_pose.header.frame_id = pPose.header.frame_id;
@@ -105,7 +106,6 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "base_controller");
     ros::NodeHandle node_handle;
     ros::Subscriber sub_mobile_goal_pose = node_handle.subscribe("/locobot/frodo/mobile_pose_goal", 1, moveBaseCallback);
-
     pub_status = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/base_status", 1);
     check_goal_feasable = node_handle.serviceClient<nav_msgs::GetPlan>("/locobot/move_base/make_plan");
 
