@@ -131,12 +131,12 @@ def go_to_pose_goal(move_group, target_pose):
     return success
 
 
-def dummySuccess():
-        current_arm_status.data = ARM_SUCCESS
-        arm_status_pub.publish(current_arm_status)
-        rospy.sleep(5)
-        current_arm_status.data = ARM_IDLE
-        arm_status_pub.publish(current_arm_status)
+def fArmSuccess():
+    current_arm_status.data = ARM_SUCCESS
+    arm_status_pub.publish(current_arm_status)
+    rospy.sleep(5)
+    current_arm_status.data = ARM_IDLE
+    arm_status_pub.publish(current_arm_status)
 
 
 def fArmFail():
@@ -216,8 +216,7 @@ def GraspCallback(pose_goal):
         if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
             return
 
-        current_arm_status.data = ARM_SUCCESS
-        arm_status_pub.publish(current_arm_status)
+        fArmSuccess()
 
     elif pick_place == PLACE:
 
@@ -260,11 +259,8 @@ def GraspCallback(pose_goal):
         bond_close.wait_until_broken()
         #rospy.loginfo("Gripped Closed")
 
-        current_arm_status.data = ARM_SUCCESS
-        arm_status_pub.publish(current_arm_status)
-        rospy.sleep(5)
-        current_arm_status.data = ARM_IDLE
-        arm_status_pub.publish(current_arm_status)
+        fArmSuccess()
+
     else:
         rospy.ERROR("[CORE::GRIPPER_CONTROLLER] ---- ERROR IN PICK/PLACE COMMAND")
 

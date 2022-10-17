@@ -116,11 +116,13 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
             pub_pick_place.publish(pick_place);
             retry_arm = 0;
+            distance_arm = 0.5;
         }
         else
         {
             id_request_buffer.pop_front();
             retry_arm = 0;
+            distance_arm = 0.5;
 
         }
         break;
