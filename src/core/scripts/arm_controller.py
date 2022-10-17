@@ -1,38 +1,18 @@
 #!/usr/bin/env python
-
+# ----------- IMPORTS ----------- #
 import sys
 import os
+from tkinter import CURRENT
 os.environ['ROS_NAMESPACE'] = 'locobot'
-from numpy import True_
 import moveit_commander
 from std_msgs.msg import Int64
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 import rospy
 from bondpy import bondpy
+from std_srvs.srv import Empty
 
-
-
-# //ARM STATUS MACRO
-ARM_FAIL = 0
-ARM_IDLE = 1
-ARM_RUNNING = 2
-ARM_SUCCESS = 3
-PICK = 0
-PLACE = 1
-GRIPPER_OPEN = 1
-GRIPPER_CLOSE = 0
-
-# //PICK AND PLACE MACR
-PICK = 0
-PLACE = 1
-
-current_arm_status = Int64()
-gripper_command = Int64()
-current_arm_status.data = ARM_IDLE
-pick_place = Int64()
-
-
+# ----------- FUNCTONS ----------- #
 def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
     timeout = 10  # timeout in seconds before error
     start = rospy.get_time()
@@ -57,7 +37,6 @@ def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
     # If we exited the while loop without returning then we timed out
     return False
 
-
 def add_box(target_pose, scene):
 
     box_name = "medicine"
@@ -78,7 +57,6 @@ def add_box(target_pose, scene):
         return False
     rospy.sleep(5)
 
-
 def attach_box(scene):
     box_name = 'medicine'
     eef_link = 'locobot/ee_gripper_link'
@@ -92,7 +70,6 @@ def attach_box(scene):
         return False
     rospy.sleep(5)
 
-
 def detach_box(scene):
     box_name = 'medicine'
     eef_link = 'locobot/ee_gripper_link'
@@ -103,7 +80,6 @@ def remove_box(scene):
     box_name = 'medicine'
     scene.remove_world_object(box_name)
     rospy.sleep(5)
-
 
 def go_to_pose_goal(move_group, target_pose):
     pose_goal = Pose()
@@ -130,14 +106,12 @@ def go_to_pose_goal(move_group, target_pose):
     # current_pose = move_group.get_current_pose().pose
     return success
 
-
 def fArmSuccess():
     current_arm_status.data = ARM_SUCCESS
     arm_status_pub.publish(current_arm_status)
     rospy.sleep(5)
     current_arm_status.data = ARM_IDLE
     arm_status_pub.publish(current_arm_status)
-
 
 def fArmFail():
     global arm_status_pub
@@ -147,10 +121,34 @@ def fArmFail():
     current_arm_status.data = ARM_IDLE
     arm_status_pub.publish(current_arm_status)  
 
+def goHome(move_group):
+    joint_goal = move_group.get_current_joint_values()
+    joint_goal = [0, -0.92, 1.56, -0.0145, -0.62, 0]
+    move_group.go(joint_goal, wait=True)
+    rospy.loginfo("[CORE::ARM_CONTROLLER] ---- HOME POSITION")
+    move_group.stop()
 
 
+# ----------- CONSTANTS ----------- #
+# ARM STATUS MACRO
+ARM_FAIL = 0
+ARM_IDLE = 1
+ARM_RUNNING = 2
+ARM_SUCCESS = 3
+# GRIPPER MACRO
+GRIPPER_OPEN = 1
+GRIPPER_CLOSE = 0
+# PICK AND PLACE MACR
+PICK = 0
+PLACE = 1
+# GLOBAL VARIABLES
+current_arm_status = Int64()
+gripper_command = Int64()
+pick_place = Int64()
+
+# ----------- CALLBACKS NODE -----------#
 def GraspCallback(pose_goal):
-    global bond_open, bond_close, robot, move_group_arm, arm_status_pub, gripper_command_pub, scene
+    global bond_open, bond_close, robot, move_group_arm, arm_status_pub, gripper_command_pub, scene, current_arm_status,service_octomap
     # setting the arm running to avoid other callbacks
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
@@ -158,7 +156,11 @@ def GraspCallback(pose_goal):
     #return dummySuccess()
     #return fArmFail()
     if pick_place == PICK:
-
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PICK TASK...")
+        service_octomap()
+        # Wait for OctoMap update
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- WAITING FOR OCTOMAP")
+        rospy.sleep(10)
         # then we proceed by approaching the object defining a pre_grasp_pose
         pre_grasp_pose = PoseStamped()
         pre_grasp_pose = pose_goal
@@ -215,15 +217,20 @@ def GraspCallback(pose_goal):
         # actuate the motion
         if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
             return
+        goHome(move_group_arm)
 
+        #service_octomap()
         fArmSuccess()
 
     elif pick_place == PLACE:
-
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PLACE TASK...")
+        service_octomap()
+        # Wait for OctoMap update
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- WAITING FOR OCTOMAP")
+        rospy.sleep(10)
         # We go into the place position
-        place_pose = PoseStamped()
         # actuate the motion
-        go_to_pose_goal(move_group_arm, place_pose)
+        go_to_pose_goal(move_group_arm, pose_goal)
 
         # then we open the gripper
         gripper_command.data = GRIPPER_OPEN
@@ -239,12 +246,7 @@ def GraspCallback(pose_goal):
         detach_box(scene)
 
         # going into retraction pose
-        retraction_pose = PoseStamped()
-        retraction_pose = pose_goal
-        retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
-            0.1  # we go 10 cm far from the goal position
-        # actuate the motion
-        go_to_pose_goal(move_group_arm, retraction_pose)
+        goHome(move_group_arm)
 
         # we remove the object from the scene
         remove_box(scene)
@@ -257,12 +259,12 @@ def GraspCallback(pose_goal):
             fArmFail()
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
-        #rospy.loginfo("Gripped Closed")
-
+        #service_octomap()
         fArmSuccess()
 
     else:
         rospy.ERROR("[CORE::GRIPPER_CONTROLLER] ---- ERROR IN PICK/PLACE COMMAND")
+
 
 
 def PickPlaceCallback(data):
@@ -272,8 +274,9 @@ def PickPlaceCallback(data):
 
 
 def listener():
-    global bond_close, bond_open, move_group_arm, robot, arm_status_pub, gripper_command_pub, scene
+    global bond_close, bond_open, move_group_arm, robot, arm_status_pub, gripper_command_pub, scene,current_arm_status, service_octomap
     rospy.init_node('arm_controller')
+    current_arm_status.data = ARM_IDLE
     rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
     rospy.Subscriber("/locobot/frodo/grasp_pose_goal",
                      PoseStamped, GraspCallback)
@@ -300,6 +303,8 @@ def listener():
     # define the topic used by the arm to communicate whenever close or open the gripper
     gripper_command_pub = rospy.Publisher(
         '/locobot/frodo/gripper_command', Int64, queue_size=1)
+    rospy.wait_for_service('/locobot/clear_octomap')
+    service_octomap = rospy.ServiceProxy('/locobot/clear_octomap', Empty)
     rospy.spin()
 
 

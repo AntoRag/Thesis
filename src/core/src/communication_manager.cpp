@@ -92,7 +92,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             if (pick_place.data == PICK) {
                 if (retry_arm > 2)
                     {
-                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
@@ -106,7 +106,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             else {
                 if (retry_arm > 2)
                     {
-                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
