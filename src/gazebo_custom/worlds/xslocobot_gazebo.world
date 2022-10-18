@@ -23,13 +23,33 @@
     </include>
 
     <include>     
-      <pose>1 0.0 0.430943 0 0 0 </pose>
+      <pose>3.289537 0 0.430943 0 0 0 </pose>
       <uri>model://marker1</uri>
     </include>
 
     <include>     
-      <pose>0.131 -4.959 0.430943 0 0 1.523</pose>
+      <pose>-2.843767 1.066875 0.434574 0 0 2.420288</pose>
       <uri>model://marker2</uri>
+    </include>
+    <include>     
+      <pose>3.328587 -0.132918 0 0 0 -1.569936</pose>
+      <name>6_Cube_StorageE_0</name>
+      <uri>model://6_Cube_StorageE</uri>
+    </include>
+    <include>     
+      <pose>-3.008080 0.981300 0 0 0 -2.302382</pose>
+      <name>6_Cube_StorageE_1</name>
+      <uri>model://6_Cube_StorageE</uri>
+    </include>
+    <include>     
+      <pose>3.885770 -0.121705 0.430941 3.141593 -1.569863 3.141593</pose>
+      <name>Box_33x15_0</name>
+      <uri>model://Box_33x15</uri>
+    </include>
+    <include>     
+      <pose>-3.118317 1.103697 0.430941 2.419025 -1.569863 -3.141313</pose>
+      <name>Box_33x15_1</name>
+      <uri>model://Box_33x15</uri>
     </include>
     <!-- Trossen Robotics Offices -->
     <!-- <include>
