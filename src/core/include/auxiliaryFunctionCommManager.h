@@ -83,7 +83,8 @@ bool fSearchFunction()
             if (pFoundMarker)
                 break;
             }
-
+        if (pFoundMarker)
+            break;
         //move to next spot and wait on either pSearchingActive or BASE_STATUS
 
         pub_mobile_pose_goal.publish(pSearchPoses.at(rSpot));
