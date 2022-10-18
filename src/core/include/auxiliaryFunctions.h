@@ -23,6 +23,36 @@ int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id
 //     grasp_pose_goal = markers_pose;
 //     }
 
+void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& pose_goal){
+    geometry_msgs::PoseStamped q1;
+
+    q1.pose.orientation.w = 0.9659258; //0.7071068;
+    q1.pose.orientation.x = 0;
+    q1.pose.orientation.y = 0;
+    q1.pose.orientation.z = 0.258819; //0.7071068;
+ 
+    // First quaternion q1 (x1 y1 z1 r1)
+    const float x1 = q1.pose.orientation.x;
+    const float y1 = q1.pose.orientation.y;
+    const float z1 = q1.pose.orientation.z;
+    const float r1 = q1.pose.orientation.w;
+
+    // Second quaternion q2 (x2 y2 z2 r2)
+    float x2 = pose_goal.orientation.x;
+    float y2 = pose_goal.orientation.y;
+    float z2 = pose_goal.orientation.z;
+    float r2 = pose_goal.orientation.w;
+
+    // base_pose_goal.pose.orientation.x = 0;
+    // base_pose_goal.pose.orientation.y = 0;
+    base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
+    base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
+    base_pose_goal.header.frame_id = "map";
+    base_pose_goal.header.stamp = ros::Time::now();
+
+}
+
+
 
 void fChangeOrientation(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal) {
     geometry_msgs::PoseStamped q1;

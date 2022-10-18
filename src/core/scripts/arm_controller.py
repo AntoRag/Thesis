@@ -218,8 +218,6 @@ def GraspCallback(pose_goal):
         if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
             return
         goHome(move_group_arm)
-
-        #service_octomap()
         fArmSuccess()
 
     elif pick_place == PLACE:
@@ -259,7 +257,6 @@ def GraspCallback(pose_goal):
             fArmFail()
             raise Exception('Bond could not be formed')
         bond_close.wait_until_broken()
-        #service_octomap()
         fArmSuccess()
 
     else:
