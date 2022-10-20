@@ -29,10 +29,9 @@
 #include <boost/circular_buffer.hpp>
 bool pSearchingActive = false;
 bool pFoundMarker = false;
-
 //////////  VARIABLE INITIALIZED //////////
 
-int ARM_STATUS = ARM_IDLE; // ARM_STATUS = 0 is arm idle
+int ARM_STATUS = ARM_IDLE;
 std_msgs::Int64 arm_status;
 int BASE_STATUS = BASE_IDLE;
 int BASE_PREV_STATUS = BASE_IDLE;
@@ -42,8 +41,6 @@ float distance_base = 0.5;
 uint retry_base = 0;
 uint retry_arm = 0;
 const std::string planning_frame_arm = "locobot/base_footprint";
-
-
 
 geometry_msgs::Pose pMobileBasePosition;
 geometry_msgs::PoseStamped grasp_pose_goal;
@@ -74,47 +71,20 @@ bool fSearchFunction()
     int rCount = 0;
     while (rSpot < pSearchPoses.size())
         {
-
-        //rotate 90 degrees
-        fChangeOrientation(base_pose_goal, pMobileBasePosition);
-        pub_mobile_pose_goal.publish(base_pose_goal);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ROTATING 90 DEGREES ON THE SPOT");
-        WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- DONE ROTATING");
+        int i = 0;
+        while (i<12){
+            //rotate 30 degrees
+            fTurn30deg(base_pose_goal,pMobileBasePosition);
+            pub_mobile_pose_goal.publish(base_pose_goal);
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ROTATING 30 DEGREES ON THE SPOT");
+            WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
+            ROS_INFO("[CORE::COMM_MANAGER] ---- DONE ROTATING");
+            i++;
+            if (pFoundMarker)
+                break;
+            }
         if (pFoundMarker)
             break;
-
-
-        //rotate 90 degrees
-        fChangeOrientation(base_pose_goal, pMobileBasePosition);
-        pub_mobile_pose_goal.publish(base_pose_goal);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ROTATING 90 DEGREES ON THE SPOT");
-        WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- DONE ROTATING");
-        if (pFoundMarker)
-            break;
-
-
-        //rotate 90 degrees
-        fChangeOrientation(base_pose_goal, pMobileBasePosition);
-        pub_mobile_pose_goal.publish(base_pose_goal);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ROTATING 90 DEGREES ON THE SPOT");
-        WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- DONE ROTATING");
-        if (pFoundMarker)
-            break;
-
-
-        //rotate 90 degrees
-        fChangeOrientation(base_pose_goal, pMobileBasePosition);
-        pub_mobile_pose_goal.publish(base_pose_goal);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ROTATING 90 DEGREES ON THE SPOT");
-        WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
-        ROS_INFO("[CORE::COMM_MANAGER] ---- DONE ROTATING");
-        if (pFoundMarker)
-            break;
-
-
         //move to next spot and wait on either pSearchingActive or BASE_STATUS
 
         pub_mobile_pose_goal.publish(pSearchPoses.at(rSpot));
@@ -172,11 +142,11 @@ void base_status_GoalOk_switchHandler()
 
     odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
     WaitOnVariable(BASE_STATUS, BASE_IDLE);
-
     if (pick_place.data == PICK)
         {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PICK...");
-        tf2::doTransform(markers_poses.markers[id_request_buffer.front()].pose, grasp_pose_goal, odom_to_footprint);
+        auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+        tf2::doTransform(markers_poses.markers[i].pose, grasp_pose_goal, odom_to_footprint);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
         }
     else

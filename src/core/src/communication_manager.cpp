@@ -1,5 +1,6 @@
 #include <../include/auxiliaryFunctionCommManager.h>
 
+
 void id_callback(std_msgs::Int64 id_request)
     {
 
@@ -21,15 +22,19 @@ void id_callback(std_msgs::Int64 id_request)
         ROS_INFO("[CORE::COMM_MANAGER] ---- BASE STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE || pSearchingActive)
             {
-            if (pSearchingActive)
-                pSearchingActive = false;
+            WaitOnVariable(BASE_STATUS,BASE_IDLE);
+            ros::WallDuration(1).sleep();
             pick_place.data = PICK;
+            ros::WallDuration(1).sleep();
             pub_pick_place.publish(pick_place);
-            MARKER_POSE_GOAL = markers_poses.markers[id_request_buffer.front()].pose;
+            ros::WallDuration(1).sleep();
+            MARKER_POSE_GOAL = markers_poses.markers[i].pose; //id_request_buffer.front()
             fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
             fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_base);
             pub_mobile_pose_goal.publish(base_pose_goal);
             ROS_INFO("[CORE::COMM_MANAGER] ---- ID FOUND PUBLISHING BASE GOAL");
+            if (pSearchingActive)
+                pSearchingActive = false;
             }
         else
             {
@@ -92,7 +97,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             if (pick_place.data == PICK) {
                 if (retry_arm > 2)
                     {
-                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
@@ -106,7 +111,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             else {
                 if (retry_arm > 2)
                     {
-                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry reached, FAIL!");
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
