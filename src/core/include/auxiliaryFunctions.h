@@ -1,9 +1,6 @@
-
 #include <tf/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
-
 #include <nav_msgs/OccupancyGrid.h>
-
 
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
     {
@@ -16,13 +13,6 @@ int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id
         }
     return -1;
     }
-
-//  void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_msgs::PoseStamped  markers_pose)
-//     {
-//     ROS_INFO("fGetPoseFromMaker, calculating...");
-//     grasp_pose_goal = markers_pose;
-//     }
-
 
 void fChangeOrientation(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal) {
     geometry_msgs::PoseStamped q1;
@@ -81,8 +71,9 @@ void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::
     base_pose_goal.header.frame_id = "map";
     base_pose_goal.header.stamp = ros::Time::now();
     ROS_INFO("Marker pose: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.position.x, pose_goal.position.y, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y);
-
     }
+
+
 template<class T, class U>
 void WaitOnVariableOfPair(T& pFirstVariable, T pFirstPredicate, U& pSecondVariable, U pSecondPredicate)
     {
@@ -95,6 +86,7 @@ void WaitOnVariableOfPair(T& pFirstVariable, T pFirstPredicate, U& pSecondVariab
         loop_rate.sleep();
         }
     }
+
 template<class T>
 void WaitOnVariable(T& pVariable, T pPredicate)
     {
