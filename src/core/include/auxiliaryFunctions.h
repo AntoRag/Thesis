@@ -17,12 +17,6 @@ int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id
     return -1;
     }
 
-//  void fGetPoseFromMarker(geometry_msgs::PoseStamped& grasp_pose_goal, geometry_msgs::PoseStamped  markers_pose)
-//     {
-//     ROS_INFO("fGetPoseFromMaker, calculating...");
-//     grasp_pose_goal = markers_pose;
-//     }
-
 void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& pose_goal){
     geometry_msgs::PoseStamped q1;
 
@@ -43,8 +37,8 @@ void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& 
     float z2 = pose_goal.orientation.z;
     float r2 = pose_goal.orientation.w;
 
-    // base_pose_goal.pose.orientation.x = 0;
-    // base_pose_goal.pose.orientation.y = 0;
+    base_pose_goal.pose.position.x = pose_goal.position.x;
+    base_pose_goal.pose.position.y = pose_goal.position.y;
     base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
     base_pose_goal.header.frame_id = "map";

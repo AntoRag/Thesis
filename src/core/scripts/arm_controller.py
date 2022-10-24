@@ -153,7 +153,8 @@ def GraspCallback(pose_goal):
     current_arm_status.data = ARM_RUNNING
     arm_status_pub.publish(current_arm_status)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM RUNNNING")  # log when running
-    #return dummySuccess()
+    rospy.sleep(5)
+    return fArmSuccess()
     #return fArmFail()
     if pick_place == PICK:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PICK TASK...")
