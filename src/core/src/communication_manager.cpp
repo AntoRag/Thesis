@@ -8,7 +8,7 @@ void id_callback(std_msgs::Int64 id_request)
     int i;
     ID_REQUESTED = id_request.data;
     if (!pSearchingActive) {
-        ROS_INFO("[CORE::COMM_MANAGER] ----ADDED ID TO BUFFER");
+        ROS_INFO("[CORE::COMM_MANAGER] ---- ADDED ID TO BUFFER");
         id_request_buffer.push_back(ID_REQUESTED);
         }
 
