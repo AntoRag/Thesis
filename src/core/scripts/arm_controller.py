@@ -47,9 +47,9 @@ def add_box(target_pose, scene):
     box_pose.pose.orientation.z = 0.00001
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.z = target_pose.pose.position.z
-    box_pose.pose.position.x = target_pose.pose.position.x + 0.02
+    box_pose.pose.position.x = target_pose.pose.position.x
     box_pose.pose.position.y = target_pose.pose.position.y
-    scene.add_box(box_name, box_pose, size=(0.04, 0.04, 0.07))
+    scene.add_box(box_name, box_pose, size=(0.065, 0.02, 0.125))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")

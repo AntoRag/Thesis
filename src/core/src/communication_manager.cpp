@@ -27,7 +27,7 @@ void id_callback(std_msgs::Int64 id_request)
             pick_place.data = PICK;
             ros::WallDuration(1).sleep();
             pub_pick_place.publish(pick_place);
-            ros::WallDuration(1).sleep();
+            ros::WallDuration(10).sleep();
             MARKER_POSE_GOAL = markers_poses.markers[i].pose; //id_request_buffer.front()
             fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
             fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_base);
