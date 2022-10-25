@@ -93,6 +93,7 @@ def go_to_pose_goal(move_group, target_pose):
     # rospy.loginfo("Setting target pose")
     move_group.set_pose_target(pose_goal)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- MOVING THE ARM...")
+    rospy.loginfo("[CORE::ARM_CONTROLLER] ---- TARGET POS: X=%1.3f, Y=%1.3f, Z=%1.3f",pose_goal.position.x,pose_goal.position.y,pose_goal.position.z)
     success = move_group.go(wait=True)
     move_group.stop()
     # rospy.loginfo("Clear pose target")
@@ -154,7 +155,7 @@ def GraspCallback(pose_goal):
     arm_status_pub.publish(current_arm_status)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM RUNNNING")  # log when running
     rospy.sleep(5)
-    return fArmSuccess()
+    #return fArmSuccess()
     #return fArmFail()
     if pick_place == PICK:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PICK TASK...")
@@ -286,6 +287,8 @@ def listener():
         arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
+    tolerance = 0.1
+    move_group_arm.set_goal_position_tolerance(tolerance)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(
         robot_description="/locobot/robot_description")
@@ -303,6 +306,7 @@ def listener():
         '/locobot/frodo/gripper_command', Int64, queue_size=1)
     rospy.wait_for_service('/locobot/clear_octomap')
     service_octomap = rospy.ServiceProxy('/locobot/clear_octomap', Empty)
+    goHome(move_group_arm)
     rospy.spin()
 
 

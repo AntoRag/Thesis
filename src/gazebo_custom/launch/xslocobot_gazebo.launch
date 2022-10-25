@@ -2,7 +2,7 @@
   <env name="GAZEBO_RESOURCE_PATH"              value="$(env GAZEBO_RESOURCE_PATH):$(find gazebo_custom):$(find gazebo_custom)/worlds"/>
   <env name="GAZEBO_MODEL_PATH"              value="$(env GAZEBO_MODEL_PATH):$(find gazebo_custom):$(find gazebo_custom)/models"/>
 
-  <arg name="robot_model"                       default="locobot_wx250s"/>
+  <arg name="robot_model"                       default="locobot_wx250"/>
   <arg name="robot_name"                        default="locobot"/>
   <arg name="arm_model"                         default="$(eval 'mobile_' + arg('robot_model').split('_')[1])"/>
   <arg name="show_lidar"                        default="false"/>

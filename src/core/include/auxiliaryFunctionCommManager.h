@@ -38,7 +38,7 @@ int BASE_STATUS = BASE_IDLE;
 int BASE_PREV_STATUS = BASE_IDLE;
 int ID_REQUESTED = 100;
 float distance_arm = 0.5;
-float distance_base = 0.6;
+float distance_base = 0.7;
 uint retry_base = 0;
 uint retry_arm = 0;
 const std::string planning_frame_arm = "locobot/base_footprint";
@@ -142,11 +142,12 @@ void base_status_GoalOk_switchHandler()
     tf2_ros::TransformListener tf2_listener(tf_buffer);
     geometry_msgs::TransformStamped odom_to_footprint;
 
-    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "locobot/odom", ros::Time(0), ros::Duration(1.0));
+    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "map", ros::Time(0), ros::Duration(1.0));
     WaitOnVariable(BASE_STATUS, BASE_IDLE);
     if (pick_place.data == PICK)
     {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PICK...");
+        ros::spinOnce();
         auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
         tf2::doTransform(markers_poses.markers[i].pose, grasp_pose_goal, odom_to_footprint);
         pub_grasp_pose_goal.publish(grasp_pose_goal);

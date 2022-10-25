@@ -42,8 +42,6 @@ void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& 
     base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
     base_pose_goal.header.frame_id = "map";
-    base_pose_goal.header.stamp = ros::Time::now();
-
 }
 
 
@@ -73,7 +71,6 @@ void fChangeOrientation(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
     base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
     base_pose_goal.header.frame_id = "map";
-    base_pose_goal.header.stamp = ros::Time::now();
     }
 
 
@@ -103,7 +100,6 @@ void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::
     base_pose_goal.pose.position.z = 0;
 
     base_pose_goal.header.frame_id = "map";
-    base_pose_goal.header.stamp = ros::Time::now();
     ROS_INFO("Marker pose: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.position.x, pose_goal.position.y, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y);
 
     }

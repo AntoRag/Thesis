@@ -63,7 +63,7 @@ void moveBaseCallback(geometry_msgs::PoseStamped pPose)
     rGoal.target_pose.pose.position = pPose.pose.position;
     rGoal.target_pose.pose.orientation = pPose.pose.orientation;
     rGoal.target_pose.header.frame_id = pPose.header.frame_id;
-
+    rGoal.target_pose.header.stamp = ros::Time::now();
     MoveBaseClient moveBaseClient("/locobot/move_base", true);
     if (moveBaseGoalCalc(rGoal))
         {

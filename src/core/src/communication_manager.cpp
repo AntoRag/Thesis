@@ -29,11 +29,14 @@ void id_callback(std_msgs::Int64 id_request)
             ros::WallDuration(5).sleep();
             MARKER_POSE_GOAL = markers_poses.markers[i].pose;
             fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
-            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, 1.1);
+            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, 1.2);
             pub_mobile_pose_goal.publish(base_pose_goal);
             pApproaching = true;
+            ros::WallDuration(5).sleep();
             WaitOnVariable(BASE_STATUS, BASE_IDLE);
             ros::WallDuration(5).sleep();
+            ROS_INFO("[CORE::COMM_MANAGER] ---- APPROACHING...");
+            ros::spinOnce();
             i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
             MARKER_POSE_GOAL = markers_poses.markers[i].pose;
             fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_base);
