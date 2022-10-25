@@ -52,6 +52,7 @@ def gripper_callback(data):
 
 def listener():
     global bond_close, bond_open, move_group_gripper
+    moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('gripper_controller')
     rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
     gripper_name = "interbotix_gripper"

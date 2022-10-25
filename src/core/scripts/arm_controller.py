@@ -274,13 +274,15 @@ def PickPlaceCallback(data):
 
 def listener():
     global bond_close, bond_open, move_group_arm, robot, arm_status_pub, gripper_command_pub, scene,current_arm_status, service_octomap
+     # initialize the communication with the moveit_commander
+    moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('arm_controller')
     current_arm_status.data = ARM_IDLE
     rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
     rospy.Subscriber("/locobot/frodo/grasp_pose_goal",
                      PoseStamped, GraspCallback)
-    # initialize the communication with the moveit_commander
-    moveit_commander.roscpp_initialize(sys.argv)
+   
+   
     rospy.sleep(5)
     arm_name = "interbotix_arm"  # define the planning interface for the arm
     move_group_arm = moveit_commander.MoveGroupCommander(
