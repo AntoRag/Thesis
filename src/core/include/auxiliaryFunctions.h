@@ -103,6 +103,35 @@ void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::
     ROS_INFO("Marker pose: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.position.x, pose_goal.position.y, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y);
 
     }
+void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal, float distance)
+    {
+    geometry_msgs::PoseStamped new_pose;
+    float x2 = pose_goal.orientation.x;
+    float y2 = pose_goal.orientation.y;
+    float z2 = 0.5;
+    float r2 = 0.5;
+
+
+    tf2::Quaternion q(x2, y2, z2, r2);
+    tf2::Matrix3x3 m_FromMaptoMarker(q);
+    tf2::Vector3 vector(0, 0, distance);
+    tf2::Vector3 raw1, raw2, raw3;
+
+    raw1 = m_FromMaptoMarker.getRow(0);
+    raw2 = m_FromMaptoMarker.getRow(1);
+    raw3 = m_FromMaptoMarker.getRow(2);
+
+    new_pose.pose.position.x = raw1.getX() * vector.getX() + raw1.getY() * vector.getY() + raw1.getZ() * vector.getZ() + pose_goal.position.x;
+    new_pose.pose.position.y = raw2.getX() * vector.getX() + raw2.getY() * vector.getY() + raw2.getZ() * vector.getZ() + pose_goal.position.y;
+    new_pose.pose.position.z = raw3.getX() * vector.getX() + raw3.getY() * vector.getY() + raw3.getZ() * vector.getZ() + pose_goal.position.z;
+    base_pose_goal.pose.position.x = new_pose.pose.position.x;
+    base_pose_goal.pose.position.y = new_pose.pose.position.y;
+    base_pose_goal.pose.position.z = new_pose.pose.position.z;
+
+    base_pose_goal.header.frame_id = "locobot/base_footprint";
+    ROS_INFO("Marker pose: x=%1.3f y=%1.3f z=%1.3f, Goal pose: x=%1.3f y=%1.3f z=%1.3f", pose_goal.position.x, pose_goal.position.y,pose_goal.position.z, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y,base_pose_goal.pose.position.z);
+
+    }
 template<class T, class U>
 void WaitOnVariableOfPair(T& pFirstVariable, T pFirstPredicate, U& pSecondVariable, U pSecondPredicate)
     {

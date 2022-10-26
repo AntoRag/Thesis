@@ -38,19 +38,21 @@ int BASE_STATUS = BASE_IDLE;
 int BASE_PREV_STATUS = BASE_IDLE;
 int ID_REQUESTED = 100;
 float distance_arm = 0.5;
-float distance_base = 0.7;
+float distance_base = 0.6;
 uint retry_base = 0;
 uint retry_arm = 0;
 const std::string planning_frame_arm = "locobot/base_footprint";
 
 geometry_msgs::Pose pMobileBasePosition;
 geometry_msgs::PoseStamped grasp_pose_goal;
+geometry_msgs::PoseStamped pre_grasp_pose_goal;
 geometry_msgs::PoseStamped base_pose_goal;
 geometry_msgs::PoseStamped MARKER_POSE_GOAL;
 geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
 geometry_msgs::PoseStamped PLACE_GRASP_GOAL;
-
+geometry_msgs::PoseStamped INITIAL_ROBOT_POSE;
 ar_track_alvar_msgs::AlvarMarkers markers_poses;
+ar_track_alvar_msgs::AlvarMarkers markers_poses_arm;
 std_msgs::Int64 pick_place;
 
 // DATABASE FOR REQUEST AND AR TAG
@@ -61,6 +63,7 @@ ros::Publisher pub_grasp_pose_goal;
 ros::Publisher pub_pick_place;
 ros::Publisher pub_mobile_pose_goal;
 ros::Publisher pub_no_marker;
+ros::Publisher pub_pre_grasp_pose_goal;
 
 std::vector<geometry_msgs::PoseStamped> pSearchPoses;
 
@@ -125,7 +128,11 @@ void base_status_GoalFail_switchHandler()
         return;
     }
     ROS_WARN("[CORE::COMM_MANAGER] ---- GOAL OCCUPIED! Trying new position. Retry : %d", retry_arm);
-    distance_base += 0.15;
+    distance_base += 0.25;
+    ros::spinOnce();
+    ros::WallDuration(1).sleep();
+    auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+    MARKER_POSE_GOAL = markers_poses.markers[i].pose;
     fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_base);
     pub_mobile_pose_goal.publish(base_pose_goal);
     retry_base++;
@@ -135,27 +142,29 @@ void base_status_GoalFail_switchHandler()
 void base_status_GoalOk_switchHandler()
 {
     // For now if I'm searching I do not need to handle
-    if (pSearchingActive || pApproaching)
+    if (pSearchingActive || pApproaching){
         return;
+    }
     retry_base = 0;
-    tf2_ros::Buffer tf_buffer;
-    tf2_ros::TransformListener tf2_listener(tf_buffer);
-    geometry_msgs::TransformStamped odom_to_footprint;
 
-    odom_to_footprint = tf_buffer.lookupTransform("locobot/base_footprint", "map", ros::Time(0), ros::Duration(1.0));
+    ROS_INFO("[CORE::COMM_MANAGER] ---- Ti prego funziona");
     WaitOnVariable(BASE_STATUS, BASE_IDLE);
     if (pick_place.data == PICK)
     {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PICK...");
+        ros::WallDuration(10).sleep();
         ros::spinOnce();
-        auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
-        tf2::doTransform(markers_poses.markers[i].pose, grasp_pose_goal, odom_to_footprint);
+        auto i = fFindIdInMarkers(markers_poses_arm, ID_REQUESTED);
+        auto marker_pose_arm = markers_poses_arm.markers[i].pose;
+        fChangePositionArm(pre_grasp_pose_goal,marker_pose_arm.pose,0.1);
+        pub_pre_grasp_pose_goal.publish(pre_grasp_pose_goal);
+        ros::WallDuration(5).sleep();
+        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
     }
     else
     {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PLACE...");
-        // tf2::doTransform(PLACE_GRASP_GOAL,grasp_pose_goal,odom_to_footprint);
         pub_grasp_pose_goal.publish(PLACE_GRASP_GOAL);
     }
 }
