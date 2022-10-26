@@ -11,7 +11,7 @@ from geometry_msgs.msg import PoseStamped
 import rospy
 from bondpy import bondpy
 from std_srvs.srv import Empty
-
+from interbotix_xs_msgs import msg
 # ----------- FUNCTONS ----------- #
 def ObjectInScene(scene, box_name, box_is_attached, box_is_known):
     timeout = 10  # timeout in seconds before error
@@ -42,15 +42,15 @@ def add_box(target_pose, scene):
     box_name = "medicine"
     box_pose = PoseStamped()
     box_pose.header.frame_id = "locobot/base_footprint"
-    box_pose.pose.orientation.x = 0.00001
-    box_pose.pose.orientation.y = 0.00001
-    box_pose.pose.orientation.z = 0.00001
+    box_pose.pose.orientation.x = 1e-6
+    box_pose.pose.orientation.y = 1e-6
+    box_pose.pose.orientation.z = 1e-6
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.x = target_pose.pose.position.x 
     box_pose.pose.position.y = target_pose.pose.position.y
-    box_pose.pose.position.z = target_pose.pose.position.z
+    box_pose.pose.position.z = target_pose.pose.position.z + 0.0625
     # scene.add_box(box_name, box_pose, size=(0.02, 0.065, 0.125))
-    scene.add_box(box_name, box_pose, size=(0.02, 0.03, 0.125))
+    scene.add_box(box_name, box_pose, size=(0.02, 0.06, 0.125))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")
@@ -130,28 +130,40 @@ def goHome(move_group):
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- HOME POSITION")
     move_group.stop()
 
-def closeGripper(move_group_gripper):
-    joint_goal_close = move_group_gripper.get_current_joint_values()
-    print("joint status",joint_goal_close[0]," ",joint_goal_close[1])
-    joint_goal_close[0] = 0.03
-    joint_goal_close[1] = -0.03
+def closeGripper():
+    global gripper_control
+    # joint_goal_close = move_group_gripper.get_current_joint_values()
+    # print("joint status",joint_goal_close[0]," ",joint_goal_close[1])
+    # joint_goal_close[0] = 0.03
+    # joint_goal_close[1] = -0.03
 
-    joint_goal_close[0] = 0.025
-    joint_goal_close[1] = -0.025
-    # The go command can be called with joint values, poses, or without any
-    # parameters if you have already set the pose or joint target for the group
-    move_group_gripper.go(joint_goal_close, wait=True)
+    # joint_goal_close[0] = 0.025
+    # joint_goal_close[1] = -0.025
+    # # The go command can be called with joint values, poses, or without any
+    # # parameters if you have already set the pose or joint target for the group
+    # move_group_gripper.go(joint_goal_close, wait=True)
+    close_gripper = msg.JointSingleCommand()
+    close_gripper.name = "gripper"
+    close_gripper.cmd = -350
+    gripper_control.publish(close_gripper)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- GRIPPER CLOSED")
 
-def openGripper(move_group_gripper):
-    joint_goal = move_group_gripper.get_current_joint_values()
-    print("joint status",joint_goal[0]," ",joint_goal[1])
-    joint_goal[0] = 0.035
-    joint_goal[1] = -0.035
-    # The go command can be called with joint values, poses, or without any
-    # parameters if you have already set the pose or joint target for the group
-    move_group_gripper.go(joint_goal, wait=True)
+def openGripper():
+    global gripper_control
+    # joint_goal = move_group_gripper.get_current_joint_values()
+    # print("joint status",joint_goal[0]," ",joint_goal[1])
+    # joint_goal[0] = 0.035
+    # joint_goal[1] = -0.035
+    # # The go command can be called with joint values, poses, or without any
+    # # parameters if you have already set the pose or joint target for the group
+    # move_group_gripper.go(joint_goal, wait=True)
+    # rospy.loginfo("[CORE::ARM_CONTROLLER] ---- GRIPPER OPENED")
+    open_gripper = msg.JointSingleCommand()
+    open_gripper.name = "gripper"
+    open_gripper.cmd = 350
+    gripper_control.publish(open_gripper)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- GRIPPER OPENED")
+
 
 def PreGraspCallback(pre_pose_goal):
     global pre_grasp_pose_goal
@@ -267,7 +279,7 @@ def PickPlaceCallback(data):
 
 
 def listener():
-    global bond_close, bond_open, move_group_arm, robot, arm_status_pub, gripper_command_pub, scene,current_arm_status, service_octomap, move_group_gripper
+    global bond_close, bond_open, move_group_arm, robot, arm_status_pub, scene,current_arm_status, service_octomap,gripper_control
      # initialize the communication with the moveit_commander
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('arm_controller')
@@ -275,10 +287,11 @@ def listener():
     rospy.Subscriber("/locobot/frodo/pick_or_place", Int64, PickPlaceCallback)
     rospy.Subscriber("/locobot/frodo/grasp_pose_goal",PoseStamped, GraspCallback)
     rospy.Subscriber("/locobot/frodo/pre_grasp_pose_goal",PoseStamped, PreGraspCallback)
+    gripper_control = rospy.Publisher("/locobot/commands/joint_single", msg.JointSingleCommand,queue_size=1)
     rospy.sleep(5)
-    gripper_name = "interbotix_gripper"
-    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
-    rospy.sleep(5)
+    # gripper_name = "interbotix_gripper"
+    # move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
+    # rospy.sleep(5)
     arm_name = "interbotix_arm"  # define the planning interface for the arm
     move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
@@ -289,7 +302,10 @@ def listener():
     arm_status_pub = rospy.Publisher('/locobot/frodo/arm_status', Int64, queue_size=1)
     rospy.wait_for_service('/locobot/clear_octomap')
     service_octomap = rospy.ServiceProxy('/locobot/clear_octomap', Empty)
-
+    # move_group_gripper.allow_replanning(True)
+    # move_group_gripper.set_num_planning_attempts(10)
+    goHome(move_group_arm)
+    closeGripper()
     rospy.spin()
 
 
