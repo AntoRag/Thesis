@@ -52,14 +52,17 @@ def gripper_callback(data):
 
 def listener():
     global bond_close, bond_open, move_group_gripper
-    rospy.init_node('gripper_controller')
-    rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
-    gripper_name = "interbotix_gripper"
-    rospy.sleep(5)
-    move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
-    bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
-    bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
-    rospy.spin()
+    # moveit_commander.roscpp_initialize(sys.argv)
+    # rospy.init_node('gripper_controller')
+    # rospy.Subscriber("/locobot/frodo/gripper_command", Int64 , gripper_callback)
+    # gripper_name = "interbotix_gripper"
+    # rospy.sleep(100)
+    # move_group_gripper = moveit_commander.MoveGroupCommander(gripper_name,robot_description="/locobot/robot_description")
+    # move_group_gripper.allow_replanning(True)
+    # move_group_gripper.set_num_planning_attempts(10)
+    # bond_open = bondpy.Bond("/locobot/open_gripper","opengripper")
+    # bond_close = bondpy.Bond("/locobot/close_gripper","closegripper")
+    # rospy.spin()
 
 
 if __name__ == '__main__':

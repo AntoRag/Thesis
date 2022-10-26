@@ -28,7 +28,7 @@
     </include>
 
     <include>     
-      <pose>-2.843767 1.066875 0.434574 0 0 2.420288</pose>
+      <pose>-2.459862 1.420232 0.434574 0 0 2.420288</pose>
       <uri>model://marker2</uri>
     </include>
     <include>     
@@ -37,7 +37,7 @@
       <uri>model://6_Cube_StorageE</uri>
     </include>
     <include>     
-      <pose>-3.008080 0.981300 0 0 0 -2.302382</pose>
+      <pose>-2.640213 1.391053 0 0 0 -2.302382</pose>
       <name>6_Cube_StorageE_1</name>
       <uri>model://6_Cube_StorageE</uri>
     </include>
@@ -47,7 +47,7 @@
       <uri>model://Box_33x15</uri>
     </include>
     <include>     
-      <pose>-3.118317 1.103697 0.430941 2.419025 -1.569863 -3.141313</pose>
+      <pose>-2.775149 1.493163 0.430941 2.419025 -1.569863 -3.141313</pose>
       <name>Box_33x15_1</name>
       <uri>model://Box_33x15</uri>
     </include>

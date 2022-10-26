@@ -1,20 +1,20 @@
 #include <../include/auxiliaryFunctionCommManager.h>
 
-
 void id_callback(std_msgs::Int64 id_request)
     {
 
     ROS_INFO("[CORE::COMM_MANAGER] ---- ENTERED ID CALLBACK");
     int i;
     ID_REQUESTED = id_request.data;
-    if (!pSearchingActive) {
-        ROS_INFO("[CORE::COMM_MANAGER] ----ADDED ID TO BUFFER");
+    if (!pSearchingActive)
+        {
+        ROS_INFO("[CORE::COMM_MANAGER] ---- ADDED ID TO BUFFER");
         id_request_buffer.push_back(ID_REQUESTED);
         }
 
     ROS_INFO("[CORE::COMM_MANAGER] ---- ID REQUESTED: %d", ID_REQUESTED);
     i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
-
+    ROS_INFO("[CORE::COMM_MANAGER] ---- MARKER INDEX: %d", i);
     // FOUND
     if (i >= 0)
         {
@@ -22,23 +22,30 @@ void id_callback(std_msgs::Int64 id_request)
         ROS_INFO("[CORE::COMM_MANAGER] ---- BASE STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE || pSearchingActive)
             {
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ID FOUND PUBLISHING BASE GOAL");
             WaitOnVariable(BASE_STATUS, BASE_IDLE);
-            ros::WallDuration(1).sleep();
             pick_place.data = PICK;
-            ros::WallDuration(1).sleep();
             pub_pick_place.publish(pick_place);
-            ros::WallDuration(1).sleep();
-            MARKER_POSE_GOAL = markers_poses.markers[i].pose; //id_request_buffer.front()
+            ros::WallDuration(5).sleep();
+            MARKER_POSE_GOAL = markers_poses.markers[i].pose;
+            INITIAL_ROBOT_POSE = base_pose_goal;
+            fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
+            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, 1.2);
+            pub_mobile_pose_goal.publish(base_pose_goal);
+            pApproaching = true;
+            ros::WallDuration(5).sleep();
+            WaitOnVariable(BASE_STATUS, BASE_IDLE);
+            ros::WallDuration(10).sleep();
+            ROS_INFO("[CORE::COMM_MANAGER] ---- APPROACHING...");
+            ros::spinOnce();
+            i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+            MARKER_POSE_GOAL = markers_poses.markers[i].pose;
+            base_pose_goal = INITIAL_ROBOT_POSE;
             fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
             fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_base);
             pub_mobile_pose_goal.publish(base_pose_goal);
-            ROS_INFO("[CORE::COMM_MANAGER] ---- ID FOUND PUBLISHING BASE GOAL");
-            if (pSearchingActive)
-                {
-                pFoundMarker = false;
-                pSearchingActive = false;
-
-                }
+            pApproaching = false;
+            pSearchingActive = false;
             }
         else
             {
@@ -47,15 +54,13 @@ void id_callback(std_msgs::Int64 id_request)
         }
     else // NOT FOUND
         {
-        bool rSuccess = fSearchFunction();
-        if (rSuccess)
+        if (fSearchFunction())
             {
             ROS_INFO("[CORE::COMM_MANAGER] ---- SEARCH SUCCESSFUL");
             id_callback(id_request);
             }
         else
             ROS_ERROR("[CORE::COMM_MANAGER] ---- ARTAG NOT FOUND!");
-
         }
     }
 
@@ -63,11 +68,17 @@ void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
     {
     markers_poses = req;
     if (pSearchingActive)
-        if (fFindIdInMarkers(markers_poses, ID_REQUESTED) >= 0) {
-            ROS_INFO("[CORE::COMM_MANAGER] ---- ARTAG FOR SEARCH FOUND!");
+        {
+        if (fFindIdInMarkers(markers_poses, ID_REQUESTED) >= 0)
+            {
             pFoundMarker = true;
             }
+        }
+    }
 
+void artag_arm_callback(ar_track_alvar_msgs::AlvarMarkers req)
+    {
+    markers_poses_arm = req;
     }
 
 void arm_status_callback(std_msgs::Int64 arm_status)
@@ -91,37 +102,40 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 {
                 id_request_buffer.pop_front();
                 retry_arm = 0;
-
                 }
             break;
         case ARM_IDLE:
             ROS_INFO("[CORE::COMM_MANAGER] ---- ARM IDLE");
             break;
         case ARM_FAIL:
-            if (pick_place.data == PICK) {
+            if (pick_place.data == PICK)
+                {
                 if (retry_arm > 2)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
-                distance_arm += 0.15;
+                distance_arm += 0.25;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
-                WaitOnVariable(BASE_STATUS, BASE_IDLE);
+                ros::spinOnce();
+                ros::WallDuration(1).sleep();
+                auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+                MARKER_POSE_GOAL = markers_poses.markers[i].pose;
                 fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_arm);
                 pub_mobile_pose_goal.publish(base_pose_goal);
                 retry_arm++;
                 }
-            else {
+            else
+                {
                 if (retry_arm > 2)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
                     distance_arm = 0.5;
                     break;
                     }
-                distance_arm += 0.15;
+                distance_arm += 0.25;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
-                WaitOnVariable(BASE_STATUS, BASE_IDLE);
                 fChangePosition(base_pose_goal, HOME_POSE_GOAL.pose, distance_arm);
                 pub_mobile_pose_goal.publish(base_pose_goal);
                 retry_arm++;
@@ -197,8 +211,10 @@ int main(int argc, char** argv)
     ros::Subscriber sub_status_arm = node_handle.subscribe("/locobot/frodo/arm_status", 1, arm_status_callback);
     ros::Subscriber sub_status_base = node_handle.subscribe("/locobot/frodo/base_status", 1, base_status_callback);
     ros::Subscriber sub_mobile_base_position = node_handle.subscribe("/locobot/mobile_base/odom", 1, mobileBasePositionCallback);
+    ros::Subscriber sub_artag_arm = node_handle.subscribe("/locobot/move_group/arm/ar_pose_marker", 1, artag_arm_callback);
 
     pub_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/grasp_pose_goal", 1);
+    pub_pre_grasp_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/pre_grasp_pose_goal", 1);
     pub_pick_place = node_handle.advertise<std_msgs::Int64>("/locobot/frodo/pick_or_place", 1);
     pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
     pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);

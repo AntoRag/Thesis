@@ -35,12 +35,12 @@
       output="screen">
     </node>
 
-    <node
+    <!-- <node
       pkg="core"
       type="gripper_controller.py"
       name="gripper_controller"
       output="screen">
-    </node>
+    </node> -->
 
     <node
       pkg="core"
