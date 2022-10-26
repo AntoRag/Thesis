@@ -22,7 +22,7 @@ void id_callback(std_msgs::Int64 id_request)
         ROS_INFO("[CORE::COMM_MANAGER] ---- BASE STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE || pSearchingActive)
             {
-            WaitOnVariable(BASE_STATUS,BASE_IDLE);
+            WaitOnVariable(BASE_STATUS, BASE_IDLE);
             ros::WallDuration(1).sleep();
             pick_place.data = PICK;
             ros::WallDuration(1).sleep();
@@ -34,7 +34,11 @@ void id_callback(std_msgs::Int64 id_request)
             pub_mobile_pose_goal.publish(base_pose_goal);
             ROS_INFO("[CORE::COMM_MANAGER] ---- ID FOUND PUBLISHING BASE GOAL");
             if (pSearchingActive)
+                {
+                pFoundMarker = false;
                 pSearchingActive = false;
+
+                }
             }
         else
             {
