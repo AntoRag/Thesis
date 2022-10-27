@@ -48,7 +48,7 @@ def add_box(target_pose, scene):
     box_pose.pose.orientation.w = 1.0
     box_pose.pose.position.x = target_pose.pose.position.x 
     box_pose.pose.position.y = target_pose.pose.position.y
-    box_pose.pose.position.z = target_pose.pose.position.z + 0.0625
+    box_pose.pose.position.z = target_pose.pose.position.z + 0.04
     # scene.add_box(box_name, box_pose, size=(0.02, 0.065, 0.125))
     scene.add_box(box_name, box_pose, size=(0.02, 0.06, 0.125))
     success = ObjectInScene(scene, box_name, False, True)
@@ -212,7 +212,7 @@ def GraspCallback(pose_goal):
         rospy.sleep(10)
 
         # then we open the gripper
-        openGripper(move_group_gripper)
+        openGripper()
 
         # first we add the box to be grasped to the planning scene
         if (add_box(pose_goal, scene) == False):
@@ -228,7 +228,7 @@ def GraspCallback(pose_goal):
             return
 
         # then we close the gripper
-        closeGripper(move_group_gripper)
+        closeGripper()
 
         # going into retraction pose
         retraction_pose = PoseStamped()
@@ -251,7 +251,7 @@ def GraspCallback(pose_goal):
         go_to_pose_goal(move_group_arm, pose_goal)
 
         # then we open the gripper
-        openGripper(move_group_gripper)
+        openGripper()
 
         # now we add the box to the end effector link
         detach_box(scene)
@@ -263,7 +263,7 @@ def GraspCallback(pose_goal):
         remove_box(scene)
 
         # then we close the gripper
-        closeGripper(move_group_gripper)
+        closeGripper()
 
         fArmSuccess()
 
@@ -296,6 +296,7 @@ def listener():
     move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
+    move_group_arm.set_goal_tolerance(0.1)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
     scene = moveit_commander.PlanningSceneInterface()
