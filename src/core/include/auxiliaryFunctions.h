@@ -73,6 +73,33 @@ void fChangeOrientation(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
     base_pose_goal.header.frame_id = "map";
     }
 
+void fChangeOrientationArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal) {
+    geometry_msgs::PoseStamped q1;
+
+    q1.pose.orientation.w = 0.5;
+    q1.pose.orientation.x = 0.5;
+    q1.pose.orientation.y = 0.5;
+    q1.pose.orientation.z = 0.5;
+
+    // First quaternion q1 (x1 y1 z1 r1)
+    const float x1 = q1.pose.orientation.x;
+    const float y1 = q1.pose.orientation.y;
+    const float z1 = q1.pose.orientation.z;
+    const float r1 = q1.pose.orientation.w;
+
+    // Second quaternion q2 (x2 y2 z2 r2)
+    float x2 = pose_goal.orientation.x;
+    float y2 = pose_goal.orientation.y;
+    float z2 = pose_goal.orientation.z;
+    float r2 = pose_goal.orientation.w;
+
+    //q2*q1 quaternion product
+    base_pose_goal.pose.orientation.x = r2 * x1 + x2 * r1 + y2 * z1 - z2 * y1;  // x component
+    base_pose_goal.pose.orientation.y = r2 * y1 - x2 * z1 + y2 * r1 + z2 * x1;  // y component
+    base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
+    base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
+    base_pose_goal.header.frame_id = "locobot/base_footprint";
+    }
 
 void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal, float distance)
     {
@@ -114,7 +141,7 @@ void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
 
     tf2::Quaternion q(x2, y2, z2, r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);
-    tf2::Vector3 vector(0, 0, distance);
+    tf2::Vector3 vector(0, -distance, 0);
     tf2::Vector3 raw1, raw2, raw3;
 
     raw1 = m_FromMaptoMarker.getRow(0);

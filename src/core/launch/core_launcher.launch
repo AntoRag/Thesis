@@ -18,6 +18,34 @@
       <arg name="P"                                 value="$(arg P)"/>
       <arg name="Y"                                 value="$(arg Y)"/>
     </include>
+
+        <node
+      pkg="core"
+      type="arm_controller_sim.py"
+      name="arm_controller"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="gripper_controller.py"
+      name="gripper_controller"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="communication_manager"
+      name="communication_manager"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="base_controller"
+      name="base_controller"
+      output="screen">
+    </node>
   </group>
 
   <group if="$(arg use_actual)">
@@ -26,9 +54,8 @@
       <arg name="use_moveit"                        value="$(arg use_moveit)"/>
       <arg name="use_artag"                         value="$(arg use_artag)"/>
     </include>
-  </group>
 
-    <node
+        <node
       pkg="core"
       type="arm_controller.py"
       name="arm_controller"
@@ -55,6 +82,8 @@
       name="base_controller"
       output="screen">
     </node>
+  </group>
+
 </launch>
 
 

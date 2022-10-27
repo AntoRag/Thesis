@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   message_generation
   costmap_2d
+  interbotix_xs_msgs
 )
 
 find_package(Eigen3 REQUIRED)
@@ -217,6 +218,7 @@ include_directories(include
 # catkin_add_nosetests(test)
 catkin_install_python(PROGRAMS
   scripts/arm_controller.py
+  scripts/arm_controller_sim.py
   scripts/gripper_controller.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

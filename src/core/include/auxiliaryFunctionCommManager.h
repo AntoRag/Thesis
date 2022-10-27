@@ -38,7 +38,7 @@ int BASE_STATUS = BASE_IDLE;
 int BASE_PREV_STATUS = BASE_IDLE;
 int ID_REQUESTED = 100;
 float distance_arm = 0.5;
-float distance_base = 0.6;
+float distance_base = 0.3;
 uint retry_base = 0;
 uint retry_arm = 0;
 const std::string planning_frame_arm = "locobot/base_footprint";
@@ -146,8 +146,6 @@ void base_status_GoalOk_switchHandler()
         return;
     }
     retry_base = 0;
-
-    ROS_INFO("[CORE::COMM_MANAGER] ---- Ti prego funziona");
     WaitOnVariable(BASE_STATUS, BASE_IDLE);
     if (pick_place.data == PICK)
     {
@@ -156,9 +154,11 @@ void base_status_GoalOk_switchHandler()
         ros::spinOnce();
         auto i = fFindIdInMarkers(markers_poses_arm, ID_REQUESTED);
         auto marker_pose_arm = markers_poses_arm.markers[i].pose;
+        // fChangeOrientationArm(pre_grasp_pose_goal,marker_pose_arm.pose);
         fChangePositionArm(pre_grasp_pose_goal,marker_pose_arm.pose,0.1);
         pub_pre_grasp_pose_goal.publish(pre_grasp_pose_goal);
         ros::WallDuration(5).sleep();
+        // fChangeOrientationArm(grasp_pose_goal,marker_pose_arm.pose);
         fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
     }
