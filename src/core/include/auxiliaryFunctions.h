@@ -1,9 +1,6 @@
-
 #include <tf/transform_datatypes.h>
 #include <ar_track_alvar_msgs/AlvarMarkers.h>
-
 #include <nav_msgs/OccupancyGrid.h>
-
 
 int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id_request)
     {
@@ -17,14 +14,14 @@ int fFindIdInMarkers(ar_track_alvar_msgs::AlvarMarkers markers_poses, int32_t id
     return -1;
     }
 
-void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& pose_goal){
+void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal) {
     geometry_msgs::PoseStamped q1;
 
     q1.pose.orientation.w = 0.9659258; //0.7071068;
     q1.pose.orientation.x = 0;
     q1.pose.orientation.y = 0;
     q1.pose.orientation.z = 0.258819; //0.7071068;
- 
+
     // First quaternion q1 (x1 y1 z1 r1)
     const float x1 = q1.pose.orientation.x;
     const float y1 = q1.pose.orientation.y;
@@ -42,7 +39,7 @@ void fTurn30deg(geometry_msgs::PoseStamped& base_pose_goal,geometry_msgs::Pose& 
     base_pose_goal.pose.orientation.z = r2 * z1 + x2 * y1 - y2 * x1 + z2 * r1; // z component
     base_pose_goal.pose.orientation.w = r2 * r1 - x2 * x1 - y2 * y1 - z2 * z1; // r component
     base_pose_goal.header.frame_id = "map";
-}
+    }
 
 
 
@@ -128,7 +125,6 @@ void fChangePosition(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::
 
     base_pose_goal.header.frame_id = "map";
     ROS_INFO("Marker pose: x=%1.3f y=%1.3f, Goal pose: x=%1.3f y=%1.3f", pose_goal.position.x, pose_goal.position.y, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y);
-
     }
 void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msgs::Pose& pose_goal, float distance)
     {
@@ -156,7 +152,7 @@ void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
     base_pose_goal.pose.position.z = new_pose.pose.position.z;
 
     base_pose_goal.header.frame_id = "locobot/base_footprint";
-    ROS_INFO("Marker pose: x=%1.3f y=%1.3f z=%1.3f, Goal pose: x=%1.3f y=%1.3f z=%1.3f", pose_goal.position.x, pose_goal.position.y,pose_goal.position.z, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y,base_pose_goal.pose.position.z);
+    ROS_INFO("Marker pose: x=%1.3f y=%1.3f z=%1.3f, Goal pose: x=%1.3f y=%1.3f z=%1.3f", pose_goal.position.x, pose_goal.position.y, pose_goal.position.z, base_pose_goal.pose.position.x, base_pose_goal.pose.position.y, base_pose_goal.pose.position.z);
 
     }
 template<class T, class U>
@@ -171,6 +167,7 @@ void WaitOnVariableOfPair(T& pFirstVariable, T pFirstPredicate, U& pSecondVariab
         loop_rate.sleep();
         }
     }
+
 template<class T>
 void WaitOnVariable(T& pVariable, T pPredicate)
     {

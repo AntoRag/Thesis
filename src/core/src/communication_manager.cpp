@@ -1,27 +1,27 @@
 #include <../include/auxiliaryFunctionCommManager.h>
 
 void id_callback(std_msgs::Int64 id_request)
-{
+    {
 
     ROS_INFO("[CORE::COMM_MANAGER] ---- ENTERED ID CALLBACK");
     int i;
     ID_REQUESTED = id_request.data;
     if (!pSearchingActive)
-    {
+        {
         ROS_INFO("[CORE::COMM_MANAGER] ---- ADDED ID TO BUFFER");
         id_request_buffer.push_back(ID_REQUESTED);
-    }
+        }
 
     ROS_INFO("[CORE::COMM_MANAGER] ---- ID REQUESTED: %d", ID_REQUESTED);
     i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
     ROS_INFO("[CORE::COMM_MANAGER] ---- MARKER INDEX: %d", i);
     // FOUND
     if (i >= 0)
-    {
+        {
 
         ROS_INFO("[CORE::COMM_MANAGER] ---- BASE STATUS: %d", BASE_STATUS);
         if (BASE_STATUS == BASE_IDLE || pSearchingActive)
-        {
+            {
             ROS_INFO("[CORE::COMM_MANAGER] ---- ID FOUND PUBLISHING BASE GOAL");
             WaitOnVariable(BASE_STATUS, BASE_IDLE);
             pick_place.data = PICK;
@@ -46,144 +46,144 @@ void id_callback(std_msgs::Int64 id_request)
             pub_mobile_pose_goal.publish(base_pose_goal);
             pApproaching = false;
             pSearchingActive = false;
-        }
+            }
         else
-        {
+            {
             ROS_INFO("[CORE::COMM_MANAGER] ---- ROBOT RUNNING, TRY LATER");
+            }
         }
-    }
     else // NOT FOUND
-    {
-        if (fSearchFunction())
         {
+        if (fSearchFunction())
+            {
             ROS_INFO("[CORE::COMM_MANAGER] ---- SEARCH SUCCESSFUL");
             id_callback(id_request);
-        }
+            }
         else
             ROS_ERROR("[CORE::COMM_MANAGER] ---- ARTAG NOT FOUND!");
-    }
-}
-
-void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
-{
-    markers_poses = req;
-    if (pSearchingActive)
-    {
-        if (fFindIdInMarkers(markers_poses, ID_REQUESTED) >= 0)
-        {
-            pFoundMarker = true;
         }
     }
-}
+
+void artag_callback(ar_track_alvar_msgs::AlvarMarkers req)
+    {
+    markers_poses = req;
+    if (pSearchingActive)
+        {
+        if (fFindIdInMarkers(markers_poses, ID_REQUESTED) >= 0)
+            {
+            pFoundMarker = true;
+            }
+        }
+    }
 
 void artag_arm_callback(ar_track_alvar_msgs::AlvarMarkers req)
-{
+    {
     markers_poses_arm = req;
-}
+    }
 
 void arm_status_callback(std_msgs::Int64 arm_status)
-{
+    {
     ROS_INFO("[CORE::COMM_MANAGER] ---- ENTERED ARM CALLBACK");
     ARM_STATUS = arm_status.data;
     uint retry = 0;
     switch (ARM_STATUS)
-    {
-    case ARM_SUCCESS:
-        if (pick_place.data == PICK)
         {
-            WaitOnVariable(BASE_STATUS, BASE_IDLE);
-            pick_place.data = PLACE;
-            ROS_INFO("[CORE::COMM_MANAGER] ---- Starting PLACE");
-            pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
-            pub_pick_place.publish(pick_place);
-            retry_arm = 0;
-        }
-        else
-        {
-            id_request_buffer.pop_front();
-            retry_arm = 0;
-        }
-        break;
-    case ARM_IDLE:
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ARM IDLE");
-        break;
-    case ARM_FAIL:
-        if (pick_place.data == PICK)
-        {
-            if (retry_arm > 2)
-            {
-                ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
-                distance_arm = 0.5;
-                break;
-            }
-            distance_arm += 0.25;
-            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
-            ros::spinOnce();
-            ros::WallDuration(1).sleep();
-            auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
-            MARKER_POSE_GOAL = markers_poses.markers[i].pose;
-            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_arm);
-            pub_mobile_pose_goal.publish(base_pose_goal);
-            retry_arm++;
-        }
-        else
-        {
-            if (retry_arm > 2)
-            {
-                ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
-                distance_arm = 0.5;
-                break;
-            }
-            distance_arm += 0.25;
-            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
-            fChangePosition(base_pose_goal, HOME_POSE_GOAL.pose, distance_arm);
-            pub_mobile_pose_goal.publish(base_pose_goal);
-            retry_arm++;
-        }
-        break;
+        case ARM_SUCCESS:
+            if (pick_place.data == PICK)
+                {
+                WaitOnVariable(BASE_STATUS, BASE_IDLE);
+                pick_place.data = PLACE;
+                ROS_INFO("[CORE::COMM_MANAGER] ---- Starting PLACE");
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+                pub_pick_place.publish(pick_place);
+                retry_arm = 0;
+                }
+            else
+                {
+                id_request_buffer.pop_front();
+                retry_arm = 0;
+                }
+            break;
+        case ARM_IDLE:
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM IDLE");
+            break;
+        case ARM_FAIL:
+            if (pick_place.data == PICK)
+                {
+                if (retry_arm > 2)
+                    {
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
+                    distance_arm = 0.5;
+                    break;
+                    }
+                distance_arm += 0.25;
+                ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
+                ros::spinOnce();
+                ros::WallDuration(1).sleep();
+                auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
+                MARKER_POSE_GOAL = markers_poses.markers[i].pose;
+                fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_arm);
+                pub_mobile_pose_goal.publish(base_pose_goal);
+                retry_arm++;
+                }
+            else
+                {
+                if (retry_arm > 2)
+                    {
+                    ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
+                    distance_arm = 0.5;
+                    break;
+                    }
+                distance_arm += 0.25;
+                ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
+                fChangePosition(base_pose_goal, HOME_POSE_GOAL.pose, distance_arm);
+                pub_mobile_pose_goal.publish(base_pose_goal);
+                retry_arm++;
+                }
+            break;
 
-    case ARM_RUNNING:
-        ROS_INFO("[CORE::COMM_MANAGER] ---- ARM RUNNING");
-        break;
-    default:
-        break;
+        case ARM_RUNNING:
+            ROS_INFO("[CORE::COMM_MANAGER] ---- ARM RUNNING");
+            break;
+        default:
+            break;
+        }
     }
-}
 
 void base_status_callback(std_msgs::Int64 base_status)
-{
+    {
     ROS_INFO("[CORE::COMM_MANAGER] ---- ENTERD BASE CALLBACK");
     BASE_STATUS = base_status.data;
     switch (BASE_STATUS)
-    {
-    case BASE_IDLE:
-        ROS_INFO("[CORE::COMM_MANAGER] ---- BASE IDLE");
-        base_status_idle_switchHandler();
-        break;
-    case BASE_TO_GOAL:
-        ROS_INFO("[CORE::COMM_MANAGER] ---- BASE TO GOAL");
-        base_status_ToGoal_switchHandler();
-        break;
-    case BASE_GOAL_OK:
-        ROS_INFO("[CORE::COMM_MANAGER] ---- BASE ARRIVED AT GOAL");
-        base_status_GoalOk_switchHandler();
-        break;
-    case BASE_GOAL_FAIL:
-        ROS_ERROR("[CORE::COMM_MANAGER] ---- BASE FAILED");
-        base_status_GoalFail_switchHandler();
-        break;
+        {
+        case BASE_IDLE:
+            ROS_INFO("[CORE::COMM_MANAGER] ---- BASE IDLE");
+            base_status_idle_switchHandler();
+            break;
+        case BASE_TO_GOAL:
+            ROS_INFO("[CORE::COMM_MANAGER] ---- BASE TO GOAL");
+            base_status_ToGoal_switchHandler();
+            break;
+        case BASE_GOAL_OK:
+            ROS_INFO("[CORE::COMM_MANAGER] ---- BASE ARRIVED AT GOAL");
+            base_status_GoalOk_switchHandler();
+            break;
+        case BASE_GOAL_FAIL:
+            ROS_ERROR("[CORE::COMM_MANAGER] ---- BASE FAILED");
+            base_status_GoalFail_switchHandler();
+            break;
+        }
     }
-}
 
 void mobileBasePositionCallback(nav_msgs::Odometry pOdometryInfo)
-{
+    {
     pMobileBasePosition = pOdometryInfo.pose.pose;
-}
+    }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv)
+    {
 
-    putenv((char *)"ROS_NAMESPACE=locobot");
+    putenv((char*)"ROS_NAMESPACE=locobot");
     ros::init(argc, argv, "communication_manager");
 
     HOME_POSE_GOAL.header.frame_id = "map";
@@ -244,4 +244,4 @@ int main(int argc, char **argv)
 
     ros::spin();
     return 0;
-}
+    }
