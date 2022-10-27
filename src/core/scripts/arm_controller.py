@@ -50,7 +50,7 @@ def add_box(target_pose, scene):
     box_pose.pose.position.y = target_pose.pose.position.y
     box_pose.pose.position.z = target_pose.pose.position.z + 0.04
     # scene.add_box(box_name, box_pose, size=(0.02, 0.065, 0.125))
-    scene.add_box(box_name, box_pose, size=(0.02, 0.06, 0.125))
+    scene.add_box(box_name, box_pose, size=(0.04, 0.08, 0.15))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")
@@ -219,7 +219,7 @@ def GraspCallback(pose_goal):
             return
 
         # then we approach the object
-        rospy.sleep(5)
+        rospy.sleep(10)
         if (go_to_pose_goal(move_group_arm, pose_goal) == False):
             return
 
@@ -296,7 +296,7 @@ def listener():
     move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
-    move_group_arm.set_goal_tolerance(0.1)
+    move_group_arm.set_goal_tolerance(0.05)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
     scene = moveit_commander.PlanningSceneInterface()
@@ -305,7 +305,7 @@ def listener():
     service_octomap = rospy.ServiceProxy('/locobot/clear_octomap', Empty)
     # move_group_gripper.allow_replanning(True)
     # move_group_gripper.set_num_planning_attempts(10)
-    goHome(move_group_arm)
+    #goHome(move_group_arm)
     closeGripper()
     rospy.spin()
 

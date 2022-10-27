@@ -150,8 +150,11 @@ void base_status_GoalOk_switchHandler()
     if (pick_place.data == PICK)
     {
         ROS_INFO("[CORE::COMM_MANAGER] ---- STARTING PICK...");
-        ros::WallDuration(10).sleep();
-        ros::spinOnce();
+        auto time_now = ros::WallTime::now().toSec();
+        while (ros::WallTime::now().toSec()- time_now<10){
+            ros::spinOnce();
+        }
+
         auto i = fFindIdInMarkers(markers_poses_arm, ID_REQUESTED);
         auto marker_pose_arm = markers_poses_arm.markers[i].pose;
         // fChangeOrientationArm(pre_grasp_pose_goal,marker_pose_arm.pose);
