@@ -42,15 +42,15 @@ def add_box(target_pose, scene):
     box_name = "medicine"
     box_pose = PoseStamped()
     box_pose.header.frame_id = "locobot/base_footprint"
-    box_pose.pose.orientation.x = 1e-6
-    box_pose.pose.orientation.y = 1e-6
-    box_pose.pose.orientation.z = 1e-6
-    box_pose.pose.orientation.w = 1.0
-    box_pose.pose.position.x = target_pose.pose.position.x 
+    box_pose.pose.orientation.x = target_pose.pose.orientation.x
+    box_pose.pose.orientation.y = target_pose.pose.orientation.y
+    box_pose.pose.orientation.z = target_pose.pose.orientation.z
+    box_pose.pose.orientation.w = target_pose.pose.orientation.w
+    box_pose.pose.position.x = target_pose.pose.position.x + 0.02
     box_pose.pose.position.y = target_pose.pose.position.y
     box_pose.pose.position.z = target_pose.pose.position.z + 0.04
     # scene.add_box(box_name, box_pose, size=(0.02, 0.065, 0.125))
-    scene.add_box(box_name, box_pose, size=(0.04, 0.08, 0.15))
+    scene.add_box(box_name, box_pose, size=(0.04, 0.07, 0.15))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")
@@ -84,10 +84,10 @@ def remove_box(scene):
 
 def go_to_pose_goal(move_group, target_pose):
     pose_goal = Pose()
-    pose_goal.orientation.x = 1e-6
-    pose_goal.orientation.y = 1e-6
-    pose_goal.orientation.z = 1e-6
-    pose_goal.orientation.w = 1
+    pose_goal.orientation.x = target_pose.pose.orientation.x
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
     pose_goal.position.y = target_pose.pose.position.y
     pose_goal.position.z = target_pose.pose.position.z
@@ -220,6 +220,7 @@ def GraspCallback(pose_goal):
 
         # then we approach the object
         rospy.sleep(10)
+        pose_goal.pose.position.x =pose_goal.pose.position.x
         if (go_to_pose_goal(move_group_arm, pose_goal) == False):
             return
 
@@ -296,7 +297,7 @@ def listener():
     move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
-    move_group_arm.set_goal_tolerance(0.05)
+    move_group_arm.set_goal_tolerance(0.0005)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
     scene = moveit_commander.PlanningSceneInterface()

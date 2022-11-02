@@ -131,8 +131,8 @@ void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
     geometry_msgs::PoseStamped new_pose;
     float x2 = pose_goal.orientation.x;
     float y2 = pose_goal.orientation.y;
-    float z2 = 0.5;
-    float r2 = 0.5;
+    float z2 = pose_goal.orientation.z;
+    float r2 = pose_goal.orientation.w;
 
 
     tf2::Quaternion q(x2, y2, z2, r2);
