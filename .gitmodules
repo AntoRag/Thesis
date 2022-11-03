@@ -52,3 +52,10 @@
 	path = src/navigation_layers
 	url = https://github.com/DLu/navigation_layers.git
 	branch = noetic
+[submodule "src/spencer_people_tracking"]
+	path = src/spencer_people_tracking
+	url = https://github.com/spencer-project/spencer_people_tracking.git
+	branch = noetic
+[submodule "src/people"]
+	path = src/people
+	url = https://github.com/wg-perception/people.git
