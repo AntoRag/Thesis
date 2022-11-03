@@ -228,29 +228,26 @@ int main(int argc, char** argv)
     pub_mobile_pose_goal = node_handle.advertise<geometry_msgs::PoseStamped>("/locobot/frodo/mobile_pose_goal", 1);
     pub_no_marker = node_handle.advertise<std_msgs::String>("/locobot/frodo/no_marker", 1);
 
-    geometry_msgs::PoseStamped rTempPose;
+    SPOT1_POSE_GOAL.header.frame_id = "map";
+    SPOT1_POSE_GOAL.pose.position.x = -1.6;
+    SPOT1_POSE_GOAL.pose.position.y = 0;
+    SPOT1_POSE_GOAL.pose.position.z = 0;
+    SPOT1_POSE_GOAL.pose.orientation.x = 0;
+    SPOT1_POSE_GOAL.pose.orientation.y = 0;
+    SPOT1_POSE_GOAL.pose.orientation.z = -0.7334;
+    SPOT1_POSE_GOAL.pose.orientation.w = 0.68;
 
-    rTempPose.header.frame_id = "map";
-    rTempPose.pose.position.x = -1.6;
-    rTempPose.pose.position.y = 0;
-    rTempPose.pose.position.z = 0;
-    rTempPose.pose.orientation.x = 0;
-    rTempPose.pose.orientation.y = 0;
-    rTempPose.pose.orientation.z = -0.7334;
-    rTempPose.pose.orientation.w = 0.68;
-    pSearchPoses.push_back(rTempPose);
-    pSearchPoses.push_back(HOME_POSE_GOAL);
-    rTempPose.header.frame_id = "map";
-    rTempPose.pose.position.x = 1.6266;
-    rTempPose.pose.position.y = 0;
-    rTempPose.pose.position.z = 0.0;
-    rTempPose.pose.orientation.x = 0;
-    rTempPose.pose.orientation.y = 0;
-    rTempPose.pose.orientation.z = -0.705;
-    rTempPose.pose.orientation.w = 0.70931;
-    pSearchPoses.push_back(rTempPose);
-    pSearchPoses.push_back(HOME_POSE_GOAL);
+    SPOT2_POSE_GOAL.header.frame_id = "map";
+    SPOT2_POSE_GOAL.pose.position.x = 1.6266;
+    SPOT2_POSE_GOAL.pose.position.y = 0;
+    SPOT2_POSE_GOAL.pose.position.z = 0.0;
+    SPOT2_POSE_GOAL.pose.orientation.x = 0;
+    SPOT2_POSE_GOAL.pose.orientation.y = 0;
+    SPOT2_POSE_GOAL.pose.orientation.z = -0.705;
+    SPOT2_POSE_GOAL.pose.orientation.w = 0.70931;
 
+    pSearchPoses.push_back(SPOT1_POSE_GOAL);
+    pSearchPoses.push_back(SPOT2_POSE_GOAL);
     ros::spin();
     return 0;
     }

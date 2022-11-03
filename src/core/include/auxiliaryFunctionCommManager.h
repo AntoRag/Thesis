@@ -51,6 +51,8 @@ geometry_msgs::PoseStamped MARKER_POSE_GOAL;
 geometry_msgs::PoseStamped HOME_POSE_GOAL; // Da definire
 geometry_msgs::PoseStamped PLACE_GRASP_GOAL;
 geometry_msgs::PoseStamped DEPOT_POSE_GOAL;
+geometry_msgs::PoseStamped SPOT1_POSE_GOAL;
+geometry_msgs::PoseStamped SPOT2_POSE_GOAL;
 geometry_msgs::PoseStamped INITIAL_ROBOT_POSE;
 ar_track_alvar_msgs::AlvarMarkers markers_poses;
 ar_track_alvar_msgs::AlvarMarkers markers_poses_arm;
