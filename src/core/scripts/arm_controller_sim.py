@@ -318,8 +318,8 @@ def listener():
 
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
-    tolerance = 0.1
-    move_group_arm.set_goal_position_tolerance(tolerance)
+    # tolerance = 0.005
+    # move_group_arm.set_goal_position_tolerance(tolerance)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(
         robot_description="/locobot/robot_description")
