@@ -110,63 +110,81 @@ def go_to_pose_goal(move_group, target_pose):
     return success
 
 def go_to_pose_goal_approach(move_group, target_pose):
-    waypoints = []
-    scale = 1
-    wpose = Pose()
-    wpose = move_group.get_current_pose().pose
-    wpose = target_pose
-    wpose.position.x -= scale * 0.05
-    waypoints.append(copy.deepcopy(wpose))
-    wpose = target_pose.pose
-    waypoints.append(copy.deepcopy(wpose))
-
-    # We want the Cartesian path to be interpolated at a resolution of 1 cm
-    # which is why we will specify 0.01 as the eef_step in Cartesian
-    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-    (plan, fraction) = move_group.compute_cartesian_path(
-                                       waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
-                                       0.0)         # jump_threshold
-
-    # Note: We are just planning, not asking move_group to actually move the robot yet:
-    success = move_group.execute(plan,wait=True)
+    pose_goal = Pose()
+    pose_goal.orientation.x = target_pose.pose.orientation.x-0.05
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
     if success:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
     else:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
         fArmFail()
-    # rospy.loginfo("Stop any residual motion")
-    # current_pose = move_group.get_current_pose().pose
+        return success
+    pose_goal.orientation.x = target_pose.pose.orientation.x
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
+    if success:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
+    else:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
+        fArmFail()
     return success
 
 def go_to_pose_goal_retraction(move_group, target_pose):
-    waypoints = []
-    scale = 1
-    wpose = Pose()
-    wpose = move_group.get_current_pose().pose
-    wpose.position.z += scale * 0.05
-    waypoints.append(copy.deepcopy(wpose))
-    wpose.position.x -=scale*0.05
-    waypoints.append(copy.deepcopy(wpose))
-    wpose = target_pose.pose
-    waypoints.append(copy.deepcopy(wpose))
-    # We want the Cartesian path to be interpolated at a resolution of 1 cm
-    # which is why we will specify 0.01 as the eef_step in Cartesian
-    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-    (plan, fraction) = move_group.compute_cartesian_path(
-                                       waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
-                                       0.0)         # jump_threshold
-
-    # Note: We are just planning, not asking move_group to actually move the robot yet:
-    success = move_group.execute(plan,wait=True)
+    pose_goal = Pose()
+    pose_goal.orientation.x = target_pose.pose.orientation.x-0.05
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z+0.1
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
     if success:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
     else:
         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
         fArmFail()
-    # rospy.loginfo("Stop any residual motion")
-    # current_pose = move_group.get_current_pose().pose
+        return success
+    pose_goal.orientation.x = target_pose.pose.orientation.x
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
+    if success:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
+    else:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
+        fArmFail()
     return success
 
 
