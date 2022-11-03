@@ -94,7 +94,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 WaitOnVariable(BASE_STATUS, BASE_IDLE);
                 pick_place.data = PLACE;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- Starting PLACE");
-                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+                pub_mobile_pose_goal.publish(DEPOT_POSE_GOAL);
                 pub_pick_place.publish(pick_place);
                 retry_arm = 0;
                 }
@@ -195,10 +195,19 @@ int main(int argc, char** argv)
     HOME_POSE_GOAL.pose.orientation.z = 0;
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
-    PLACE_GRASP_GOAL.header.frame_id = "map";
-    PLACE_GRASP_GOAL.pose.position.x = 0.4;
+    DEPOT_POSE_GOAL.header.frame_id = "map";
+    DEPOT_POSE_GOAL.pose.position.x = -0.77722;
+    DEPOT_POSE_GOAL.pose.position.y = 0.71327;
+    DEPOT_POSE_GOAL.pose.position.z = 0;
+    DEPOT_POSE_GOAL.pose.orientation.x = 0;
+    DEPOT_POSE_GOAL.pose.orientation.y = 0;
+    DEPOT_POSE_GOAL.pose.orientation.z = 0.76744;
+    DEPOT_POSE_GOAL.pose.orientation.w = 0.64112;
+
+    PLACE_GRASP_GOAL.header.frame_id = "locobot/base_footprint";
+    PLACE_GRASP_GOAL.pose.position.x = 0.56;
     PLACE_GRASP_GOAL.pose.position.y = 0;
-    PLACE_GRASP_GOAL.pose.position.z = 0.2;
+    PLACE_GRASP_GOAL.pose.position.z = 0.437;
     PLACE_GRASP_GOAL.pose.orientation.x = 0;
     PLACE_GRASP_GOAL.pose.orientation.y = 0;
     PLACE_GRASP_GOAL.pose.orientation.z = 0;
@@ -222,23 +231,23 @@ int main(int argc, char** argv)
     geometry_msgs::PoseStamped rTempPose;
 
     rTempPose.header.frame_id = "map";
-    rTempPose.pose.position.x = 0.22;
-    rTempPose.pose.position.y = -4.6;
-    rTempPose.pose.position.z = 0.0;
+    rTempPose.pose.position.x = -1.6;
+    rTempPose.pose.position.y = 0;
+    rTempPose.pose.position.z = 0;
     rTempPose.pose.orientation.x = 0;
     rTempPose.pose.orientation.y = 0;
-    rTempPose.pose.orientation.z = 0;
-    rTempPose.pose.orientation.w = 1;
+    rTempPose.pose.orientation.z = -0.7334;
+    rTempPose.pose.orientation.w = 0.68;
     pSearchPoses.push_back(rTempPose);
     pSearchPoses.push_back(HOME_POSE_GOAL);
     rTempPose.header.frame_id = "map";
-    rTempPose.pose.position.x = -3.91;
-    rTempPose.pose.position.y = 4.27;
+    rTempPose.pose.position.x = 1.6266;
+    rTempPose.pose.position.y = 0;
     rTempPose.pose.position.z = 0.0;
     rTempPose.pose.orientation.x = 0;
     rTempPose.pose.orientation.y = 0;
-    rTempPose.pose.orientation.z = 0;
-    rTempPose.pose.orientation.w = 1;
+    rTempPose.pose.orientation.z = -0.705;
+    rTempPose.pose.orientation.w = 0.70931;
     pSearchPoses.push_back(rTempPose);
     pSearchPoses.push_back(HOME_POSE_GOAL);
 
