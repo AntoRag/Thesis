@@ -144,9 +144,9 @@ def go_to_pose_goal_retraction(move_group, target_pose):
     scale = 1
     wpose = Pose()
     wpose = move_group.get_current_pose().pose
-    wpose.pose.position.z += scale * 0.05
+    wpose.position.z += scale * 0.05
     waypoints.append(copy.deepcopy(wpose))
-    wpose.pose.position.x -=scale*0.05
+    wpose.position.x -=scale*0.05
     waypoints.append(copy.deepcopy(wpose))
     wpose = target_pose.pose
     waypoints.append(copy.deepcopy(wpose))
