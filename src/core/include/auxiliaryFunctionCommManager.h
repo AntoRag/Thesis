@@ -79,9 +79,10 @@ bool fSearchFunction()
     int rCount = 0;
     geometry_msgs::PoseStamped TempPose;
    
-    while (rSpot < pSearchPoses.size())
+    while (rSpot < pSearchPoses.size()-1)
     {
         int i = 0;
+        TempPose = pSearchPoses.at(rSpot);
         while (i < 12)
         {
             // rotate 30 degrees
@@ -96,7 +97,7 @@ bool fSearchFunction()
         }
         if (pFoundMarker)
             break;
-        pub_mobile_pose_goal.publish(pSearchPoses.at(rSpot));
+        pub_mobile_pose_goal.publish(pSearchPoses.at(rSpot+1));
         ROS_INFO("[CORE::COMM_MANAGER] ---- MOVING TO NEXT SEARCH SPOT");
         WaitOnVariableOfPair(pFoundMarker, true, BASE_STATUS, BASE_IDLE);
         if (pFoundMarker)

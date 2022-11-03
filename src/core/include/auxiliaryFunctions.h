@@ -76,7 +76,7 @@ void fChangeOrientationArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_
     q1.pose.orientation.w = 0.5;
     q1.pose.orientation.x = 0.5;
     q1.pose.orientation.y = 0.5;
-    q1.pose.orientation.z = 0.5;
+    q1.pose.orientation.z = -0.5;
 
     // First quaternion q1 (x1 y1 z1 r1)
     const float x1 = q1.pose.orientation.x;

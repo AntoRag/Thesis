@@ -245,9 +245,11 @@ int main(int argc, char** argv)
     SPOT2_POSE_GOAL.pose.orientation.y = 0;
     SPOT2_POSE_GOAL.pose.orientation.z = -0.705;
     SPOT2_POSE_GOAL.pose.orientation.w = 0.70931;
-
+    
+    pSearchPoses.push_back(HOME_POSE_GOAL);
     pSearchPoses.push_back(SPOT1_POSE_GOAL);
     pSearchPoses.push_back(SPOT2_POSE_GOAL);
+    pSearchPoses.push_back(HOME_POSE_GOAL);
     ros::spin();
     return 0;
     }
