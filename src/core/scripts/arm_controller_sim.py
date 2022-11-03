@@ -135,7 +135,7 @@ def go_to_pose_goal(move_group, target_pose):
     # current_pose = move_group.get_current_pose().pose
     return success
 
-def go_to_pose_goal_cartesian(move_group, target_pose):
+def go_to_pose_goal_approach(move_group, target_pose):
     waypoints = []
     scale = 1
     wpose = move_group.get_current_pose().pose
@@ -164,6 +164,33 @@ def go_to_pose_goal_cartesian(move_group, target_pose):
     # current_pose = move_group.get_current_pose().pose
     return success
 
+def go_to_pose_goal_retraction(move_group, target_pose):
+    waypoints = []
+    scale = 1
+    wpose = move_group.get_current_pose().pose
+    wpose.position.z += scale * 0.05
+    waypoints.append(copy.deepcopy(wpose))
+    wpose.position.x -=scale*0.05
+    waypoints.append(copy.deepcopy(wpose))
+    waypoints.append(copy.deepcopy(target_pose))
+    # We want the Cartesian path to be interpolated at a resolution of 1 cm
+    # which is why we will specify 0.01 as the eef_step in Cartesian
+    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
+    (plan, fraction) = move_group.compute_cartesian_path(
+                                       waypoints,   # waypoints to follow
+                                       0.01,        # eef_step
+                                       0.0)         # jump_threshold
+
+    # Note: We are just planning, not asking move_group to actually move the robot yet:
+    success = move_group.execute(plan,wait=True)
+    if success:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
+    else:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
+        fArmFail()
+    # rospy.loginfo("Stop any residual motion")
+    # current_pose = move_group.get_current_pose().pose
+    return success
 
 
 def fArmSuccess():
@@ -269,13 +296,11 @@ def GraspCallback(pose_goal):
         #rospy.loginfo("Gripped Opened")
 
         # first we add the box to be grasped to the planning scene
-        pose_goal.pose.position.x = pose_goal.pose.position.x
         if (add_box(pose_goal, scene) == False):
             return
 
         # then we approach the object
-        pose_goal.pose.position.x = pose_goal.pose.position.x
-        if (go_to_pose_goal_cartesian(move_group_arm, pose_goal) == False):
+        if (go_to_pose_goal_approach(move_group_arm, pose_goal) == False):
             return
 
         # now we add the box to the end effector link
@@ -295,12 +320,7 @@ def GraspCallback(pose_goal):
         #rospy.loginfo("Gripped Closed")
 
         # going into retraction pose
-        retraction_pose = PoseStamped()
-        retraction_pose = pose_goal
-        retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
-            0.1  # we go 10 cm far from the goal position
-        # actuate the motion
-        if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
+        if (go_to_pose_goal_retraction(move_group_arm, pre_grasp_pose) == False):
             return
         goHome(move_group_arm)
         fArmSuccess()
@@ -313,7 +333,7 @@ def GraspCallback(pose_goal):
         rospy.sleep(10)
         # We go into the place position
         # actuate the motion
-        go_to_pose_goal_cartesian(move_group_arm, pose_goal)
+        go_to_pose_goal_approach(move_group_arm, pose_goal)
 
         # then we open the gripper
         openGripper(move_group_gripper)
