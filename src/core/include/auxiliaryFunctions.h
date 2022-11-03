@@ -159,7 +159,7 @@ template<class T, class U>
 void WaitOnVariableOfPair(T& pFirstVariable, T pFirstPredicate, U& pSecondVariable, U pSecondPredicate)
     {
     ros::Rate loop_rate(5);
-    ros::Duration(5).sleep();
+    ros::Duration(10).sleep();
     ros::spinOnce();
     while ((pFirstVariable != pFirstPredicate) && (pSecondVariable != pSecondPredicate))
         {

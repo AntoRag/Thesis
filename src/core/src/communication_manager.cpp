@@ -115,9 +115,10 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
                     distance_arm = 0.5;
+                    pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                     break;
                     }
-                distance_arm += 0.25;
+                distance_arm += 0.10;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
                 ros::spinOnce();
                 ros::WallDuration(1).sleep();
@@ -133,9 +134,10 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
                     distance_arm = 0.5;
+                    pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                     break;
                     }
-                distance_arm += 0.25;
+                distance_arm += 0.10;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
                 fChangePosition(base_pose_goal, HOME_POSE_GOAL.pose, distance_arm);
                 pub_mobile_pose_goal.publish(base_pose_goal);
