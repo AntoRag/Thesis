@@ -160,12 +160,12 @@ void base_status_GoalOk_switchHandler()
 
         auto i = fFindIdInMarkers(markers_poses_arm, ID_REQUESTED);
         auto marker_pose_arm = markers_poses_arm.markers[i].pose;
-        // fChangeOrientationArm(pre_grasp_pose_goal,marker_pose_arm.pose);
+        fChangeOrientationArm(pre_grasp_pose_goal,marker_pose_arm.pose);
         fChangePositionArm(pre_grasp_pose_goal,marker_pose_arm.pose,0.1);
         pub_pre_grasp_pose_goal.publish(pre_grasp_pose_goal);
         ros::WallDuration(5).sleep();
-        // fChangeOrientationArm(grasp_pose_goal,marker_pose_arm.pose);
-        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.03);
+        fChangeOrientationArm(grasp_pose_goal,marker_pose_arm.pose);
+        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.02);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
     }
     else
