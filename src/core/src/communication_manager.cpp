@@ -196,8 +196,8 @@ int main(int argc, char** argv)
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
     DEPOT_POSE_GOAL.header.frame_id = "map";
-    DEPOT_POSE_GOAL.pose.position.x = -0.77722;
-    DEPOT_POSE_GOAL.pose.position.y = 0.71327;
+    DEPOT_POSE_GOAL.pose.position.x = -0.70722;
+    DEPOT_POSE_GOAL.pose.position.y = 0.76327;
     DEPOT_POSE_GOAL.pose.position.z = 0;
     DEPOT_POSE_GOAL.pose.orientation.x = 0;
     DEPOT_POSE_GOAL.pose.orientation.y = 0;
