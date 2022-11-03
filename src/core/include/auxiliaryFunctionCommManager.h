@@ -166,7 +166,7 @@ void base_status_GoalOk_switchHandler()
         pub_pre_grasp_pose_goal.publish(pre_grasp_pose_goal);
         ros::WallDuration(5).sleep();
         fChangeOrientationArm(grasp_pose_goal,marker_pose_arm.pose);
-        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.02);
+        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.01);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
     }
     else
