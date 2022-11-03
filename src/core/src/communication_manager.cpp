@@ -101,6 +101,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
             else
                 {
                 id_request_buffer.pop_front();
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 retry_arm = 0;
                 }
             break;
