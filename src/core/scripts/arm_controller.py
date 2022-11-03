@@ -114,7 +114,7 @@ def go_to_pose_goal_approach(move_group, target_pose):
     scale = 1
     wpose = move_group.get_current_pose().pose
     wpose = target_pose
-    wpose.position.x -= scale * 0.05
+    wpose.pose.position.x -= scale * 0.05
     waypoints.append(copy.deepcopy(wpose))
 
     waypoints.append(copy.deepcopy(target_pose))
@@ -142,9 +142,9 @@ def go_to_pose_goal_retraction(move_group, target_pose):
     waypoints = []
     scale = 1
     wpose = move_group.get_current_pose().pose
-    wpose.position.z += scale * 0.05
+    wpose.pose.position.z += scale * 0.05
     waypoints.append(copy.deepcopy(wpose))
-    wpose.position.x -=scale*0.05
+    wpose.pose.position.x -=scale*0.05
     waypoints.append(copy.deepcopy(wpose))
     waypoints.append(copy.deepcopy(target_pose))
     # We want the Cartesian path to be interpolated at a resolution of 1 cm
