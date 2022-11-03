@@ -9,7 +9,6 @@ from std_msgs.msg import Int64
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 import rospy
-import copy
 from bondpy import bondpy
 from std_srvs.srv import Empty
 
@@ -83,38 +82,12 @@ def remove_box(scene):
     scene.remove_world_object(box_name)
     rospy.sleep(5)
 
-# def go_to_pose_goal(move_group, target_pose):
-#     pose_goal = Pose()
-#     pose_goal.orientation.x = 1e-6
-#     pose_goal.orientation.y = 1e-6
-#     pose_goal.orientation.z = 1e-6
-#     pose_goal.orientation.w = 1
-#     pose_goal.position.x = target_pose.pose.position.x
-#     pose_goal.position.y = target_pose.pose.position.y
-#     pose_goal.position.z = target_pose.pose.position.z
-#     # rospy.loginfo("Setting target pose")
-#     move_group.set_pose_target(pose_goal)
-#     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- MOVING THE ARM...")
-#     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- TARGET POS: X=%1.3f, Y=%1.3f, Z=%1.3f",pose_goal.position.x,pose_goal.position.y,pose_goal.position.z)
-#     success = move_group.go(wait=True)
-#     move_group.stop()
-#     # rospy.loginfo("Clear pose target")
-#     move_group.clear_pose_targets()
-#     if success:
-#         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
-#     else:
-#         rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
-#         fArmFail()
-#     # rospy.loginfo("Stop any residual motion")
-#     # current_pose = move_group.get_current_pose().pose
-#     return success
-
 def go_to_pose_goal(move_group, target_pose):
     pose_goal = Pose()
-    pose_goal.orientation.x = target_pose.pose.orientation.x
-    pose_goal.orientation.y = target_pose.pose.orientation.y
-    pose_goal.orientation.z = target_pose.pose.orientation.z
-    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.orientation.x = 1e-6
+    pose_goal.orientation.y = 1e-6
+    pose_goal.orientation.z = 1e-6
+    pose_goal.orientation.w = 1
     pose_goal.position.x = target_pose.pose.position.x
     pose_goal.position.y = target_pose.pose.position.y
     pose_goal.position.z = target_pose.pose.position.z
@@ -134,64 +107,6 @@ def go_to_pose_goal(move_group, target_pose):
     # rospy.loginfo("Stop any residual motion")
     # current_pose = move_group.get_current_pose().pose
     return success
-
-def go_to_pose_goal_approach(move_group, target_pose):
-    waypoints = []
-    scale = 1
-    wpose = move_group.get_current_pose().pose
-    wpose = target_pose
-    wpose.position.x -= scale * 0.05
-    waypoints.append(copy.deepcopy(wpose))
-
-    waypoints.append(copy.deepcopy(target_pose))
-
-    # We want the Cartesian path to be interpolated at a resolution of 1 cm
-    # which is why we will specify 0.01 as the eef_step in Cartesian
-    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-    (plan, fraction) = move_group.compute_cartesian_path(
-                                       waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
-                                       0.0)         # jump_threshold
-
-    # Note: We are just planning, not asking move_group to actually move the robot yet:
-    success = move_group.execute(plan,wait=True)
-    if success:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
-    else:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
-        fArmFail()
-    # rospy.loginfo("Stop any residual motion")
-    # current_pose = move_group.get_current_pose().pose
-    return success
-
-def go_to_pose_goal_retraction(move_group, target_pose):
-    waypoints = []
-    scale = 1
-    wpose = move_group.get_current_pose().pose
-    wpose.position.z += scale * 0.05
-    waypoints.append(copy.deepcopy(wpose))
-    wpose.position.x -=scale*0.05
-    waypoints.append(copy.deepcopy(wpose))
-    waypoints.append(copy.deepcopy(target_pose))
-    # We want the Cartesian path to be interpolated at a resolution of 1 cm
-    # which is why we will specify 0.01 as the eef_step in Cartesian
-    # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
-    (plan, fraction) = move_group.compute_cartesian_path(
-                                       waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
-                                       0.0)         # jump_threshold
-
-    # Note: We are just planning, not asking move_group to actually move the robot yet:
-    success = move_group.execute(plan,wait=True)
-    if success:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
-    else:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
-        fArmFail()
-    # rospy.loginfo("Stop any residual motion")
-    # current_pose = move_group.get_current_pose().pose
-    return success
-
 
 def fArmSuccess():
     current_arm_status.data = ARM_SUCCESS
@@ -296,11 +211,13 @@ def GraspCallback(pose_goal):
         #rospy.loginfo("Gripped Opened")
 
         # first we add the box to be grasped to the planning scene
+        pose_goal.pose.position.x = pose_goal.pose.position.x
         if (add_box(pose_goal, scene) == False):
             return
 
         # then we approach the object
-        if (go_to_pose_goal_approach(move_group_arm, pose_goal) == False):
+        pose_goal.pose.position.x = pose_goal.pose.position.x
+        if (go_to_pose_goal(move_group_arm, pose_goal) == False):
             return
 
         # now we add the box to the end effector link
@@ -320,7 +237,12 @@ def GraspCallback(pose_goal):
         #rospy.loginfo("Gripped Closed")
 
         # going into retraction pose
-        if (go_to_pose_goal_retraction(move_group_arm, pre_grasp_pose) == False):
+        retraction_pose = PoseStamped()
+        retraction_pose = pose_goal
+        retraction_pose.pose.position.x = retraction_pose.pose.position.x - \
+            0.1  # we go 10 cm far from the goal position
+        # actuate the motion
+        if (go_to_pose_goal(move_group_arm, retraction_pose) == False):
             return
         goHome(move_group_arm)
         fArmSuccess()
@@ -333,7 +255,7 @@ def GraspCallback(pose_goal):
         rospy.sleep(10)
         # We go into the place position
         # actuate the motion
-        go_to_pose_goal_approach(move_group_arm, pose_goal)
+        go_to_pose_goal(move_group_arm, pose_goal)
 
         # then we open the gripper
         openGripper(move_group_gripper)
