@@ -2,6 +2,7 @@
 # ----------- IMPORTS ----------- #
 import sys
 import os
+import copy
 from tkinter import CURRENT
 os.environ['ROS_NAMESPACE'] = 'locobot'
 import moveit_commander
