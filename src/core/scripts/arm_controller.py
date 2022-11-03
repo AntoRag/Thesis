@@ -112,12 +112,13 @@ def go_to_pose_goal(move_group, target_pose):
 def go_to_pose_goal_approach(move_group, target_pose):
     waypoints = []
     scale = 1
+    wpose = Pose()
     wpose = move_group.get_current_pose().pose
     wpose = target_pose
-    wpose.pose.position.x -= scale * 0.05
+    wpose.position.x -= scale * 0.05
     waypoints.append(copy.deepcopy(wpose))
-
-    waypoints.append(copy.deepcopy(target_pose))
+    wpose = target_pose.pose
+    waypoints.append(copy.deepcopy(wpose))
 
     # We want the Cartesian path to be interpolated at a resolution of 1 cm
     # which is why we will specify 0.01 as the eef_step in Cartesian
@@ -141,12 +142,14 @@ def go_to_pose_goal_approach(move_group, target_pose):
 def go_to_pose_goal_retraction(move_group, target_pose):
     waypoints = []
     scale = 1
+    wpose = Pose()
     wpose = move_group.get_current_pose().pose
     wpose.pose.position.z += scale * 0.05
     waypoints.append(copy.deepcopy(wpose))
     wpose.pose.position.x -=scale*0.05
     waypoints.append(copy.deepcopy(wpose))
-    waypoints.append(copy.deepcopy(target_pose))
+    wpose = target_pose.pose
+    waypoints.append(copy.deepcopy(wpose))
     # We want the Cartesian path to be interpolated at a resolution of 1 cm
     # which is why we will specify 0.01 as the eef_step in Cartesian
     # translation.  We will disable the jump threshold by setting it to 0.0 disabling:
