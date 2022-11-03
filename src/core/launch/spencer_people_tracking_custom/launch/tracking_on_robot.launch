@@ -1,0 +1,42 @@
+<launch>
+        <!-- Launch file arguments -->
+    <arg name="height_above_ground" default="0.56"/>  <!-- in meters, assumes a horizontally oriented RGB-D sensor; important for accurate detection -->
+    <arg name="use_upper_body_detector" default="false"/> <!-- use depth-template-based upper-body detector? -->
+    <arg name="use_pcl_detector" default="true"/> <!-- use ROI-HOG detector from PCL library? cannot be used with upper-body detector at the same time! -->
+    <arg name="use_hog_detector" default="false"/> <!-- use RGB groundHOG detector? Requires cudaHOG library-->
+   
+   
+    <!-- TF frame IDs used by some detectors, and tracking components -->
+    <arg name="base_footprint_frame_id" default="locobot/base_footprint"/>  <!-- name of the robot's base frame after projection onto the ground plane -->
+    <arg name="world_frame_id" default="map"/>  <!-- this is the fixed tracking frame -->
+
+
+    <!-- Set ground plane distance -->
+    <rosparam param="/spencer/perception_internal/people_detection/ground_plane/distance" subst_value="true">$(arg height_above_ground)</rosparam>
+
+    <!-- RGB-D detectors -->
+    <!-- <remap from="/spencer/sensors/rgbd_front_top/depth/image_rect" to="/spencer/sensors/rgbd_front_top/depth_registered/hw_registered/image_rect"  if="$(arg use_openni1)"/>
+    <remap from="/spencer/sensors/rgbd_front_top/depth/camera_info" to="/locobot/camera/aligned_depth_to_color/camera_info" if="$(arg use_openni1)"/> -->
+
+    <include file="$(find core)/launch/spencer_people_tracking_custom/launch/detectors/front_rgbd_detectors.launch">
+        <arg name="upper_body" value="$(arg use_upper_body_detector)"/>
+        <arg name="pcl_detector" value="$(arg use_pcl_detector)"/>
+        <arg name="hog" value="$(arg use_hog_detector)"/>
+        <arg name="base_footprint_frame_id" value="$(arg base_footprint_frame_id)"/>
+    </include>
+
+    <!-- Laser detectors -->
+    <include file="$(find core)/launch/spencer_people_tracking_custom/launch/detectors/laser_detectors.launch"/> 
+
+    <!-- People tracking -->
+    <include file="$(find core)/launch/spencer_people_tracking_custom/launch/tracking/freiburg_people_tracking.launch">
+        <arg name="rgbd" default="true"/>
+        <arg name="laser_low_confidence_detections" default="false"/>
+        <arg name="base_footprint_frame_id" value="$(arg base_footprint_frame_id)"/>
+        <arg name="world_frame_id" value="$(arg world_frame_id)"/>
+    </include>
+
+    <!-- Group tracking -->
+    <include file="$(find core)/launch/spencer_people_tracking_custom/launch/tracking/group_tracking.launch"/> 
+
+</launch>

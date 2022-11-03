@@ -1,0 +1,104 @@
+<launch>
+
+    <arg name="use_octomap"                       default="false"/>
+    <arg name="use_moveit"                        default="false"/>
+    <arg name="use_artag"                         default="false"/>
+    <arg name="use_actual"                        default="false"/>
+    <arg name="use_detection"                     default="true"/>  
+    <arg name="R"                                 default="0"/>
+    <arg name="P"                                 default="0"/>
+    <arg name="Y"                                 default="1.57"/>
+    <arg name="camera_tilt_angle"                 default="0.2618"/>  
+
+  <!-- <group if="$(arg use_detection)">
+    <include file="$(find face_detector)launch/face_detector.rgbd.launch">
+      <arg name="camera" default="/locobot/camera" />
+      <arg name="rgb_ns" default="/locobot/camera/color/" />
+      <arg name="depth_ns" default="/locobot/camera/depth_registered/" />
+      <arg name="image_topic" default="/locobot/camera/color/image_raw" />
+      <arg name="depth_topic" default="/locobot/camera/aligned_depth_to_color/image_raw" />
+      <arg name="fixed_frame" default="/locobot/camera_link" />
+    </include>
+  </group> -->
+
+
+  <group unless="$(arg use_actual)">
+    <include file="$(find nav_custom)/launch/xslocobot_nav_sim_rtabmap.launch">
+      <arg name="use_octomap"                       value="$(arg use_octomap)"/>
+      <arg name="use_moveit"                        value="$(arg use_moveit)"/>
+      <arg name="use_artag"                         value="$(arg use_artag)"/>
+      <arg name="world_name"                        value="xslocobot_gazebo.world"/>
+      <arg name="R"                                 value="$(arg R)"/>
+      <arg name="P"                                 value="$(arg P)"/>
+      <arg name="Y"                                 value="$(arg Y)"/>
+      <arg name="camera_tilt_angle"                 value="$(arg camera_tilt_angle)"/>  
+    </include>
+
+        <node
+      pkg="core"
+      type="arm_controller_sim.py"
+      name="arm_controller"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="gripper_controller.py"
+      name="gripper_controller"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="communication_manager"
+      name="communication_manager"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="base_controller"
+      name="base_controller"
+      output="screen">
+    </node>
+  </group>
+
+  <group if="$(arg use_actual)">
+    <include file="$(find nav_custom)/launch/xslocobot_nav.launch">
+      <arg name="use_octomap"                       value="$(arg use_octomap)"/>
+      <arg name="use_moveit"                        value="$(arg use_moveit)"/>
+      <arg name="use_artag"                         value="$(arg use_artag)"/>
+    </include>
+
+        <node
+      pkg="core"
+      type="arm_controller.py"
+      name="arm_controller"
+      output="screen">
+    </node>
+
+    <!-- <node
+      pkg="core"
+      type="gripper_controller.py"
+      name="gripper_controller"
+      output="screen">
+    </node> -->
+
+    <node
+      pkg="core"
+      type="communication_manager"
+      name="communication_manager"
+      output="screen">
+    </node>
+
+    <node
+      pkg="core"
+      type="base_controller"
+      name="base_controller"
+      output="screen">
+    </node>
+  </group>
+
+</launch>
+
+

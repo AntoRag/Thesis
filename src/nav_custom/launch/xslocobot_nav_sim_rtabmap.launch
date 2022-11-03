@@ -12,6 +12,7 @@
   <arg name="use_rtabmapviz"                    default="false"/>
   <arg name="rtabmapviz_args"                   default=""/>
   <arg name="database_path"                     default=""/> <!--~/.ros/rtabmap.db"/-->
+  <arg name="base_type"                         default="kobuki"/> <!-- 'KOBUKI', 'CREATE3' -->
   <arg name="camera_tilt_angle"                 default="0.2618"/>
   <arg name="use_rviz"                          default="true"/>
   <arg name="rviz_frame"                        default="map"/>
