@@ -38,7 +38,7 @@ int BASE_STATUS = BASE_IDLE;
 int BASE_PREV_STATUS = BASE_IDLE;
 int ID_REQUESTED = 100;
 float distance_arm = 0.5;
-float distance_base = 0.52;
+float distance_base = 0.5;
 uint retry_base = 0;
 uint retry_arm = 0;
 const std::string planning_frame_arm = "locobot/base_footprint";
@@ -83,7 +83,7 @@ bool fSearchFunction()
     {
         int i = 0;
         TempPose = pSearchPoses.at(rSpot);
-        while (i < 12)
+        while (i < 11)
         {
             // rotate 30 degrees
             fTurn30deg(TempPose, pMobileBasePosition);
@@ -166,7 +166,7 @@ void base_status_GoalOk_switchHandler()
         pub_pre_grasp_pose_goal.publish(pre_grasp_pose_goal);
         ros::WallDuration(5).sleep();
         fChangeOrientationArm(grasp_pose_goal,marker_pose_arm.pose);
-        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.02);
+        fChangePositionArm(grasp_pose_goal,marker_pose_arm.pose,0.01);
         pub_grasp_pose_goal.publish(grasp_pose_goal);
     }
     else

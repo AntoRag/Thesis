@@ -30,7 +30,7 @@ void id_callback(std_msgs::Int64 id_request)
             MARKER_POSE_GOAL = markers_poses.markers[i].pose;
             INITIAL_ROBOT_POSE = base_pose_goal;
             fChangeOrientation(base_pose_goal, MARKER_POSE_GOAL.pose);
-            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, 1.2);
+            fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, 1);
             pub_mobile_pose_goal.publish(base_pose_goal);
             pApproaching = true;
             ros::WallDuration(5).sleep();
@@ -200,8 +200,8 @@ int main(int argc, char** argv)
     HOME_POSE_GOAL.pose.orientation.w = 1;
 
     DEPOT_POSE_GOAL.header.frame_id = "map";
-    DEPOT_POSE_GOAL.pose.position.x = -0.70722;
-    DEPOT_POSE_GOAL.pose.position.y = 0.87;
+    DEPOT_POSE_GOAL.pose.position.x = -0.60722;
+    DEPOT_POSE_GOAL.pose.position.y = 0.90;
     DEPOT_POSE_GOAL.pose.position.z = 0;
     DEPOT_POSE_GOAL.pose.orientation.x = 0;
     DEPOT_POSE_GOAL.pose.orientation.y = 0;
@@ -251,8 +251,8 @@ int main(int argc, char** argv)
     SPOT2_POSE_GOAL.pose.orientation.w = 0.70931;
     
     pSearchPoses.push_back(HOME_POSE_GOAL);
-    pSearchPoses.push_back(SPOT1_POSE_GOAL);
     pSearchPoses.push_back(SPOT2_POSE_GOAL);
+    pSearchPoses.push_back(SPOT1_POSE_GOAL);
     pSearchPoses.push_back(HOME_POSE_GOAL);
     ros::spin();
     return 0;

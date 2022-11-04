@@ -47,11 +47,11 @@ def add_box(target_pose, scene):
     box_pose.pose.orientation.y = target_pose.pose.orientation.y
     box_pose.pose.orientation.z = target_pose.pose.orientation.z
     box_pose.pose.orientation.w = target_pose.pose.orientation.w
-    box_pose.pose.position.x = target_pose.pose.position.x + 0.02
+    box_pose.pose.position.x = target_pose.pose.position.x + 0.03
     box_pose.pose.position.y = target_pose.pose.position.y
-    box_pose.pose.position.z = target_pose.pose.position.z + 0.04
+    box_pose.pose.position.z = target_pose.pose.position.z 
     # scene.add_box(box_name, box_pose, size=(0.02, 0.065, 0.125))
-    scene.add_box(box_name, box_pose, size=(0.04, 0.07, 0.15))
+    scene.add_box(box_name, box_pose, size=(0.06, 0.07, 0.15))
     success = ObjectInScene(scene, box_name, False, True)
     if not success:
         rospy.logerr("[CORE::ARM_CONTROLLER] ---- NOT ADDED ANY BOX")
@@ -111,46 +111,27 @@ def go_to_pose_goal(move_group, target_pose):
 
 def go_to_pose_goal_approach(move_group, target_pose):
     pose_goal = Pose()
-    pose_goal.orientation.x = target_pose.pose.orientation.x-0.06
-    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
-    pose_goal.orientation.z = target_pose.pose.orientation.z
-    pose_goal.orientation.w = target_pose.pose.orientation.w
-    pose_goal.position.x = target_pose.pose.position.x
-    pose_goal.position.y = target_pose.pose.position.y
-    pose_goal.position.z = target_pose.pose.position.z
-    move_group.set_pose_target(pose_goal)
-    success = move_group.go(wait=True)
-    move_group.stop()
-    # rospy.loginfo("Clear pose target")
-    move_group.clear_pose_targets()
-    if success:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
-    else:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
-        fArmFail()
-        return success
-
-    pose_goal = Pose()
-    pose_goal.orientation.x = target_pose.pose.orientation.x-0.04
-    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
-    pose_goal.orientation.z = target_pose.pose.orientation.z
-    pose_goal.orientation.w = target_pose.pose.orientation.w
-    pose_goal.position.x = target_pose.pose.position.x
-    pose_goal.position.y = target_pose.pose.position.y
-    pose_goal.position.z = target_pose.pose.position.z
-    move_group.set_pose_target(pose_goal)
-    success = move_group.go(wait=True)
-    move_group.stop()
-    # rospy.loginfo("Clear pose target")
-    move_group.clear_pose_targets()
-    if success:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
-    else:
-        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
-        fArmFail()
-        return success
     pose_goal.orientation.x = target_pose.pose.orientation.x
-    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
+    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x-0.05
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
+    if success:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
+    else:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
+        fArmFail()
+        return success
+    pose_goal = Pose()
+    pose_goal.orientation.x = target_pose.pose.orientation.x
+    pose_goal.orientation.y = target_pose.pose.orientation.y
     pose_goal.orientation.z = target_pose.pose.orientation.z
     pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
@@ -170,13 +151,13 @@ def go_to_pose_goal_approach(move_group, target_pose):
 
 def go_to_pose_goal_retraction(move_group, target_pose):
     pose_goal = Pose()
-    pose_goal.orientation.x = target_pose.pose.orientation.x-0.05
+    pose_goal.orientation.x = target_pose.pose.orientation.x
     pose_goal.orientation.y = target_pose.pose.orientation.y
-    pose_goal.orientation.z = target_pose.pose.orientation.z+0.1
+    pose_goal.orientation.z = target_pose.pose.orientation.z
     pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
     pose_goal.position.y = target_pose.pose.position.y
-    pose_goal.position.z = target_pose.pose.position.z
+    pose_goal.position.z = target_pose.pose.position.z+0.1
     move_group.set_pose_target(pose_goal)
     success = move_group.go(wait=True)
     move_group.stop()
@@ -194,7 +175,7 @@ def go_to_pose_goal_retraction(move_group, target_pose):
     pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
     pose_goal.position.y = target_pose.pose.position.y
-    pose_goal.position.z = target_pose.pose.position.z
+    pose_goal.position.z = target_pose.pose.position.z+0.1
     move_group.set_pose_target(pose_goal)
     success = move_group.go(wait=True)
     move_group.stop()
@@ -264,11 +245,6 @@ def openGripper():
     gripper_control.publish(open_gripper)
     rospy.loginfo("[CORE::ARM_CONTROLLER] ---- GRIPPER OPENED")
 
-
-def PreGraspCallback(pre_pose_goal):
-    global pre_grasp_pose_goal
-    pre_grasp_pose_goal = pre_pose_goal
-
 # ----------- CONSTANTS ----------- #
 # ARM STATUS MACRO
 ARM_FAIL = 0
@@ -333,8 +309,10 @@ def GraspCallback(pose_goal):
         # going into retraction pose
         retraction_pose = PoseStamped()
         retraction_pose = pre_grasp_pose_goal
-        # retraction_pose.pose.position.x = retraction_pose.pose.position.x - 0.1  # we go 10 cm far from the goal position
-        # actuate the motion
+        service_octomap()
+        # Wait for OctoMap update
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- WAITING FOR OCTOMAP")
+        rospy.sleep(10)
         if (go_to_pose_goal_retraction(move_group_arm, retraction_pose) == False):
             return
         goHome(move_group_arm)
@@ -377,6 +355,10 @@ def PickPlaceCallback(data):
     pick_place = data.data
     return
 
+
+def PreGraspCallback(pre_pose_goal):
+    global pre_grasp_pose_goal
+    pre_grasp_pose_goal = pre_pose_goal
 
 def listener():
     global bond_close, bond_open, move_group_arm, robot, arm_status_pub, scene,current_arm_status, service_octomap,gripper_control
