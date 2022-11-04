@@ -8,6 +8,8 @@ Panels:
         - /Move Base1/Local Plan1
         - /PlanningScene1/Scene Geometry1
         - /PlanningScene1/Scene Robot1
+        - /MarkerArray1
+        - /MarkerArray1/Namespaces1
       Splitter Ratio: 0.5944444537162781
     Tree Height: 208
   - Class: rviz/Selection
@@ -235,6 +237,10 @@ Visualization Manager:
       Frame Timeout: 60
       Frames:
         All Enabled: false
+        ar_marker_0:
+          Value: true
+        ar_marker_14:
+          Value: true
         locobot/ar_tag_link:
           Value: true
         locobot/arm_base_link:
@@ -307,6 +313,8 @@ Visualization Manager:
           Value: true
         map:
           Value: true
+        pcl_people_detector_front_link:
+          Value: true
       Marker Alpha: 1
       Marker Scale: 0.15000000596046448
       Name: TF
@@ -326,7 +334,10 @@ Visualization Manager:
                     locobot/tilt_link:
                       locobot/camera_link:
                         locobot/camera_depth_link:
-                          {}
+                          ar_marker_0:
+                            {}
+                          ar_marker_14:
+                            {}
                 locobot/caster_back_link:
                   {}
                 locobot/caster_front_link:
@@ -366,6 +377,8 @@ Visualization Manager:
                   {}
                 locobot/wheel_right_link:
                   {}
+              pcl_people_detector_front_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 0.699999988079071
@@ -515,8 +528,8 @@ Visualization Manager:
         - Alpha: 1
           Autocompute Intensity Bounds: true
           Autocompute Value Bounds:
-            Max Value: 0.766029953956604
-            Min Value: 0.019530296325683594
+            Max Value: 2.2483596801757812
+            Min Value: -0.30781835317611694
             Value: true
           Axis: Z
           Channel Name: intensity
@@ -748,6 +761,51 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Alpha: 1
+      Class: spencer_tracking_rviz_plugin/DetectedPersons
+      Color: 130; 130; 130
+      Color map offset: 0
+      Color transform: Rainbow
+      Enabled: true
+      Excluded person IDs: ""
+      Font color: 255; 255; 255
+      Font color style: Same color
+      Font scale: 2
+      Included person IDs: ""
+      Low-confidence alpha: 0.5
+      Low-confidence threshold: 0.5
+      Name: DetectedPersons
+      Queue Size: 10
+      Render confidences: false
+      Render covariances:
+        Line width: 0.10000000149011612
+        Value: true
+      Render detection IDs: true
+      Render modality text: false
+      Render orientation arrows: true
+      Style:
+        Line width: 0.05000000074505806
+        Scaling factor: 1
+        Value: Cylinders
+      Text spacing: 1
+      Topic: /spencer/perception_internal/detected_persons/rgbd_front_top/upper_body
+      Unreliable: false
+      Value: true
+      Z offset:
+        Use Z position from message: false
+        Value: 0
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /spencer/perception_internal/people_detection/rgbd_front_top/pcl_people_detector/cluster_marker_array
+      Name: MarkerArray
+      Namespaces:
+        FinalBeforeHOGClassify: true
+        HeadBased_Input: true
+        HeadBased_MaxHeightFiltered: true
+        HeadBased_MergedCloseInFloorCoordinates: true
+        HeadBased_Subclusters: true
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:

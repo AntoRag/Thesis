@@ -59,3 +59,4 @@
 [submodule "src/people"]
 	path = src/people
 	url = https://github.com/wg-perception/people.git
+	branch = noetic
