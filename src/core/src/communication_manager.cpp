@@ -35,7 +35,7 @@ void id_callback(std_msgs::Int64 id_request)
             pApproaching = true;
             ros::WallDuration(5).sleep();
             WaitOnVariable(BASE_STATUS, BASE_IDLE);
-            ros::WallDuration(10).sleep();
+            ros::WallDuration(20).sleep();
             ROS_INFO("[CORE::COMM_MANAGER] ---- APPROACHING...");
             ros::spinOnce();
             i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
@@ -102,6 +102,8 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 {
                 id_request_buffer.pop_front();
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
+                pick_place.data = NAN;
+                pub_pick_place.publish(pick_place);
                 retry_arm = 0;
                 }
             break;
