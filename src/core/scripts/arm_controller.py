@@ -111,8 +111,28 @@ def go_to_pose_goal(move_group, target_pose):
 
 def go_to_pose_goal_approach(move_group, target_pose):
     pose_goal = Pose()
-    pose_goal.orientation.x = target_pose.pose.orientation.x-0.05
-    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.x = target_pose.pose.orientation.x-0.06
+    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
+    pose_goal.orientation.z = target_pose.pose.orientation.z
+    pose_goal.orientation.w = target_pose.pose.orientation.w
+    pose_goal.position.x = target_pose.pose.position.x
+    pose_goal.position.y = target_pose.pose.position.y
+    pose_goal.position.z = target_pose.pose.position.z
+    move_group.set_pose_target(pose_goal)
+    success = move_group.go(wait=True)
+    move_group.stop()
+    # rospy.loginfo("Clear pose target")
+    move_group.clear_pose_targets()
+    if success:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- ARM MOVED CORRECTLY")
+    else:
+        rospy.loginfo("[CORE::ARM_CONTROLLER] ---- PROBLEM DURING MOTION")
+        fArmFail()
+        return success
+
+    pose_goal = Pose()
+    pose_goal.orientation.x = target_pose.pose.orientation.x-0.04
+    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
     pose_goal.orientation.z = target_pose.pose.orientation.z
     pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
@@ -130,7 +150,7 @@ def go_to_pose_goal_approach(move_group, target_pose):
         fArmFail()
         return success
     pose_goal.orientation.x = target_pose.pose.orientation.x
-    pose_goal.orientation.y = target_pose.pose.orientation.y
+    pose_goal.orientation.y = target_pose.pose.orientation.y+0.01
     pose_goal.orientation.z = target_pose.pose.orientation.z
     pose_goal.orientation.w = target_pose.pose.orientation.w
     pose_goal.position.x = target_pose.pose.position.x
