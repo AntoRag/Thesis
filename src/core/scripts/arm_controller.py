@@ -376,7 +376,6 @@ def listener():
     move_group_arm = moveit_commander.MoveGroupCommander(arm_name, robot_description="/locobot/robot_description")
     move_group_arm.allow_replanning(True)
     move_group_arm.set_num_planning_attempts(10)
-    move_group_arm.set_goal_tolerance(0.0005)
     # get some parameters for the arm and the scene
     robot = moveit_commander.RobotCommander(robot_description="/locobot/robot_description")
     scene = moveit_commander.PlanningSceneInterface()

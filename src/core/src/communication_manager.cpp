@@ -103,7 +103,6 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 id_request_buffer.pop_front();
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 pick_place.data = NAN;
-                pub_pick_place.publish(pick_place);
                 retry_arm = 0;
                 }
             break;
