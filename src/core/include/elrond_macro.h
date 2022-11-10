@@ -19,6 +19,7 @@
 
 #define PICK 0
 #define PLACE 1
+#define NAN 2
 
 // // DEFINE HOME POSITION BASE
 // geometry_msgs::Pose HOME_POSE_GOAL( 

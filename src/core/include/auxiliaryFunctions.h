@@ -137,7 +137,7 @@ void fChangePositionArm(geometry_msgs::PoseStamped& base_pose_goal, geometry_msg
 
     tf2::Quaternion q(x2, y2, z2, r2);
     tf2::Matrix3x3 m_FromMaptoMarker(q);
-    tf2::Vector3 vector(0, -0.01, distance);
+    tf2::Vector3 vector(0, -0.02, distance);
     tf2::Vector3 raw1, raw2, raw3;
 
     raw1 = m_FromMaptoMarker.getRow(0);
