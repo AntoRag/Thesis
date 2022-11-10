@@ -37,6 +37,6 @@
     </include>-->
 
     <!-- Group tracking -->
-    <!-- <include file="$(find core)/launch/spencer_people_tracking_custom/launch/tracking/group_tracking.launch"/>  -->
+    <include file="$(find core)/launch/spencer_people_tracking_custom/launch/tracking/group_tracking.launch"/> 
 
 </launch>

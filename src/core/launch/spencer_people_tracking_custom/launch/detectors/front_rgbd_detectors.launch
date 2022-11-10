@@ -12,7 +12,7 @@
         <!-- RWTH tf based groundplane -->
         <node pkg="rwth_ground_plane" type="ground_plane_tf_based_fixed" name="ground_plane_front_top" output="screen">
             <param name="base_footprint" value="$(arg base_footprint_frame_id)" type="string"/>
-            <param name="camera_frame" value="locobot/camera_depth_link" type="string"/>
+            <param name="camera_frame" value="locobot/camera_depth_frame" type="string"/>
             <param name="ground_plane" value="$(arg ground_plane)" type="string"/>
             <param name="rate" value="10.0"/>
         </node>
@@ -26,14 +26,14 @@
             <arg name="upper_body_image" value="image" />
             <arg name="ground_plane" value="$(arg ground_plane)" />
             <arg name="detection_id_offset" value="3"/>
-            <arg name="detection_id_increment" value="$(arg detection_id_increment)"/> 
+            <arg name="detection_id_increment" value="$(arg detection_id_increment)"/>
         </include>
 
         <!-- Front PCL detector (publishes on same topic as upper-body detector) -->
         <group if="$(arg pcl_detector)">
             <remap from="/spencer/perception/detected_persons" to="/spencer/perception_internal/detected_persons/rgbd_front_top/upper_body"/> <!-- replaces upper-body detections -->
             <include file="$(find pcl_people_detector)/launch/start.launch" ns="rgbd_front_top">
-                <arg name="input_topic" value="/locobot/camera/depth_registered/points"/>
+                <arg name="input_topic" value="/locobot/rtabmap/depth/color/obstacles"/>
                 <arg name="camera_info_topic" value="/locobot/camera/color/camera_info"/>
                 <arg name="base_link_frame" value="$(arg base_footprint_frame_id)"/>
                 <arg name="detection_frame" value="pcl_people_detector_front_link"/>
