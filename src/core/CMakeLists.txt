@@ -19,6 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  people_msgs
+  spencer_tracking_msgs
   message_generation
   costmap_2d
   interbotix_xs_msgs
@@ -224,8 +226,18 @@ catkin_install_python(PROGRAMS
 )
 add_executable(base_controller src/base_controller.cpp)
 add_executable(communication_manager src/communication_manager.cpp)
+add_executable(tracked_people_translator src/tracked_people_translator.cpp)
+
+
+
+
+
 target_link_libraries(base_controller ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 target_link_libraries(communication_manager ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(tracked_people_translator ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+
 install(TARGETS base_controller DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(TARGETS communication_manager DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(TARGETS tracked_people_translator DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(DIRECTORY launch/ DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch)

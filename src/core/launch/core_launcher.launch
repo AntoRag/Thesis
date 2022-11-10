@@ -49,8 +49,8 @@
       name="base_controller"
       output="screen">
     </node>
-  </group>
 
+  </group>
   <group if="$(arg use_actual)">
     <include file="$(find nav_custom)/launch/xslocobot_nav.launch">
       <arg name="use_octomap"                       value="$(arg use_octomap)"/>
@@ -72,6 +72,13 @@
       output="screen">
     </node> -->
 
+
+    <node
+      pkg="core"
+      type="tracked_people_translator"
+      name="tracked_people_translator"
+      output="screen">
+    </node>
     <node
       pkg="core"
       type="communication_manager"
