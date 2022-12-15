@@ -27,7 +27,7 @@ If an item is not found among all the available in the scene the robot enters a 
 # Arm controller
 Now we can go in deep to analyze the role of the arm controller. It is constructed such that the node exchanges some information with the communication node. The topics used are the following: arm_status, pick_or_place, grasp_pose_goal, and pre_grasp_pose_goal. A general view of the communication structure is sketched in the following Figure.
 <p align="center">
-    <img src="/Media/arm_comm.jpg" alt="Arm controller software architecture" style="height: 50%; width: 50%;"/>
+    <img src="/Media/arm_comm.jpg" alt="Arm controller software architecture" style="height: 70%; width: 70%;"/>
 </p>
 
 ## Description of the "arm_status" topic
