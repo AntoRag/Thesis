@@ -10,7 +10,7 @@ Essentially the goal of the communication node is to deal with a request for an 
 
 ## Item request handling
 The first thing that has to be done when receiving a request for an id is to search if it is present in the robot's field of view. The software will listen to the ar_pose_marker topics which contain details such as pose and orientation characterizing each marker. To ensure that the arm and the mobile base have a correct reading at each time instant without having to perform any transformation online we set up two different ar_track_alvar nodes so that ones computes the positions for the mobile base (so with respect to "map" frame) and another one that estimates the position with respect to "locobot/base_footprint" which is the planning frame of MoveIt.
-<img src="/Media/idreq_alg.png" alt="How item requests are handled" style="height: 50; width:50;"/>
+<img src="/Media/idreq_alg.png" alt="How item requests are handled" style="height: 30; width:30;"/>
 
 ## Search phase 
 If an item is not found among all the available in the scene the robot enters a function that performs a series of predefined actions presented in the following Algorithm. The function has some parameters that can be tuned according to the application's necessities: we can tune the spots to be investigated and the degrees of rotation that the mobile base performs at each iteration.
