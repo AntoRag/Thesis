@@ -197,9 +197,11 @@ def fArmSuccess():
     arm_status_pub.publish(current_arm_status)
 
 def fArmFail():
+    global move_group_arm
     global arm_status_pub
     current_arm_status.data = ARM_FAIL
     arm_status_pub.publish(current_arm_status)
+    goHome(move_group_arm)
     rospy.sleep(5)
     current_arm_status.data = ARM_IDLE
     arm_status_pub.publish(current_arm_status)  

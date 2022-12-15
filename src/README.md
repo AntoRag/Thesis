@@ -1,4 +1,6 @@
 # Packages
+The folder contains the packages related to the construction of the software architecture for the solution developed for the mobile manipulator Locobot WX250. The software structure is depicted in the following figure:
+![Software structure mobile manipulator](/Media/communication_structure.jpg "Software structure mobile manipulator")
 
 ## Package descriptions
 
@@ -20,18 +22,18 @@ The following folder contains the packages needed to operate the robot both in s
 
 <---------------TO BE DONE--------------->
 
-## How to launch MoveIt alone
+## How to launch MoveIt! alone
 
-In both the cases in MoveIt we can select the motion planning pipeline to be implemented. Currently there are the following pipeline implemented:
+In both the cases in MoveIt! we can select the motion planning pipeline to be implemented. Currently there are the following pipeline implemented:
 
 - OMPL **(pipeline:=ompl)**
 - STOMP  **(pipeline:=stomp)**
 - OMPL + CHOMP  **(pipeline:=ompl-chomp)**
 - OMPL + STOMP  **(pipeline:=ompl-stomp)**
 
-### Simulation MoveIt alone
+### Simulation MoveIt! alone
 
-To launch a simulation of the robot using MoveIt as motion planning framework we can run the following:
+To launch a simulation of the robot using MoveIt! as motion planning framework we can run the following:
 
 ```bash
 roslaunch moveit_custom xslocobot_moveit_custom.launch use_gazebo:=true
@@ -49,9 +51,9 @@ Then we can set other parameters like the followings:
 |pipeline               | here we can select the motion planner to be exploited|
 |world_name             | here we can give the path to a world where we can test our rover in gazebo|
 
-### Actual robot MoveIt alone
+### Actual robot MoveIt! alone
 
-To launch a simulation of the robot using MoveIt as motion planning framework we can run the following:
+To launch a simulation of the robot using MoveIt! as motion planning framework we can run the following:
 
 ```bash
 roslaunch moveit_custom xslocobot_moveit_custom.launch use_gazebo:=true
@@ -65,15 +67,15 @@ Then we can set other parameters like the followings:
 |use_camera             | if true launches the nodes for publishing the camera data|
 |pipeline               | here we can select the motion planner to be exploited|
 
-## How to launch RTAB-Map + MoveIt
+## How to launch RTAB-Map + MoveIt!
 
 <---------------TO BE DONE--------------->
 
-### Simulation RTAB-Map + MoveIt
+### Simulation RTAB-Map + MoveIt!
 
 <---------------TO BE DONE--------------->
 
-### Actual robot RTAB-Map + MoveIt
+### Actual robot RTAB-Map + MoveIt!
 
 <---------------TO BE DONE--------------->
 <!-- - save_data_topic script can be implemented to read messages published on a topic and store they in a .csv file that after can be easily imported in MATLAB. Until now it is possible to read Float64 messages published on a topic. To run it just type on the terminal
@@ -96,7 +98,7 @@ In this way we will obtain a file called data_saved.csv with time as first colum
   python3 FromBagToCVS.py /path/to/.bag/file topic/to/be/converted/
   ```
 
-- To run a simulation in Gazebo while using MoveIt as framework we can give as command:
+- To run a simulation in Gazebo while using MoveIt! as framework we can give as command:
 
   ```bash
 

@@ -98,7 +98,7 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 pub_pick_place.publish(pick_place);
                 retry_arm = 0;
                 }
-            else
+            else if (pick_place.data == PLACE)
                 {
                 id_request_buffer.pop_front();
                 pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
@@ -115,33 +115,23 @@ void arm_status_callback(std_msgs::Int64 arm_status)
                 if (retry_arm > 2)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry pick reached, FAIL!");
-                    distance_arm = 0.5;
                     pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                     break;
                     }
-                distance_arm += 0.10;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PICK, Repositioning...");
-                ros::spinOnce();
-                ros::WallDuration(1).sleep();
-                auto i = fFindIdInMarkers(markers_poses, ID_REQUESTED);
-                MARKER_POSE_GOAL = markers_poses.markers[i].pose;
-                fChangePosition(base_pose_goal, MARKER_POSE_GOAL.pose, distance_arm);
-                pub_mobile_pose_goal.publish(base_pose_goal);
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 retry_arm++;
                 }
-            else
+            else if (pick_place.data == PLACE)
                 {
                 if (retry_arm > 2)
                     {
                     ROS_ERROR("[CORE::COMM_MANAGER] ---- Max retry place reached, FAIL!");
-                    distance_arm = 0.5;
                     pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                     break;
                     }
-                distance_arm += 0.10;
                 ROS_INFO("[CORE::COMM_MANAGER] ---- ARM FAILED PLACE, Repositioning...");
-                fChangePosition(base_pose_goal, HOME_POSE_GOAL.pose, distance_arm);
-                pub_mobile_pose_goal.publish(base_pose_goal);
+                pub_mobile_pose_goal.publish(HOME_POSE_GOAL);
                 retry_arm++;
                 }
             break;
