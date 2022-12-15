@@ -21,7 +21,22 @@ If an item is not found among all the available in the scene the robot enters a 
 ![Representation in the space of the mobile manipulator](/Media/search_phase.png "Representation in the space of the mobile manipulator")
 
 # Arm controller
+Now we can go in deep to analyze the role of the arm controller. It is constructed such that the node exchanges some information with the communication node. The topics used are the following: arm_status, pick_or_place, grasp_pose_goal, and pre_grasp_pose_goal. A general view of the communication structure is sketched in the following Figure.
+![Arm controller software architecture](/Media/arm_comm.jpg "Arm controller software architecture")
 
+## Description of the "arm_status" topic
+The first topic that we will analyze is the arm_status topic. It is capable of communicating four status that characterizes the working flow of the arm:
+- ARM FAIL: it is implemented to allow the replanning of the mobile base if the pick or place actions fail.
+- ARM SUCCESS: this status is the one sent at the end of a pick/place action that is performed successfully. After 5 seconds the status is changed back to ARM IDLE.
+- ARM IDLE: this is a necessary step to make the communication node aware that the arm completed its motion. Without this status published the base cannot move.
+- ARM RUNNING: this message is exchanged only to make the user aware that the arm_controller is running.
 
+## Description of the pose goal topics
+These topics, grasp_pose_goal and pre_grasp_pose_goal, are constructed only to exchange the two pose goals, that the arm will exploit to perform its motion. The messages sent and received are of type geometry_msgs/PoseStamped, so they store information such as position, orientation, and frame of reference for which those values are computed.
+
+## Description of the pick_or_place topic
+The routine of movements to be performed changes depending if we are dealing with picking or placing. We construct the following topic to make the arm aware of the sequence of action to be executed. As we know, the options are PICK or PLACE. According to this subdivision, we split the routine into two parts depending on what has to be performed, as can be seen in the Figure below. The main difference between these two phases regards the update of the planning scene and the presence or not of some intermediate poses to approach the target position. Once the arm controller has received the goal pose and the action to be achieved, the routine starts and performs the desired moves taking into account the planning scene. Here we report the main steps that the manipulator performs in each situation:
+
+![Flowchart for understanding in which order the actions are performed](/Media/Flowchart_pick_place.jpg "Flowchart for understanding in which order the actions are performed")
 
 # Base controller
