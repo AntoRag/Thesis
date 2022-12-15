@@ -34,6 +34,6 @@ These topics, grasp_pose_goal and pre_grasp_pose_goal, are constructed only to e
 ## Description of the pick_or_place topic
 The routine of movements to be performed changes depending if we are dealing with picking or placing. We construct the following topic to make the arm aware of the sequence of action to be executed. As we know, the options are PICK or PLACE. According to this subdivision, we split the routine into two parts depending on what has to be performed, as can be seen in the Figure below. The main difference between these two phases regards the update of the planning scene and the presence or not of some intermediate poses to approach the target position. Once the arm controller has received the goal pose and the action to be achieved, the routine starts and performs the desired moves taking into account the planning scene. Here we report the main steps that the manipulator performs in each situation:
 
-<img src="/Media/Flowchart_pick_place.jpg" alt="Flowchart for understanding in which order the actions are performed" style="height: 50%; width: 50%;"/>
+<img src="/Media/Flowchart_pick_place.jpg" alt="Flowchart for understanding in which order the actions are performed" style="height: 20%; width: 20%;"/>
 
 # Base controller
