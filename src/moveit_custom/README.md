@@ -19,6 +19,5 @@ The planner is aware of the environment thanks to the **Octmap** plugin availabl
 ![Example how what is possible to detect with Octomap](/Media/retraction_real.png "Example how what is possible to detect with Octomap")
 
 
-https://user-images.githubusercontent.com/94801013/171169179-fe046676-bd94-4ccd-87d2-d38759f99afc.mp4
 
 
