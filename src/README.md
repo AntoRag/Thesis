@@ -14,17 +14,20 @@ The following folder contains the packages needed to operate the robot both in s
 - MoveIt alone
 - RTAB-Map + MoveIt
 
-## How to launch RTAB-Map alone
-
-<---------------TO BE DONE--------------->
 
 ### Simulation RTAB-Map alone
 
+To launch RTAB-Map in simulation alone we can run in a terminal:
+```bash
 <---------------TO BE DONE--------------->
+```
 
 ### Actual robot RTAB-Map alone
 
+To launch RTAB-Map in the actual robot alone we can run in a terminal:
+```bash
 <---------------TO BE DONE--------------->
+```
 
 ## How to launch MoveIt! alone
 
@@ -73,15 +76,24 @@ Then we can set other parameters like the followings:
 
 ## How to launch RTAB-Map + MoveIt!
 
+To launch RTAB-Map alone we can run in a terminal:
+```bash
 <---------------TO BE DONE--------------->
+```
 
 ### Simulation RTAB-Map + MoveIt!
 
+To launch RTAB-Map alone we can run in a terminal:
+```bash
 <---------------TO BE DONE--------------->
+```
 
 ### Actual robot RTAB-Map + MoveIt!
 
+To launch RTAB-Map alone we can run in a terminal:
+```bash
 <---------------TO BE DONE--------------->
+```
 <!-- - save_data_topic script can be implemented to read messages published on a topic and store they in a .csv file that after can be easily imported in MATLAB. Until now it is possible to read Float64 messages published on a topic. To run it just type on the terminal
 
   ```bash
