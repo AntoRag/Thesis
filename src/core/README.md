@@ -10,16 +10,13 @@ Essentially the goal of the communication node is to deal with a request for an 
 
 ## Item request handling
 The first thing that has to be done when receiving a request for an id is to search if it is present in the robot's field of view. The software will listen to the ar_pose_marker topics which contain details such as pose and orientation characterizing each marker. To ensure that the arm and the mobile base have a correct reading at each time instant without having to perform any transformation online we set up two different ar_track_alvar nodes so that ones computes the positions for the mobile base (so with respect to "map" frame) and another one that estimates the position with respect to "locobot/base_footprint" which is the planning frame of MoveIt.
-![How item requests are handled](/Media/idreq_alg.png "How item requests are handled"){width=250}
+<img src="/Media/idreq_alg.png" alt="How item requests are handled" style="height: 100px; width:100px;"/>
 
 ## Search phase 
 If an item is not found among all the available in the scene the robot enters a function that performs a series of predefined actions presented in the following Algorithm. The function has some parameters that can be tuned according to the application's necessities: we can tune the spots to be investigated and the degrees of rotation that the mobile base performs at each iteration.
+<img src="/Media/search_algor.png" alt="Sample of the search algorithm" style="height: 100px; width:100px;"/>
 
-![Sample of the search algorithm](/Media/search_algor.png "Sample of the search algorithm"){width=250}
-
-
-![Representation in the space of the mobile manipulator](/Media/search_phase.png "Representation in the space of the mobile manipulator")
-
+<img src="/Media/search_phase.png" alt="Representation in the space of the mobile manipulator" style="height: 100px; width:100px;"/>
 # Arm controller
 Now we can go in deep to analyze the role of the arm controller. It is constructed such that the node exchanges some information with the communication node. The topics used are the following: arm_status, pick_or_place, grasp_pose_goal, and pre_grasp_pose_goal. A general view of the communication structure is sketched in the following Figure.
 ![Arm controller software architecture](/Media/arm_comm.jpg "Arm controller software architecture"){width=250}
@@ -37,6 +34,5 @@ These topics, grasp_pose_goal and pre_grasp_pose_goal, are constructed only to e
 ## Description of the pick_or_place topic
 The routine of movements to be performed changes depending if we are dealing with picking or placing. We construct the following topic to make the arm aware of the sequence of action to be executed. As we know, the options are PICK or PLACE. According to this subdivision, we split the routine into two parts depending on what has to be performed, as can be seen in the Figure below. The main difference between these two phases regards the update of the planning scene and the presence or not of some intermediate poses to approach the target position. Once the arm controller has received the goal pose and the action to be achieved, the routine starts and performs the desired moves taking into account the planning scene. Here we report the main steps that the manipulator performs in each situation:
 
-![Flowchart for understanding in which order the actions are performed](/Media/Flowchart_pick_place.jpg "Flowchart for understanding in which order the actions are performed"){width=250}
-
+<img src="/Media/Flowchart_pick_place.jpg" alt="Flowchart for understanding in which order the actions are performed" style="height: 100px; width:100px;"/>
 # Base controller
