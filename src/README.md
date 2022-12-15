@@ -1,6 +1,9 @@
 # Packages
 The folder contains the packages related to the construction of the software architecture for the solution developed for the mobile manipulator Locobot WX250. The software structure is depicted in the following figure:
-![Software structure mobile manipulator](/Media/communication_structure.jpg "Software structure mobile manipulator")
+<p align="center">
+    <img src="/Media/communication_structure.jpg" alt="Software structure mobile manipulator" style="height: 70%; width: 70%;"/>
+</p>
+
 The core of the software is contained in the "core" folder where the software architecture is contained.
 
 ## Package descriptions
