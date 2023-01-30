@@ -10,7 +10,7 @@ By selecting ROS (Robot Operating System) as middleware, we can achieve hardware
 - STOMP (Stochastic Trajectory Optimization for Motion Planning)
 - CHOMP (Covariant Hamiltonian Optimization for Motion Planning)
 
-In particular, from our tests, we understand that the fastest algorithm to solve the motion planning problem in a not-so-populated scenario is $RRT^{*}$, so we continued our tests, selecting it as the default planner.
+In particular, from our tests, we understand that the fastest algorithm to solve the motion planning problem in a not-so-populated scenario is RRT*, so we continued our tests, selecting it as the default planner.
 The second problem addressed during this thesis work is the implementation of an obstacle avoidance algorithm that must be fully compatible with MoveIt and its planning tools. Our attention focused on Octomap, which is a pretty powerful tool combined with MoveIt. It guarantees, in fact, online computation of the grid map that characterizes the obstacles to be taken into account by the manipulator.
 The third problem addressed with this work regards object recognition on the shelves. This is achieved through the implementation of a package for ROS called "ar_track_alvar". It relies on the recognition of ARTag markers so that we can identify and estimate the items poses with a certain precision.
 Due to the constraints of the Locobot platform, we chose path-planning algorithms that favoured computational speed and detection algorithms that did not require the presence of a GPU. 
